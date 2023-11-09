@@ -1,4 +1,5 @@
 import { app, BrowserWindow } from "electron";
+import { ipcMain } from "electron";
 import path from "node:path";
 
 // The built directory structure
@@ -39,6 +40,14 @@ function createWindow() {
   } else {
     // win.loadFile('dist/index.html')
     win.loadFile(path.join(process.env.DIST, "index.html"));
+
+    ipcMain.on("maximize-window", () => {
+      if (win?.isMaximized()) {
+        win.restore();
+      } else {
+        win?.maximize();
+      }
+    });
   }
 }
 
