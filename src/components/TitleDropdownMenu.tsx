@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 
-const TitleDropdownMenu = (props: { options: string[]; header: string }) => {
+const TitleDropdownMenu = (props: {
+  options: { name: string; action: Function }[];
+  header: string;
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const options = props.options;
 
@@ -15,18 +18,21 @@ const TitleDropdownMenu = (props: { options: string[]; header: string }) => {
     setIsOpen(false);
   };
   return (
-    <div className=' hover:bg-white hover:text-black hover:font-bold px-2 py-1 '>
+    <div className=' hover:bg-white hover:text-black hover:font-bold px-2 py-1 rounded-sm'>
       <ul onMouseEnter={handleToggle} onMouseLeave={handleToggle}>
         <li>{props.header}</li>
         {isOpen && (
-          <ul className='absolute bg-white shadow-lg py-1 '>
+          <ul className='absolute bg-white shadow-lg py-1 rounded-md'>
             {options.map((option) => (
               <li
-                key={option}
-                onClick={() => handleSelect(option)}
-                className='w-full bg-white px-3 py-1 hover:bg-gray-100 hover:text-black cursor-pointer'
+                key={option.name}
+                onClick={() => {
+                  handleSelect(option.name);
+                  option.action();
+                }}
+                className='w-full bg-white px-3 py-1 hover:bg-gray-100 hover:text-black cursor-pointer '
               >
-                {option}
+                {option.name}
               </li>
             ))}
           </ul>

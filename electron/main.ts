@@ -1,6 +1,8 @@
-import { app, BrowserWindow } from "electron";
+const { app, BrowserWindow, dialog } = require("electron");
+
 import { ipcMain } from "electron";
 import path from "node:path";
+const fs = require("fs");
 
 // The built directory structure
 //
@@ -16,7 +18,7 @@ process.env.VITE_PUBLIC = app.isPackaged
   ? process.env.DIST
   : path.join(process.env.DIST, "../public");
 
-let win: BrowserWindow | null;
+let win: any;
 // 🚧 Use ['ENV_NAME'] avoid vite:define plugin - Vite@2.x
 const VITE_DEV_SERVER_URL = process.env["VITE_DEV_SERVER_URL"];
 
@@ -25,9 +27,12 @@ function createWindow() {
     icon: path.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
+      nodeIntegration: true,
     },
     titleBarStyle: "hidden",
     frame: false,
+    minWidth: 400, // Set the minimum width
+    minHeight: 300, // Set the minimum height
   });
 
   // Test active push message to Renderer-process.
@@ -68,5 +73,58 @@ app.on("activate", () => {
     createWindow();
   }
 });
+
+ipcMain.on("open-folder-dialog", function (event) {
+  dialog
+    .showOpenDialog(win, {
+      properties: ["openDirectory"],
+    })
+    .then((result) => {
+      if (!result.canceled) {
+        const selectedFolderPath = result.filePaths[0];
+        const filesAndFolders = getFilesAndFolders(selectedFolderPath);
+        event.sender.send("selected-folder", filesAndFolders);
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+});
+
+interface FileOrFolder {
+  name: string;
+  type: "file" | "folder";
+  children: FileOrFolder[];
+}
+
+function getFilesAndFolders(folderPath: string) {
+  const filesAndFolders: FileOrFolder = {
+    name: path.basename(folderPath),
+    type: "folder",
+    children: [],
+  };
+
+  const items = fs.readdirSync(folderPath);
+
+  items.forEach((item: any) => {
+    const itemPath = path.join(folderPath, item);
+    const stat = fs.statSync(itemPath);
+
+    if (stat.isDirectory()) {
+      // Recursively add subfolders
+      const subfolder = getFilesAndFolders(itemPath);
+      filesAndFolders.children.push(subfolder);
+    } else {
+      // Add files
+      filesAndFolders.children.push({
+        name: item,
+        type: "file",
+        children: [],
+      });
+    }
+  });
+
+  return filesAndFolders;
+}
 
 app.whenReady().then(createWindow);

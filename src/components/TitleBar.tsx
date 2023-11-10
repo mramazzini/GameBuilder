@@ -1,4 +1,5 @@
 import TitleDropdownMenu from "./TitleDropdownMenu";
+import Logo from "../assets/Logo.png";
 const TitleBar = () => {
   const maximize = () => {
     window.resizeTo(screen.availWidth, screen.availHeight);
@@ -12,30 +13,46 @@ const TitleBar = () => {
 
   return (
     <div
-      className='title-bar flex justify-between items-center bg-gray-800 text-white text-sm font-semibold px-4 py-2 w-full h-7'
+      className='title-bar flex justify-between items-center bg-black/80 text-white text-sm font-semibold plx-4 py-5 w-full h-7 border-b border-white/25'
       id='title-bar'
     >
-      <div className='title-bar-controls flex min-w-min '>
+      <img src={Logo} className='w-6 mx-2 h-6' />
+      <div className='title-bar-controls flex w-1/3 '>
         <TitleDropdownMenu
-          options={["New Project", "Load Project", "Settings"]}
+          options={[
+            { name: "New Project", action: () => {} },
+            { name: "Load Project", action: () => {} },
+          ]}
           header='File'
         />
         <TitleDropdownMenu
-          options={["Import Image", "Import Map", "Import Tileset"]}
+          options={[
+            { name: "Import Map File", action: () => {} },
+            { name: "Import Tileset", action: () => {} },
+          ]}
           header='Import'
         />
         <TitleDropdownMenu
-          options={["Run Project", "Run Project with Debugging"]}
+          options={[
+            {
+              name: "Run Project",
+              action: () => {},
+            },
+            {
+              name: "Run Project with Debugging",
+              action: () => {},
+            },
+          ]}
           header='Run'
         />
       </div>
       <div
-        className='title-bar-title w-full text-center'
+        className='title-bar-title w-1/3 text-center'
         id='title-bar-draggable'
       >
         {document.title ? document.title : "Untitled"}
       </div>
-      <div className='title-bar-window-controls flex '>
+      <div className='title-bar-window-controls flex justify-end w-1/3 '>
         <button
           className='hover:bg-gray-400 hover:text-black hover:font-bold px-2 py-1 '
           aria-label='Minimize'
