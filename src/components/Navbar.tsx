@@ -9,7 +9,7 @@ const options = [
 
 const Navbar = (props: { setCurrentPage: Function; currentPage: string }) => {
   return (
-    <nav className='navbar navbar-expand-lg navbar-dark bg-slate-900 flex justify-between items-center'>
+    <nav className='navbar navbar-expand-lg navbar-dark bg-slate-900 flex justify-between items-center '>
       <div className='flex'>
         {options.map((option) => (
           <button

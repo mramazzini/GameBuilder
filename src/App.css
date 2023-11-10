@@ -8,4 +8,17 @@
 
 :root {
   overflow: hidden;
+  user-select: none;
+}
+
+.scroll-active {
+  overflow: auto;
+}
+.scroll-active::-webkit-scrollbar {
+  display: block;
+  width: 10px;
+}
+.scroll-active::-webkit-scrollbar-thumb {
+  background: rgb(255, 255, 255, 0.25);
+  border-radius: 5px;
 }

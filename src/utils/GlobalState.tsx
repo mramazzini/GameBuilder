@@ -3,9 +3,11 @@ import { reducer } from "./reducers";
 
 interface ProjectState {
   projectDirectory: string;
+  error: string;
 }
 const initialState = {
   projectDirectory: "",
+  error: "",
 };
 
 const ProjectContext = createContext<{
@@ -20,6 +22,7 @@ const { Provider } = ProjectContext;
 const ProjectProvider = ({ value = [], ...props }) => {
   const [state, dispatch] = useReducer(reducer, {
     projectDirectory: "",
+    error: "",
   });
 
   return <Provider value={{ state, dispatch }} {...props} />;

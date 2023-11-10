@@ -31,8 +31,8 @@ function createWindow() {
     },
     titleBarStyle: "hidden",
     frame: false,
-    minWidth: 400, // Set the minimum width
-    minHeight: 300, // Set the minimum height
+    minWidth: 500, // Set the minimum width
+    minHeight: 400, // Set the minimum height
   });
 
   // Test active push message to Renderer-process.
@@ -87,20 +87,64 @@ ipcMain.on("open-folder-dialog", function (event) {
       }
     })
     .catch((err) => {
-      console.error(err);
+      event.sender.send("error", "Error opening folder");
     });
+});
+
+ipcMain.on("create-folders", function (event) {
+  const foldersToCreate = [
+    "animation",
+    "relationships",
+    "hitboxes",
+    "maps",
+    "images",
+    "sounds",
+    "tilesets",
+  ];
+
+  try {
+    dialog
+      .showOpenDialog(win, {
+        properties: ["openDirectory"],
+      })
+      .then((result) => {
+        if (!result.canceled) {
+          //check if folder is empty
+          if (fs.readdirSync(result.filePaths[0]).length > 0) {
+            event.sender.send(
+              "error",
+              "Folder is not empty. Please select an empty folder or load an existing Project."
+            );
+            return;
+          }
+          const selectedFolderPath = result.filePaths[0];
+          //create subfolders here
+          foldersToCreate.forEach((folder) => {
+            fs.mkdirSync(path.join(selectedFolderPath, folder));
+          });
+          const filesAndFolders = getFilesAndFolders(selectedFolderPath);
+          event.sender.send("selected-folder", filesAndFolders);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  } catch (err) {
+    console.error(err);
+    event.sender.send("error", "Error creating folders");
+  }
 });
 
 interface FileOrFolder {
   name: string;
-  type: "file" | "folder";
+  isFolder: boolean;
   children: FileOrFolder[];
 }
 
 function getFilesAndFolders(folderPath: string) {
   const filesAndFolders: FileOrFolder = {
     name: path.basename(folderPath),
-    type: "folder",
+    isFolder: true,
     children: [],
   };
 
@@ -118,7 +162,7 @@ function getFilesAndFolders(folderPath: string) {
       // Add files
       filesAndFolders.children.push({
         name: item,
-        type: "file",
+        isFolder: false,
         children: [],
       });
     }

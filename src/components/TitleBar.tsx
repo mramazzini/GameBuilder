@@ -1,6 +1,14 @@
 import TitleDropdownMenu from "./TitleDropdownMenu";
 import Logo from "../assets/Logo.png";
+const ipcRenderer = window.ipcRenderer;
+import { SET_PROJECT_DIRECTORY } from "../utils/actions";
+
+import { useProjectContext } from "../utils/GlobalState";
+
 const TitleBar = () => {
+  const { state, dispatch } = useProjectContext();
+
+  // Window Controls -----------------------------------------------------------
   const maximize = () => {
     window.resizeTo(screen.availWidth, screen.availHeight);
   };
@@ -10,6 +18,34 @@ const TitleBar = () => {
   const close = () => {
     window.close();
   };
+  // ---------------------------------------------------------------------------
+
+  // New Project ---------------------------------------------------------------
+
+  const createFolders = () => {
+    ipcRenderer.send("create-folders");
+  };
+  ipcRenderer.on("folders-created", (event, folderPath) => {
+    dispatch({
+      type: SET_PROJECT_DIRECTORY,
+      payload: folderPath.name,
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+
+  // Load Project --------------------------------------------------------------
+
+  ipcRenderer.on("selected-folder", (event, folderPath) => {
+    dispatch({
+      type: SET_PROJECT_DIRECTORY,
+      payload: folderPath.name,
+    });
+  });
+  const openFolderDialog = () => {
+    ipcRenderer.send("open-folder-dialog");
+  };
+  // ---------------------------------------------------------------------------
 
   return (
     <div
@@ -20,8 +56,11 @@ const TitleBar = () => {
       <div className='title-bar-controls flex w-1/3 '>
         <TitleDropdownMenu
           options={[
-            { name: "New Project", action: () => {} },
-            { name: "Load Project", action: () => {} },
+            { name: "New Project", action: createFolders },
+            {
+              name: "Load Project",
+              action: openFolderDialog,
+            },
           ]}
           header='File'
         />

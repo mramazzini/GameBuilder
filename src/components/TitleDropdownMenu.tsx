@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 const TitleDropdownMenu = (props: {
-  options: { name: string; action: Function }[];
+  options: { name: string; action: any }[];
   header: string;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,9 +11,10 @@ const TitleDropdownMenu = (props: {
     setIsOpen(!isOpen);
   };
 
-  const handleSelect = (option: string) => {
+  const handleSelect = (option: { name: string; action: any }) => {
     // Handle the selected option here (e.g., save it to state or perform an action)
     console.log("Selected option:", option);
+    option.action();
     // Close the dropdown after selection
     setIsOpen(false);
   };
@@ -27,8 +28,7 @@ const TitleDropdownMenu = (props: {
               <li
                 key={option.name}
                 onClick={() => {
-                  handleSelect(option.name);
-                  option.action();
+                  handleSelect(option);
                 }}
                 className='w-full bg-white px-3 py-1 hover:bg-gray-100 hover:text-black cursor-pointer '
               >

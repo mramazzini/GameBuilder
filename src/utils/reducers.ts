@@ -1,4 +1,4 @@
-import { SET_PROJECT_DIRECTORY } from "./actions";
+import { SET_PROJECT_DIRECTORY, SET_ERROR } from "./actions";
 
 export const reducer = (state: any, action: any) => {
   switch (action.type) {
@@ -7,6 +7,12 @@ export const reducer = (state: any, action: any) => {
       return {
         ...state,
         projectDirectory: action.payload,
+      };
+    case SET_ERROR:
+      console.log("reducer: SET_ERROR to ", action.payload, "");
+      return {
+        ...state,
+        error: action.payload,
       };
     default:
       return state;
