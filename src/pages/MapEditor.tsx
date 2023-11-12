@@ -1,12 +1,25 @@
 import React from "react";
-import { MapEditorProvider } from "../utils/MapEditorState/MapEditorState";
-import TileSetNav from "../components/MapEditor/TilesetNav";
+import { useEffect, useState } from "react";
+import { Map, Tileset } from "../utils/types";
+import MapNav from "../components/MapEditor/MapNav";
+import MapContainer from "../components/MapEditor/MapContainer";
 const MapEditor = () => {
+  const [selectedTileset, setSelectedTileset] = useState<Tileset | null>(null);
+  const [selectedMap, setSelectedMap] = useState<Map | null>(null);
   return (
-    <div>
-      <MapEditorProvider>
-        <h1>Map Editor</h1>
-      </MapEditorProvider>
+    <div className='flex flex-row justify-between grow'>
+      <MapNav
+        selectedTileset={selectedTileset}
+        setSelectedTileset={setSelectedTileset}
+        setSelectedMap={setSelectedMap}
+        selectedMap={selectedMap}
+      />
+      <MapContainer
+        selectedTileset={selectedTileset}
+        setSelectedTileset={setSelectedTileset}
+        setSelectedMap={setSelectedMap}
+        selectedMap={selectedMap}
+      />
     </div>
   );
 };

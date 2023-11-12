@@ -1,3 +1,6 @@
+const ipcRenderer = window.ipcRenderer;
+import { fileOrFolder } from "./types";
+
 const getCurrentTime = () => {
   const currentDate: Date = new Date();
 
@@ -16,4 +19,9 @@ const getCurrentTime = () => {
   return currentTime;
 };
 
-export { getCurrentTime };
+const getMapInfo = (projectDirectory: string) => {
+  // request map info from ipcMain
+  ipcRenderer.send("get-map-info", projectDirectory);
+};
+
+export { getCurrentTime, getMapInfo };

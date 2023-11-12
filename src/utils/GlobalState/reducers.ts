@@ -1,5 +1,10 @@
-import { SET_PROJECT_DIRECTORY, SET_ERROR, ADD_STD_TO_LOG } from "./actions";
-import { getCurrentTime } from "../helpers";
+import {
+  SET_PROJECT_DIRECTORY,
+  SET_ERROR,
+  ADD_STD_TO_LOG,
+  SET_FILES_AND_FOLDERS,
+} from "./actions";
+import { getCurrentTime, getMapInfo } from "../helpers";
 
 export const reducer = (state: any, action: any) => {
   switch (action.type) {
@@ -34,6 +39,20 @@ export const reducer = (state: any, action: any) => {
       return {
         ...state,
         stdLog: [...state.stdLog, newLogEntry],
+      };
+    case SET_FILES_AND_FOLDERS:
+      console.log("reducer: SET_FILES_AND_FOLDERS to ", action.payload, "");
+      // Calculate Map information
+      getMapInfo(state.projectDirectory);
+      return {
+        ...state,
+        filesAndFolders: action.payload,
+      };
+    case "SET_MAP_INFO":
+      console.log("reducer: SET_MAP_INFO to ", action.payload, "");
+      return {
+        ...state,
+        maps: action.payload,
       };
     default:
       return state;

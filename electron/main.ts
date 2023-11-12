@@ -4,6 +4,7 @@ import { ipcMain } from "electron";
 import path from "node:path";
 const fs = require("fs");
 const { spawn } = require("child_process");
+const readline = require("readline");
 
 // The built directory structure
 //
@@ -147,6 +148,30 @@ ipcMain.on("initialize-engine", function (event, projectDirectory: string) {
   } catch (err) {
     console.error(err);
     event.sender.send("error", "Error initializing engine");
+  }
+});
+
+ipcMain.on("get-map-info", function (event, projectDirectory: string) {
+  try {
+    console.log(
+      "Received map-info message with project directory:",
+      projectDirectory
+    );
+
+    // loop through maps folder and get map info
+    const mapsFolder = path.join(projectDirectory, "maps");
+    const mapFiles = fs.readdirSync(mapsFolder);
+    const maps: any[] = [];
+    mapFiles.forEach((mapFile: string) => {
+      const mapPath = path.join(mapsFolder, mapFile);
+      const mapData = fs.readFileSync(mapPath, "utf8");
+      const map = JSON.parse(mapData);
+      maps.push(map);
+    });
+    event.sender.send("map-info", maps);
+  } catch (err) {
+    console.error(err);
+    event.sender.send("error", "Error getting map info");
   }
 });
 

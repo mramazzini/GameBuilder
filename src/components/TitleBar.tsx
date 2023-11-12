@@ -50,7 +50,7 @@ const TitleBar = () => {
       className='title-bar  flex justify-between  items-center bg-black/80 text-white text-sm font-semibold plx-4 h-9 w-full  border-b border-white/25'
       id='title-bar'
     >
-      <div className='title-bar-controls flex h-full '>
+      <div className='title-bar-controls  flex h-full '>
         <img src={Logo} className='w-5 mx-2 my-2' />
         <TitleDropdownMenu
           options={[
@@ -84,7 +84,7 @@ const TitleBar = () => {
         />
       </div>
       <div
-        className='title-bar-title  text-center  flex-grow'
+        className='title-bar-title bg-black/50 text-center  flex-grow h-full flex items-center justify-center'
         id='title-bar-draggable'
       >
         {document.title ? document.title : "Untitled"}

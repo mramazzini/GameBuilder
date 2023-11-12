@@ -3,48 +3,29 @@
 import React, { useState, useEffect } from "react";
 
 import RenderFolder from "./RenderFolder.js";
-
+import { useProjectContext } from "../../utils/GlobalState/GlobalState.js";
 const ipcRenderer = window.ipcRenderer;
 
 interface FileExplorerProps {
   initialPath: string;
 }
 
-interface File {
-  name: string;
-  isFolder: boolean;
-  children: File[];
-}
-
 const FileExplorer: React.FC<FileExplorerProps> = ({ initialPath }) => {
-  const [files, setFiles] = useState<File[]>([]);
-
+  const { state, dispatch } = useProjectContext();
   const [width, setWidth] = useState(400);
   const [isResizing, setResizing] = useState(false);
-
+  useEffect(() => {
+    console.log(state.filesAndFolders);
+  }, [state.filesAndFolders]);
   //New Project
   const createFolders = () => {
     ipcRenderer.send("create-folders");
   };
-  ipcRenderer.on(
-    "folders-created",
-    (event, { selectedFolderPath, filesAndFolders }) => {
-      setFiles(filesAndFolders.children);
-    }
-  );
 
   // Load Project
   const openFolderDialog = () => {
     ipcRenderer.send("open-folder-dialog");
   };
-
-  ipcRenderer.on(
-    "selected-folder",
-    (event, { selectedFolderPath, filesAndFolders }) => {
-      document.title = filesAndFolders.name;
-      setFiles(filesAndFolders.children);
-    }
-  );
 
   //Resize Component
   useEffect(() => {
@@ -81,7 +62,7 @@ const FileExplorer: React.FC<FileExplorerProps> = ({ initialPath }) => {
 
   return (
     <div
-      className='bg-black/80 border-l border-white/25 text-white scroll-active pr-5 text-sm flex flex-row h-full justify-start'
+      className='bg-black/50 border-l border-white/25 text-white scroll-active pr-5 text-sm flex flex-row h-full justify-start'
       style={{
         width: `${width}px`,
         minWidth: `max-content`,
@@ -102,7 +83,7 @@ const FileExplorer: React.FC<FileExplorerProps> = ({ initialPath }) => {
         <div className='py-1 font-bold border-b border-white/25'>
           Project Explorer
         </div>
-        {files.length === 0 && (
+        {state.filesAndFolders.children.length === 0 && (
           <div className='text-xs text-gray-400 px-2 py-1'>
             <button
               className='text-3xl text-white w-full flex justify-start items-center hover:bg-black/70 hover:text-white/80  px-2 py-1 rounded-sm'
@@ -119,7 +100,7 @@ const FileExplorer: React.FC<FileExplorerProps> = ({ initialPath }) => {
             </button>
           </div>
         )}
-        {files.map((file) => (
+        {state.filesAndFolders.children.map((file) => (
           <li onClick={() => handleFileSelect()} key={file.name}>
             {RenderFolder(file, 0)}
           </li>

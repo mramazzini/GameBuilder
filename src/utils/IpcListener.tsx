@@ -4,6 +4,8 @@ import {
   ADD_STD_TO_LOG,
   SET_PROJECT_DIRECTORY,
   SET_ERROR,
+  SET_FILES_AND_FOLDERS,
+  SET_MAP_INFO,
 } from "./GlobalState/actions";
 import { useProjectContext } from "./GlobalState/GlobalState";
 const textDecoder = new TextDecoder("utf-8");
@@ -45,6 +47,11 @@ const IpcListener = () => {
         type: SET_PROJECT_DIRECTORY,
         payload: selectedFolderPath,
       });
+
+      dispatch({
+        type: SET_FILES_AND_FOLDERS,
+        payload: filesAndFolders,
+      });
     };
 
     const createFolders = (
@@ -58,6 +65,11 @@ const IpcListener = () => {
         type: SET_PROJECT_DIRECTORY,
         payload: selectedFolderPath,
       });
+
+      dispatch({
+        type: SET_FILES_AND_FOLDERS,
+        payload: filesAndFolders,
+      });
     };
 
     const handleError = (event: any, err: any) => {
@@ -68,6 +80,12 @@ const IpcListener = () => {
         payload: err,
       });
     };
+    const requestMapInfo = (event: any, mapInfo: any) => {
+      dispatch({
+        type: SET_MAP_INFO,
+        payload: mapInfo,
+      });
+    };
 
     ipcRenderer.on("engine-stdout", handleEngineStdout);
     ipcRenderer.on("engine-stderr", handleEngineStderr);
@@ -76,12 +94,16 @@ const IpcListener = () => {
     ipcRenderer.on("error", handleError);
     ipcRenderer.on("selected-folder", openFolderDialog);
     ipcRenderer.on("folders-created", createFolders);
+    ipcRenderer.on("map-info", requestMapInfo);
     return () => {
       ipcRenderer.removeListener("engine-stdout", handleEngineStdout);
       ipcRenderer.removeListener("engine-stderr", handleEngineStderr);
       ipcRenderer.removeListener("engine-exit", handleEngineExit);
       ipcRenderer.removeListener("engine-initialized", handleEngineInitialized);
       ipcRenderer.removeListener("error", handleError);
+      ipcRenderer.removeListener("selected-folder", openFolderDialog);
+      ipcRenderer.removeListener("folders-created", createFolders);
+      ipcRenderer.removeListener("map-info", requestMapInfo);
     };
   }, []);
 

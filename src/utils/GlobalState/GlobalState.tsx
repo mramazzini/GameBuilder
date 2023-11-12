@@ -1,20 +1,17 @@
 import { createContext, useContext, useReducer } from "react";
 import { reducer } from "./reducers";
-
-interface ProjectState {
-  projectDirectory: string;
-  error: string;
-  stdLog: log[];
-}
-interface log {
-  message: string;
-  timestamp: string;
-}
-
+import { ProjectState } from "../types";
 const initialState = {
   projectDirectory: "",
   error: "",
   stdLog: [],
+  tilesets: [],
+  maps: [],
+  filesAndFolders: {
+    name: "",
+    isFolder: true,
+    children: [],
+  },
 };
 
 const ProjectContext = createContext<{
