@@ -19,18 +19,22 @@ const TitleDropdownMenu = (props: {
     setIsOpen(false);
   };
   return (
-    <div className=' hover:bg-white hover:text-black hover:font-bold px-2 py-1 rounded-sm'>
-      <ul onMouseEnter={handleToggle} onMouseLeave={handleToggle}>
-        <li>{props.header}</li>
+    <div
+      onMouseEnter={handleToggle}
+      onMouseLeave={handleToggle}
+      className=' hover:bg-white hover:text-black hover:font-bold px-2  rounded-sm flex justify-center items-center cursor-pointer'
+    >
+      <ul className='  '>
+        <li className=''>{props.header}</li>
         {isOpen && (
-          <ul className='absolute bg-white shadow-lg py-1 rounded-md'>
+          <ul className='absolute bg-white shadow-lg py-1 rounded-md '>
             {options.map((option) => (
               <li
                 key={option.name}
                 onClick={() => {
                   handleSelect(option);
                 }}
-                className='w-full bg-white px-3 py-1 hover:bg-gray-100 hover:text-black cursor-pointer '
+                className=' w-full h-full bg-white px-3 py-1 hover:bg-gray-100 hover:text-black cursor-pointer '
               >
                 {option.name}
               </li>

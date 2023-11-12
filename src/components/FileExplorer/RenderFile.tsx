@@ -22,7 +22,7 @@ const RenderFile: React.FC<RenderFileProps> = ({
 }) => {
   return (
     <button
-      className={`hover:bg-black/50 w-full bg-black py-1 flex w-full min-w-max justify-between ${
+      className={`hover:bg-gray-800 w-full bg-black py-1 flex w-full min-w-max justify-between ${
         lastElement ? "border-b border-white/25" : ""
       }`}
     >

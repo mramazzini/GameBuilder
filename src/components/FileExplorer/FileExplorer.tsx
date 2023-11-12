@@ -1,9 +1,8 @@
 // FileExplorer.tsx
 
 import React, { useState, useEffect } from "react";
-import { useProjectContext } from "../../utils/GlobalState.js";
-import { SET_PROJECT_DIRECTORY, SET_ERROR } from "../../utils/actions.js";
-import RenderFolder from "./renderFolder.js";
+
+import RenderFolder from "./RenderFolder.js";
 
 const ipcRenderer = window.ipcRenderer;
 
@@ -20,7 +19,6 @@ interface File {
 const FileExplorer: React.FC<FileExplorerProps> = ({ initialPath }) => {
   const [files, setFiles] = useState<File[]>([]);
 
-  const { state, dispatch } = useProjectContext();
   const [width, setWidth] = useState(400);
   const [isResizing, setResizing] = useState(false);
 
@@ -28,35 +26,25 @@ const FileExplorer: React.FC<FileExplorerProps> = ({ initialPath }) => {
   const createFolders = () => {
     ipcRenderer.send("create-folders");
   };
-  ipcRenderer.on("folders-created", (event, folderPath) => {
-    dispatch({
-      type: SET_PROJECT_DIRECTORY,
-      payload: folderPath.name,
-    });
-    setFiles(folderPath.children);
-  });
+  ipcRenderer.on(
+    "folders-created",
+    (event, { selectedFolderPath, filesAndFolders }) => {
+      setFiles(filesAndFolders.children);
+    }
+  );
 
   // Load Project
   const openFolderDialog = () => {
     ipcRenderer.send("open-folder-dialog");
   };
 
-  ipcRenderer.on("selected-folder", (event, folderPath) => {
-    dispatch({
-      type: SET_PROJECT_DIRECTORY,
-      payload: folderPath.name,
-    });
-    document.title = folderPath.name;
-    setFiles(folderPath.children);
-  });
-
-  //Error handling
-  ipcRenderer.on("error", (event, err) => {
-    dispatch({
-      type: SET_ERROR,
-      payload: err,
-    });
-  });
+  ipcRenderer.on(
+    "selected-folder",
+    (event, { selectedFolderPath, filesAndFolders }) => {
+      document.title = filesAndFolders.name;
+      setFiles(filesAndFolders.children);
+    }
+  );
 
   //Resize Component
   useEffect(() => {
@@ -110,7 +98,7 @@ const FileExplorer: React.FC<FileExplorerProps> = ({ initialPath }) => {
         onMouseDown={handleMouseDown}
       ></div>
 
-      <ul className='w-full min-w-max'>
+      <ul className='w-full min-w-max '>
         <div className='py-1 font-bold border-b border-white/25'>
           Project Explorer
         </div>

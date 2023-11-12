@@ -1,9 +1,11 @@
 import TitleDropdownMenu from "./TitleDropdownMenu";
 import Logo from "../assets/Logo.png";
-const ipcRenderer = window.ipcRenderer;
-import { SET_PROJECT_DIRECTORY } from "../utils/actions";
 
-import { useProjectContext } from "../utils/GlobalState";
+const ipcRenderer = window.ipcRenderer;
+
+import { SET_PROJECT_DIRECTORY, SET_ERROR } from "../utils/GlobalState/actions";
+
+import { useProjectContext } from "../utils/GlobalState/GlobalState";
 
 const TitleBar = () => {
   const { state, dispatch } = useProjectContext();
@@ -25,35 +27,31 @@ const TitleBar = () => {
   const createFolders = () => {
     ipcRenderer.send("create-folders");
   };
-  ipcRenderer.on("folders-created", (event, folderPath) => {
-    dispatch({
-      type: SET_PROJECT_DIRECTORY,
-      payload: folderPath.name,
-    });
-  });
 
   // ---------------------------------------------------------------------------
 
   // Load Project --------------------------------------------------------------
 
-  ipcRenderer.on("selected-folder", (event, folderPath) => {
-    dispatch({
-      type: SET_PROJECT_DIRECTORY,
-      payload: folderPath.name,
-    });
-  });
   const openFolderDialog = () => {
     ipcRenderer.send("open-folder-dialog");
   };
   // ---------------------------------------------------------------------------
 
+  //Run Project
+
+  const runProjectGame = () => {
+    ipcRenderer.send("initialize-engine", state.projectDirectory);
+  };
+
+  // ---------------------------------------------------------------------------
+
   return (
     <div
-      className='title-bar flex justify-between items-center bg-black/80 text-white text-sm font-semibold plx-4 py-5 w-full h-7 border-b border-white/25'
+      className='title-bar  flex justify-between  items-center bg-black/80 text-white text-sm font-semibold plx-4 h-9 w-full  border-b border-white/25'
       id='title-bar'
     >
-      <img src={Logo} className='w-6 mx-2 h-6' />
-      <div className='title-bar-controls flex w-1/3 '>
+      <div className='title-bar-controls flex h-full '>
+        <img src={Logo} className='w-5 mx-2 my-2' />
         <TitleDropdownMenu
           options={[
             { name: "New Project", action: createFolders },
@@ -75,7 +73,7 @@ const TitleBar = () => {
           options={[
             {
               name: "Run Project",
-              action: () => {},
+              action: runProjectGame,
             },
             {
               name: "Run Project with Debugging",
@@ -86,12 +84,12 @@ const TitleBar = () => {
         />
       </div>
       <div
-        className='title-bar-title w-1/3 text-center'
+        className='title-bar-title  text-center  flex-grow'
         id='title-bar-draggable'
       >
         {document.title ? document.title : "Untitled"}
       </div>
-      <div className='title-bar-window-controls flex justify-end w-1/3 '>
+      <div className='title-bar-window-controls flex justify-end '>
         <button
           className='hover:bg-gray-400 hover:text-black hover:font-bold px-2 py-1 '
           aria-label='Minimize'

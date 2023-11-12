@@ -1,5 +1,5 @@
-import { useProjectContext } from "../utils/GlobalState";
-import { SET_ERROR } from "../utils/actions";
+import { useProjectContext } from "../utils/GlobalState/GlobalState";
+import { SET_ERROR } from "../utils/GlobalState/actions";
 
 const Error = () => {
   const { state, dispatch } = useProjectContext();

@@ -5,11 +5,12 @@ const options = [
   "Sprite Editor",
   "Animation Editor",
   "Sound Editor",
+  "App Runner",
 ];
 
 const Navbar = (props: { setCurrentPage: Function; currentPage: string }) => {
   return (
-    <nav className='navbar navbar-expand-lg navbar-dark bg-slate-900 flex justify-between items-center '>
+    <nav className='navbar navbar-expand-lg navbar-dark bg-slate-900 flex justify-between items-center border-b border-white/25'>
       <div className='flex'>
         {options.map((option) => (
           <button
