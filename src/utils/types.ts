@@ -2,6 +2,8 @@ export interface Map {
   sizeX: number;
   sizeY: number;
   tiles: Tile[][];
+  tag: string;
+  tileset: "terrain";
 }
 
 export interface Tile {
@@ -11,14 +13,14 @@ export interface Tile {
 }
 
 export interface Tileset {
-  name: string;
+  tag: string;
   path: string;
   tileWidth: number;
   tileHeight: number;
-  tilePath: string;
+  base64: string;
   tileCount: number;
-  tileColumns: number;
-  tileRows: number;
+  columns: number;
+  rows: number;
 }
 export interface ProjectState {
   projectDirectory: string;

@@ -6,6 +6,7 @@ import {
   SET_ERROR,
   SET_FILES_AND_FOLDERS,
   SET_MAP_INFO,
+  SET_TILESET_INFO,
 } from "./GlobalState/actions";
 import { useProjectContext } from "./GlobalState/GlobalState";
 const textDecoder = new TextDecoder("utf-8");
@@ -87,6 +88,13 @@ const IpcListener = () => {
       });
     };
 
+    const requestTileSetInfo = (event: any, tileSetInfo: any) => {
+      dispatch({
+        type: SET_TILESET_INFO,
+        payload: tileSetInfo,
+      });
+    };
+
     ipcRenderer.on("engine-stdout", handleEngineStdout);
     ipcRenderer.on("engine-stderr", handleEngineStderr);
     ipcRenderer.on("engine-exit", handleEngineExit);
@@ -95,6 +103,7 @@ const IpcListener = () => {
     ipcRenderer.on("selected-folder", openFolderDialog);
     ipcRenderer.on("folders-created", createFolders);
     ipcRenderer.on("map-info", requestMapInfo);
+    ipcRenderer.on("tileset-info", requestTileSetInfo);
     return () => {
       ipcRenderer.removeListener("engine-stdout", handleEngineStdout);
       ipcRenderer.removeListener("engine-stderr", handleEngineStderr);

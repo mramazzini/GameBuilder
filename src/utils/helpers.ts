@@ -22,6 +22,7 @@ const getCurrentTime = () => {
 const getMapInfo = (projectDirectory: string) => {
   // request map info from ipcMain
   ipcRenderer.send("get-map-info", projectDirectory);
+  ipcRenderer.send("get-tileset-info", projectDirectory);
 };
 
 export { getCurrentTime, getMapInfo };

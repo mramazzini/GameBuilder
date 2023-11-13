@@ -44,6 +44,7 @@ export const reducer = (state: any, action: any) => {
       console.log("reducer: SET_FILES_AND_FOLDERS to ", action.payload, "");
       // Calculate Map information
       getMapInfo(state.projectDirectory);
+
       return {
         ...state,
         filesAndFolders: action.payload,
@@ -53,6 +54,16 @@ export const reducer = (state: any, action: any) => {
       return {
         ...state,
         maps: action.payload,
+      };
+    case "SET_TILESET_INFO":
+      action.payload.map((tileset: any) => {
+        tileset.path = "tileset_" + tileset.tag + ".png";
+      });
+      console.log("reducer: SET_TILESET_INFO to ", action.payload, "");
+
+      return {
+        ...state,
+        tilesets: action.payload,
       };
     default:
       return state;

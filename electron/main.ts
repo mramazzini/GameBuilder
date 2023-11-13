@@ -175,6 +175,35 @@ ipcMain.on("get-map-info", function (event, projectDirectory: string) {
   }
 });
 
+ipcMain.on("get-tileset-info", function (event, projectDirectory: string) {
+  try {
+    console.log(
+      "Received tileset-info message with project directory:",
+      projectDirectory
+    );
+
+    // go to relationships/tilesets.json and get tileset info
+    const relationshipsFolder = path.join(projectDirectory, "relationships");
+    const relationshipsFile = path.join(relationshipsFolder, "tilesets.json");
+    const relationshipsData = fs.readFileSync(relationshipsFile, "utf8");
+    const relationships = JSON.parse(relationshipsData);
+    //calculate base64 for each tileset image
+    relationships.forEach((tileset: any) => {
+      const tilesetPath = path.join(
+        projectDirectory,
+        "tilesets",
+        "tileset_" + tileset.tag + ".png"
+      );
+      tileset.base64 = convertImageToBase64(tilesetPath);
+    });
+
+    event.sender.send("tileset-info", relationships);
+  } catch (err) {
+    console.error(err);
+    event.sender.send("error", "Error getting tileset info");
+  }
+});
+
 ipcMain.on("create-folders", function (event) {
   const foldersToCreate = [
     "animation",
@@ -256,6 +285,15 @@ function getFilesAndFolders(folderPath: string) {
   });
 
   return filesAndFolders;
+}
+function convertImageToBase64(filePath: string) {
+  // Read the PNG file as a binary buffer
+  const buffer = fs.readFileSync(filePath);
+
+  // Convert the binary buffer to base64
+  const base64Data = buffer.toString("base64");
+
+  return base64Data;
 }
 
 app.whenReady().then(createWindow);

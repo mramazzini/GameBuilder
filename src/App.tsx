@@ -15,9 +15,9 @@ function App() {
   return (
     <ProjectProvider>
       <TitleBar />
-      <main className='bg-gray-800  h-full flex-col'>
-        <div className='flex flex-row justify-between h-full '>
-          <div className='flex justify-start flex-col  w-full  h-full'>
+      <main className='bg-gray-800  h-full flex-col w-screen min-w-fit'>
+        <div className='flex flex-row  h-full   '>
+          <div className='flex  flex-col  w-full  h-full '>
             <Navbar setCurrentPage={setCurrentPage} currentPage={currentPage} />
             {currentPage === "Home" ? (
               <Home />

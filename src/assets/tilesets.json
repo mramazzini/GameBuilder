@@ -1,0 +1,10 @@
+[
+  {
+    "tag": "terrain",
+    "tileWidth": 32,
+    "tileHeight": 32,
+    "tileCount": 5,
+    "columns": 5,
+    "rows": 1
+  }
+]
