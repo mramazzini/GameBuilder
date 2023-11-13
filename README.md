@@ -1,4 +1,4 @@
-# GameBuilder
+# Maxy's GameBuilder
 
 ## 🚧 This Application is currently under construction. 🚧
 
