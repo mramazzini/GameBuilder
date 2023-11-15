@@ -10,6 +10,7 @@ export const reducer = (state: any, action: any) => {
   switch (action.type) {
     case SET_PROJECT_DIRECTORY:
       console.log("reducer: SET_PROJECT_DIRECTORY to ", action.payload, "");
+      document.title = action.payload.split("\\").pop() || "";
       return {
         ...state,
         projectDirectory: action.payload,

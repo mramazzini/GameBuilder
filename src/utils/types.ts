@@ -3,7 +3,7 @@ export interface Map {
   sizeY: number;
   tiles: Tile[][];
   tag: string;
-  tileset: "terrain";
+  tileset: string;
 }
 
 export interface Tile {
@@ -14,7 +14,7 @@ export interface Tile {
 
 export interface Tileset {
   tag: string;
-  path: string;
+
   tileWidth: number;
   tileHeight: number;
   base64: string;

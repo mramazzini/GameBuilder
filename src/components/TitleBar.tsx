@@ -40,6 +40,13 @@ const TitleBar = () => {
   //Run Project
 
   const runProjectGame = () => {
+    if (state.projectDirectory === "") {
+      dispatch({
+        type: SET_ERROR,
+        payload: "Please create or load a project first",
+      });
+      return;
+    }
     ipcRenderer.send("initialize-engine", state.projectDirectory);
   };
 

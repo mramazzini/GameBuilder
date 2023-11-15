@@ -1,6 +1,7 @@
 import { useProjectContext } from "../../utils/GlobalState/GlobalState";
 import { useState, useEffect } from "react";
 import { Tileset, Map } from "../../utils/types";
+
 import RenderTile from "./RenderTile";
 
 interface MapContainerProps {
@@ -20,12 +21,31 @@ const MapContainer = ({
 }: MapContainerProps) => {
   const [currentTileHover, setCurrentTileHover] = useState<number[]>([8, 8]); // [x,y]
   const { state } = useProjectContext();
+  const [toggleColliders, setToggleColliders] = useState(false);
+  const [toggleColliderRemoval, setToggleColliderRemoval] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(2);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState<{
     dragging: boolean;
     mouseEvent: number;
   }>({ dragging: false, mouseEvent: 0 });
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // use shift to toggle collider view
+      console.log(e.key);
+      if (e.key === "Shift") {
+        setToggleColliders((prev) => !prev);
+      }
+      if (e.key === "Control") {
+        setToggleColliderRemoval((prev) => !prev);
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   useEffect(() => {
     setPosition({ x: 0, y: 0 });
@@ -48,6 +68,7 @@ const MapContainer = ({
   };
   const handleMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
     setIsDragging({ dragging: false, mouseEvent: 0 });
+    handleMouseMove(e);
   };
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (isDragging.dragging) {
@@ -57,8 +78,13 @@ const MapContainer = ({
         if (selectedTile === -1) return;
 
         const newMap = { ...selectedMap };
+        let willAddColliderToTile = false;
+        if (toggleColliderRemoval && toggleColliders) {
+          willAddColliderToTile = true;
+        }
         newMap.tiles[currentTileHover[0]][currentTileHover[1]] = {
-          collider: false,
+          collider: willAddColliderToTile,
+
           srcX: selectedTile % selectedTileset.columns,
           srcY: Math.floor(selectedTile / selectedTileset.columns),
         };
@@ -88,14 +114,14 @@ const MapContainer = ({
 
   return (
     <div
-      className='map-container text-white font-mono w-5/6 overflow-hidden grow'
+      className='map-container text-white font-mono w-5/6 overflow-hidden grow '
       onWheel={handleScroll}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
       onMouseMove={handleMouseMove}
     >
       {selectedMap.sizeX === 0 ? (
-        <h1 className=' text-white font-bold text-center md:text-3xl lg:text-4xl sm:text-2xl'>
+        <h1 className=' text-white font-bold text-center md:text-3xl lg:text-4xl sm:text-2xl m-5'>
           Select A Map to get started
         </h1>
       ) : (
@@ -129,7 +155,8 @@ const MapContainer = ({
                     colIndex,
                     selectedTileset,
                     selectedTileset.tileWidth,
-                    selectedTileset.tileHeight
+                    selectedTileset.tileHeight,
+                    toggleColliders
                   )}
                 </div>
               );

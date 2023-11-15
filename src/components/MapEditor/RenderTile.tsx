@@ -6,7 +6,8 @@ const RenderTile = (
   colIndex: number,
   tileSet: Tileset,
   width: number,
-  height: number
+  height: number,
+  toggleColliders: boolean
 ) => {
   return (
     <div
@@ -23,6 +24,11 @@ const RenderTile = (
         transform: `scale(${width / tileSet.tileWidth}, ${
           height / tileSet.tileHeight
         })`,
+        border: toggleColliders
+          ? tile.collider
+            ? `${tileSet.tileWidth / 16}px red solid`
+            : ""
+          : "",
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.backgroundColor = "red";

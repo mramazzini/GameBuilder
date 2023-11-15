@@ -84,7 +84,12 @@ ipcMain.on("open-folder-dialog", function (event) {
     .then((result) => {
       if (!result.canceled) {
         const selectedFolderPath = result.filePaths[0];
-        const filesAndFolders = getFilesAndFolders(selectedFolderPath);
+        const filesAndFolders = getFilesAndFolders(
+          selectedFolderPath,
+          0,
+          event
+        );
+
         event.sender.send("selected-folder", {
           selectedFolderPath,
           filesAndFolders,
@@ -92,7 +97,7 @@ ipcMain.on("open-folder-dialog", function (event) {
       }
     })
     .catch((err) => {
-      event.sender.send("error", "Error opening folder");
+      event.sender.send("error", err);
     });
 });
 
@@ -147,7 +152,7 @@ ipcMain.on("initialize-engine", function (event, projectDirectory: string) {
     event.sender.send("engine-initialized");
   } catch (err) {
     console.error(err);
-    event.sender.send("error", "Error initializing engine");
+    event.sender.send("error", `Error initializing engine: ${err}`);
   }
 });
 
@@ -171,7 +176,7 @@ ipcMain.on("get-map-info", function (event, projectDirectory: string) {
     event.sender.send("map-info", maps);
   } catch (err) {
     console.error(err);
-    event.sender.send("error", "Error getting map info");
+    event.sender.send("error", `Error getting map info ${err}`);
   }
 });
 
@@ -200,15 +205,39 @@ ipcMain.on("get-tileset-info", function (event, projectDirectory: string) {
     event.sender.send("tileset-info", relationships);
   } catch (err) {
     console.error(err);
-    event.sender.send("error", "Error getting tileset info");
+    event.sender.send("error", `Error getting tileset info ${err}`);
+  }
+});
+
+ipcMain.on("save-map", function (event, payload: any) {
+  try {
+    console.log("Received save-map message with map:", payload.map);
+
+    const newMap = {
+      ...payload.map,
+      tileset: payload.tileSet.tag,
+    };
+
+    const mapPath = path.join(
+      payload.projectDirectory,
+      "maps",
+      "map_" + payload.map.tag + ".json"
+    );
+    const mapData = JSON.stringify(newMap, null, 2);
+    fs.writeFileSync(mapPath, mapData);
+
+    event.sender.send("map-saved");
+  } catch (err) {
+    console.error(err);
+    event.sender.send("error", `Error saving map ${err}`);
   }
 });
 
 ipcMain.on("create-folders", function (event) {
   const foldersToCreate = [
-    "animation",
+    "animations",
     "relationships",
-    "hitboxes",
+
     "maps",
     "images",
     "sounds",
@@ -235,7 +264,11 @@ ipcMain.on("create-folders", function (event) {
           foldersToCreate.forEach((folder) => {
             fs.mkdirSync(path.join(selectedFolderPath, folder));
           });
-          const filesAndFolders = getFilesAndFolders(selectedFolderPath);
+          const filesAndFolders = getFilesAndFolders(
+            selectedFolderPath,
+            0,
+            event
+          );
           event.sender.send("selected-folder", {
             selectedFolderPath,
             filesAndFolders,
@@ -247,7 +280,7 @@ ipcMain.on("create-folders", function (event) {
       });
   } catch (err) {
     console.error(err);
-    event.sender.send("error", "Error creating folders");
+    event.sender.send("error", `Error creating folders ${err}`);
   }
 });
 
@@ -257,7 +290,7 @@ interface FileOrFolder {
   children: FileOrFolder[];
 }
 
-function getFilesAndFolders(folderPath: string) {
+function getFilesAndFolders(folderPath: string, index: number, event: any) {
   const filesAndFolders: FileOrFolder = {
     name: path.basename(folderPath),
     isFolder: true,
@@ -266,13 +299,38 @@ function getFilesAndFolders(folderPath: string) {
 
   const items = fs.readdirSync(folderPath);
 
+  if (index === 0) {
+    // check to see if valid project folder
+    const foldersToCheck = [
+      "animations",
+      "relationships",
+      "maps",
+      "images",
+      "sounds",
+      "tilesets",
+    ];
+    let validProject = true;
+    foldersToCheck.forEach((folder) => {
+      if (!items.includes(folder)) {
+        validProject = false;
+      }
+    });
+    if (!validProject) {
+      event.sender.send(
+        "error",
+        "Selected folder is not a valid project folder. Please select a valid project folder or create a new Project."
+      );
+      return filesAndFolders;
+    }
+  }
+
   items.forEach((item: any) => {
     const itemPath = path.join(folderPath, item);
     const stat = fs.statSync(itemPath);
 
     if (stat.isDirectory()) {
       // Recursively add subfolders
-      const subfolder = getFilesAndFolders(itemPath);
+      const subfolder = getFilesAndFolders(itemPath, index + 1, event);
       filesAndFolders.children.push(subfolder);
     } else {
       // Add files

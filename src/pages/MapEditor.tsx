@@ -11,7 +11,6 @@ const emptyTile = {
 const MapEditor = () => {
   const [selectedTileset, setSelectedTileset] = useState<Tileset>({
     tag: "none",
-    path: "",
     tileWidth: 0,
     tileHeight: 0,
     tileCount: 0,
@@ -20,10 +19,10 @@ const MapEditor = () => {
     base64: "",
   });
   const [selectedMap, setSelectedMap] = useState<Map>({
-    sizeX: 4,
-    sizeY: 4,
-    tag: "default",
-    tileset: "terrain",
+    sizeX: 0,
+    sizeY: 0,
+    tag: "No Map Selected",
+    tileset: "",
     tiles: [
       [emptyTile, emptyTile, emptyTile, emptyTile],
       [emptyTile, emptyTile, emptyTile, emptyTile],
@@ -40,6 +39,7 @@ const MapEditor = () => {
         setSelectedMap={setSelectedMap}
         selectedMap={selectedMap}
         setSelectedTile={setSelectedTile}
+        selectedTile={selectedTile}
       />
       <MapContainer
         selectedTileset={selectedTileset}
