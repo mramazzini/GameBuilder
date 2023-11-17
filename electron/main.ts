@@ -1,6 +1,6 @@
 const { app, BrowserWindow, dialog } = require("electron");
 
-import { ipcMain } from "electron";
+import { ipcMain, ipcRenderer } from "electron";
 import path from "node:path";
 const fs = require("fs");
 const { spawn } = require("child_process");
@@ -163,17 +163,8 @@ ipcMain.on("get-map-info", function (event, projectDirectory: string) {
       projectDirectory
     );
 
-    // loop through maps folder and get map info
-    const mapsFolder = path.join(projectDirectory, "maps");
-    const mapFiles = fs.readdirSync(mapsFolder);
-    const maps: any[] = [];
-    mapFiles.forEach((mapFile: string) => {
-      const mapPath = path.join(mapsFolder, mapFile);
-      const mapData = fs.readFileSync(mapPath, "utf8");
-      const map = JSON.parse(mapData);
-      maps.push(map);
-    });
-    event.sender.send("map-info", maps);
+    const mapInfo = getMapInfo(projectDirectory);
+    event.sender.send("map-info", mapInfo);
   } catch (err) {
     console.error(err);
     event.sender.send("error", `Error getting map info ${err}`);
@@ -187,22 +178,9 @@ ipcMain.on("get-tileset-info", function (event, projectDirectory: string) {
       projectDirectory
     );
 
-    // go to relationships/tilesets.json and get tileset info
-    const relationshipsFolder = path.join(projectDirectory, "relationships");
-    const relationshipsFile = path.join(relationshipsFolder, "tilesets.json");
-    const relationshipsData = fs.readFileSync(relationshipsFile, "utf8");
-    const relationships = JSON.parse(relationshipsData);
-    //calculate base64 for each tileset image
-    relationships.forEach((tileset: any) => {
-      const tilesetPath = path.join(
-        projectDirectory,
-        "tilesets",
-        "tileset_" + tileset.tag + ".png"
-      );
-      tileset.base64 = convertImageToBase64(tilesetPath);
-    });
+    const tileinfo = getTilesetInfo(projectDirectory);
 
-    event.sender.send("tileset-info", relationships);
+    event.sender.send("tileset-info", tileinfo);
   } catch (err) {
     console.error(err);
     event.sender.send("error", `Error getting tileset info ${err}`);
@@ -230,6 +208,64 @@ ipcMain.on("save-map", function (event, payload: any) {
   } catch (err) {
     console.error(err);
     event.sender.send("error", `Error saving map ${err}`);
+  }
+});
+ipcMain.on("create-map", function (event, payload: any) {
+  try {
+    console.log("Received create-map message with map:", payload.map);
+
+    let tilesArr = [];
+    for (let i = 0; i < payload.map.sizeX; i++) {
+      let subArr = [];
+      for (let j = 0; j < payload.map.sizeY; j++) {
+        subArr.push({
+          srcX: 0,
+          srcY: 0,
+          collider: false,
+        });
+      }
+      tilesArr.push(subArr);
+    }
+    const newMap = {
+      tiles: tilesArr,
+      ...payload.map,
+    };
+
+    const mapPath = path.join(
+      payload.projectDirectory,
+      "maps",
+      "map_" + payload.map.tag + ".json"
+    );
+    const mapData = JSON.stringify(newMap, null, 2);
+    fs.writeFileSync(mapPath, mapData);
+
+    event.sender.send("map-created", newMap);
+  } catch (err) {
+    console.error(err);
+    event.sender.send("error", `Error creating map ${err}`);
+  }
+});
+
+ipcMain.on("refresh-project", function (event, projectDirectory: string) {
+  try {
+    console.log(
+      "Received refresh-project message with project directory:",
+      projectDirectory
+    );
+
+    const filesAndFolders = getFilesAndFolders(projectDirectory, 0, event);
+    const mapInfo = getMapInfo(projectDirectory);
+    const tilesetInfo = getTilesetInfo(projectDirectory);
+    const payload = {
+      filesAndFolders,
+      mapInfo,
+      tilesetInfo,
+    };
+
+    event.sender.send("project-refreshed", payload);
+  } catch (err) {
+    console.error(err);
+    event.sender.send("error", `Error refreshing project ${err}`);
   }
 });
 
@@ -344,6 +380,39 @@ function getFilesAndFolders(folderPath: string, index: number, event: any) {
 
   return filesAndFolders;
 }
+function getTilesetInfo(projectDirectory: string) {
+  // go to relationships/tilesets.json and get tileset info
+  const relationshipsFolder = path.join(projectDirectory, "relationships");
+  const relationshipsFile = path.join(relationshipsFolder, "tilesets.json");
+  const relationshipsData = fs.readFileSync(relationshipsFile, "utf8");
+  const relationships = JSON.parse(relationshipsData);
+  //calculate base64 for each tileset image
+  relationships.forEach((tileset: any) => {
+    const tilesetPath = path.join(
+      projectDirectory,
+      "tilesets",
+      "tileset_" + tileset.tag + ".png"
+    );
+    tileset.base64 = convertImageToBase64(tilesetPath);
+  });
+  return relationships;
+}
+
+function getMapInfo(projectDirectory: string) {
+  // loop through maps folder and get map info
+  const mapsFolder = path.join(projectDirectory, "maps");
+  const mapFiles = fs.readdirSync(mapsFolder);
+  const maps: any[] = [];
+  mapFiles.forEach((mapFile: string) => {
+    const mapPath = path.join(mapsFolder, mapFile);
+    const mapData = fs.readFileSync(mapPath, "utf8");
+    const map = JSON.parse(mapData);
+    maps.push(map);
+  });
+
+  return maps;
+}
+
 function convertImageToBase64(filePath: string) {
   // Read the PNG file as a binary buffer
   const buffer = fs.readFileSync(filePath);

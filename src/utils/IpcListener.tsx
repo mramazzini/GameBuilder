@@ -94,6 +94,20 @@ const IpcListener = () => {
         payload: tileSetInfo,
       });
     };
+    const createMap = (event: any, args: any) => {
+      if (args.success) {
+        dispatch({
+          type: SET_MAP_INFO,
+          payload: args.mapInfo,
+        });
+      }
+    };
+    const refreshProject = (event: any, args: any) => {
+      dispatch({
+        type: SET_FILES_AND_FOLDERS,
+        payload: args.filesAndFolders,
+      });
+    };
 
     ipcRenderer.on("engine-stdout", handleEngineStdout);
     ipcRenderer.on("engine-stderr", handleEngineStderr);
@@ -104,6 +118,8 @@ const IpcListener = () => {
     ipcRenderer.on("folders-created", createFolders);
     ipcRenderer.on("map-info", requestMapInfo);
     ipcRenderer.on("tileset-info", requestTileSetInfo);
+    ipcRenderer.on("map-created", createMap);
+    ipcRenderer.on("project-refreshed", refreshProject);
     return () => {
       ipcRenderer.removeListener("engine-stdout", handleEngineStdout);
       ipcRenderer.removeListener("engine-stderr", handleEngineStderr);
@@ -113,6 +129,8 @@ const IpcListener = () => {
       ipcRenderer.removeListener("selected-folder", openFolderDialog);
       ipcRenderer.removeListener("folders-created", createFolders);
       ipcRenderer.removeListener("map-info", requestMapInfo);
+      ipcRenderer.removeListener("tileset-info", requestTileSetInfo);
+      ipcRenderer.removeListener("map-created", createMap);
     };
   }, []);
 

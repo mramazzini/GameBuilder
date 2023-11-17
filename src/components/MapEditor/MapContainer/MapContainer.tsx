@@ -1,28 +1,13 @@
-import { useProjectContext } from "../../utils/GlobalState/GlobalState";
+import { useMapContext } from "../MapState/MapContext";
 import { useState, useEffect } from "react";
-import { Tileset, Map } from "../../utils/types";
+import { Tileset, Map } from "../../../utils/types";
 
 import RenderTile from "./RenderTile";
 
-interface MapContainerProps {
-  selectedTileset: Tileset;
-  setSelectedTileset: React.Dispatch<React.SetStateAction<Tileset>>;
-  setSelectedMap: React.Dispatch<React.SetStateAction<Map>>;
-  selectedMap: Map;
-  selectedTile: number;
-}
-
-const MapContainer = ({
-  selectedTileset,
-  setSelectedTileset,
-  selectedMap,
-  selectedTile,
-  setSelectedMap,
-}: MapContainerProps) => {
+const MapContainer = () => {
   const [currentTileHover, setCurrentTileHover] = useState<number[]>([8, 8]); // [x,y]
-  const { state } = useProjectContext();
-  const [toggleColliders, setToggleColliders] = useState(false);
-  const [toggleColliderRemoval, setToggleColliderRemoval] = useState(false);
+  const { state, dispatch } = useMapContext();
+
   const [zoomLevel, setZoomLevel] = useState(2);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState<{
@@ -32,14 +17,39 @@ const MapContainer = ({
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // use shift to toggle collider view
-      console.log(e.key);
       if (e.key === "Shift") {
-        setToggleColliders((prev) => !prev);
+        dispatch({
+          type: "TOGGLE_COLLIDER_VISION",
+          payload: !state.colliderVision,
+        });
       }
       if (e.key === "Control") {
-        setToggleColliderRemoval((prev) => !prev);
+        dispatch({
+          type: "TOGGLE_ADDING_COLLIDER",
+          payload: !state.addingCollider,
+        });
       }
+      if (e.key === "w") {
+        dispatch({
+          type: "MOVE_TILE_ROW_UP",
+        });
+      }
+      if (e.key === "s") {
+        dispatch({
+          type: "MOVE_TILE_ROW_DOWN",
+        });
+      }
+      if (e.key === "a") {
+        dispatch({
+          type: "MOVE_TILE_COLUMN_LEFT",
+        });
+      }
+      if (e.key === "d") {
+        dispatch({
+          type: "MOVE_TILE_COLUMN_RIGHT",
+        });
+      }
+      console.log(state.selectedTile);
     };
     document.addEventListener("keydown", handleKeyDown);
     return () => {
@@ -58,7 +68,8 @@ const MapContainer = ({
     setZoomLevel((prevZoom) => prevZoom + 0.1);
   };
   const handleZoomOut = () => {
-    const minZoom = selectedMap.sizeX / selectedTileset.tileWidth / 3;
+    const minZoom =
+      state.selectedMap.sizeX / state.selectedTileset.tileWidth / 3;
     if (zoomLevel <= minZoom) return;
 
     setZoomLevel((prevZoom) => Math.max(0.1, prevZoom - 0.1));
@@ -75,21 +86,21 @@ const MapContainer = ({
       //left click
       if (isDragging.mouseEvent === 0) {
         // add tile to map
-        if (selectedTile === -1) return;
+        if (state.selectedTile === -1) return;
 
-        const newMap = { ...selectedMap };
+        const newMap = { ...state.selectedMap };
         let willAddColliderToTile = false;
-        if (toggleColliderRemoval && toggleColliders) {
+        if (state.addingCollider && state.colliderVision) {
           willAddColliderToTile = true;
         }
         newMap.tiles[currentTileHover[0]][currentTileHover[1]] = {
           collider: willAddColliderToTile,
 
-          srcX: selectedTile % selectedTileset.columns,
-          srcY: Math.floor(selectedTile / selectedTileset.columns),
+          srcX: state.selectedTile % state.selectedTileset.columns,
+          srcY: Math.floor(state.selectedTile / state.selectedTileset.columns),
         };
 
-        setSelectedMap(newMap);
+        dispatch({ type: "SET_MAP", payload: newMap });
 
         //middle mouse button click
       } else if (isDragging.mouseEvent === 1) {
@@ -120,7 +131,7 @@ const MapContainer = ({
       onMouseUp={handleMouseUp}
       onMouseMove={handleMouseMove}
     >
-      {selectedMap.sizeX === 0 ? (
+      {state.selectedMap.sizeX === 0 ? (
         <h1 className=' text-white font-bold text-center md:text-3xl lg:text-4xl sm:text-2xl m-5'>
           Select A Map to get started
         </h1>
@@ -130,34 +141,42 @@ const MapContainer = ({
           style={{
             display: "grid",
             gridTemplateColumns: `repeat(${
-              selectedMap?.tiles[0]?.length || 0
+              state.selectedMap?.tiles[0]?.length || 0
             }, 1fr)`,
-            gridTemplateRows: `repeat(${selectedMap?.tiles?.length || 0}, 1fr)`,
+            gridTemplateRows: `repeat(${
+              state.selectedMap?.tiles?.length || 0
+            }, 1fr)`,
 
             transform: `scale(${zoomLevel})`,
-            width: `${selectedMap.sizeX * selectedTileset.tileWidth}px`,
-            height: `${selectedMap.sizeY * selectedTileset.tileHeight}px`,
+            width: `${
+              state.selectedMap.sizeX * state.selectedTileset.tileWidth
+            }px`,
+            height: `${
+              state.selectedMap.sizeY * state.selectedTileset.tileHeight
+            }px`,
             gap: "0px",
             position: "relative",
             left: `${position.x}px`,
             top: `${position.y}px`,
           }}
         >
-          {selectedMap.tiles.map((row, rowIndex) =>
+          {state.selectedMap.tiles.map((row, rowIndex) =>
             row.map((col, colIndex) => {
               return (
                 <div
                   onMouseEnter={() => setCurrentTileHover([rowIndex, colIndex])}
                 >
-                  {RenderTile(
-                    col,
-                    rowIndex,
-                    colIndex,
-                    selectedTileset,
-                    selectedTileset.tileWidth,
-                    selectedTileset.tileHeight,
-                    toggleColliders
-                  )}
+                  <RenderTile
+                    tile={col}
+                    tileSet={state.selectedTileset}
+                    rowIndex={rowIndex}
+                    colIndex={colIndex}
+                    width={state.selectedTileset.tileWidth}
+                    height={state.selectedTileset.tileHeight}
+                    addingCollider={state.addingCollider}
+                    colliderVision={state.colliderVision}
+                    selectedTile={state.selectedTile}
+                  />
                 </div>
               );
             })

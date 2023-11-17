@@ -1,20 +1,10 @@
-import { useProjectContext } from "../../utils/GlobalState/GlobalState";
+import { useProjectContext } from "../../../utils/GlobalState/GlobalState";
+import { useMapContext } from "../MapState/MapContext";
+import { Tileset, Map } from "../../../utils/types";
 
-import { Tileset, Map } from "../../utils/types";
-interface MapToggleProps {
-  selectedTileset: Tileset;
-  setSelectedTileset: React.Dispatch<React.SetStateAction<Tileset>>;
-  selectedMap: Map;
-  setSelectedMap: React.Dispatch<React.SetStateAction<Map>>;
-}
-
-const MapToggle = ({
-  selectedTileset,
-  setSelectedTileset,
-  selectedMap,
-  setSelectedMap,
-}: MapToggleProps) => {
+const MapToggle = () => {
   const { state } = useProjectContext();
+  const { state: mapState, dispatch } = useMapContext();
 
   return (
     <div className='tile-selector flex flex-row justify-between items-center p-2 overflow-hidden '>
@@ -22,13 +12,16 @@ const MapToggle = ({
         <div className='text-sm px-2'>Tileset:</div>
         <select
           className='bg-black/50 text-white/75 border border-white/25 rounded-sm p-1'
-          value={selectedTileset.tag}
+          value={mapState.selectedTileset.tag}
           onChange={(e) => {
             const tileset = state.tilesets.find((tileset) => {
               console.log(tileset.tag, e.target.value);
               return tileset.tag === e.target.value;
             });
-            setSelectedTileset(tileset ? tileset : selectedTileset);
+            dispatch({
+              type: "SET_SELECTED_TILESET",
+              payload: tileset ? tileset : mapState.selectedTileset,
+            });
           }}
         >
           <option value='NONE'>none</option>
@@ -45,14 +38,20 @@ const MapToggle = ({
         <div className='text-sm px-2'>Map: </div>
         <select
           className='bg-black/50 text-white/75 border border-white/25 rounded-sm p-1'
-          value={selectedMap.tag}
+          value={mapState.selectedMap.tag}
           onChange={(e) => {
             const map = state.maps.find((map) => map.tag === e.target.value);
-            setSelectedMap(map ? map : selectedMap);
-            setSelectedTileset(
-              state.tilesets.find((tileset) => tileset.tag === map?.tileset) ||
-                selectedTileset
+            dispatch({
+              type: "SET_SELECTED_MAP",
+              payload: map ? map : mapState.selectedMap,
+            });
+            const tileset = state.tilesets.find(
+              (tileset) => tileset.tag === map?.tileset
             );
+            dispatch({
+              type: "SET_SELECTED_TILESET",
+              payload: tileset ? tileset : mapState.selectedTileset,
+            });
           }}
         >
           <option value='NONE'>none</option>

@@ -1,22 +1,18 @@
-import { useProjectContext } from "../../utils/GlobalState/GlobalState";
+import { useProjectContext } from "../../../utils/GlobalState/GlobalState";
+import { useMapContext } from "../MapState/MapContext";
 const ipcRenderer = window.ipcRenderer;
 interface MapSaveProps {
   setSavingMap: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedMap: any;
-  selectedTileset: any;
 }
 
-const MapSave = ({
-  setSavingMap,
-  selectedMap,
-  selectedTileset,
-}: MapSaveProps) => {
+const MapSave = ({ setSavingMap }: MapSaveProps) => {
   const { state } = useProjectContext();
+  const { state: mapState } = useMapContext();
   const saveMap = () => {
     const payload = {
-      map: selectedMap,
+      map: mapState.selectedMap,
       projectDirectory: state.projectDirectory,
-      tileSet: selectedTileset,
+      tileSet: mapState.selectedTileset,
     };
     ipcRenderer.send("save-map", payload);
   };
@@ -28,11 +24,16 @@ const MapSave = ({
       >
         <h1>Save Map?</h1>
         <div className='map-info flex flex-col justify-between items-start'>
-          <div className='text-sm'>Map Name: {selectedMap.tag}</div>
+          <div className='text-sm'>Map Name: {mapState.selectedMap.tag}</div>
           <div className='text-sm'>
-            Map Size: {selectedMap.sizeX} x {selectedMap.sizeY}
+            Map Size: {mapState.selectedMap.sizeX} x{" "}
+            {mapState.selectedMap.sizeY} (Tiles)
+            <br />
+            Absolute Size: {mapState.selectedMap.sizeX * 32} x{" "}
+            {mapState.selectedMap.sizeY * 32} (px)
           </div>
-          <div className='text-sm'>Tileset: {selectedTileset.tag}</div>
+
+          <div className='text-sm'>Tileset: {mapState.selectedTileset.tag}</div>
         </div>
         <div className='flex flex-row justify-between items-center'>
           <button

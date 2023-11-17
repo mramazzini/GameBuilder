@@ -30,6 +30,13 @@ export interface ProjectState {
   tilesets: Tileset[];
   maps: Map[];
 }
+export interface MapState {
+  selectedMap: Map;
+  selectedTileset: Tileset;
+  selectedTile: number;
+  colliderVision: boolean;
+  addingCollider: boolean;
+}
 export interface log {
   message: string;
   timestamp: string;
