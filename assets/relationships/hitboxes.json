@@ -1,0 +1,16 @@
+[
+  {
+    "tag": "player",
+    "x": 13,
+    "y": 10,
+    "width": 6,
+    "height": 16
+  },
+  {
+    "tag": "fireball",
+    "x": 0,
+    "y": 0,
+    "width": 32,
+    "height": 32
+  }
+]
