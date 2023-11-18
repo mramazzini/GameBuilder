@@ -1,12 +1,11 @@
 # Maxy's GameBuilder
 
-An Electron-React Application that provides various image and text editors in order to create an entire game - without writing a single line of code.
 
 ## 🚧 This Application is currently under construction. 🚧
 
 ## Overview
 
-Maxy's Game Builder is an application designed to work in tandem with [Maxy's 2D Game Engine](https://github.com/mramazzini/C-Game-Engine). 
+An Electron-React Application that provides various image and text editors in order to create an entire game - without writing a single line of code. Maxy's Game Builder is an application designed to work in tandem with [Maxy's 2D Game Engine](https://github.com/mramazzini/C-Game-Engine). 
 
 ## Features
 
