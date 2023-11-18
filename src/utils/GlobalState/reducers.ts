@@ -3,26 +3,32 @@ import {
   SET_ERROR,
   ADD_STD_TO_LOG,
   SET_FILES_AND_FOLDERS,
+  REFRESH_PROJECT,
+  SET_MAP_INFO,
+  SET_TILESET_INFO,
 } from "./actions";
 import { getCurrentTime, getMapInfo } from "../helpers";
 
 export const reducer = (state: any, action: any) => {
+  const logReducers = true;
   switch (action.type) {
     case SET_PROJECT_DIRECTORY:
-      console.log("reducer: SET_PROJECT_DIRECTORY to ", action.payload, "");
+      logReducers ??
+        console.log("reducer: SET_PROJECT_DIRECTORY to ", action.payload, "");
       document.title = action.payload.split("\\").pop() || "";
       return {
         ...state,
         projectDirectory: action.payload,
       };
     case SET_ERROR:
-      console.log("reducer: SET_ERROR to ", action.payload, "");
+      logReducers ?? console.log("reducer: SET_ERROR to ", action.payload, "");
       return {
         ...state,
         error: action.payload,
       };
     case ADD_STD_TO_LOG:
-      console.log("reducer: ADD_STD_TO_LOG to ", action.payload, "");
+      logReducers ??
+        console.log("reducer: ADD_STD_TO_LOG to ", action.payload, "");
       //stop repeating messages
       if (state.stdLog.length > 0) {
         const lastLogEntry = state.stdLog[state.stdLog.length - 1];
@@ -42,7 +48,8 @@ export const reducer = (state: any, action: any) => {
         stdLog: [...state.stdLog, newLogEntry],
       };
     case SET_FILES_AND_FOLDERS:
-      console.log("reducer: SET_FILES_AND_FOLDERS to ", action.payload, "");
+      logReducers ??
+        console.log("reducer: SET_FILES_AND_FOLDERS to ", action.payload, "");
       // Calculate Map information
       getMapInfo(state.projectDirectory);
 
@@ -50,17 +57,29 @@ export const reducer = (state: any, action: any) => {
         ...state,
         filesAndFolders: action.payload,
       };
-    case "SET_MAP_INFO":
-      console.log("reducer: SET_MAP_INFO to ", action.payload, "");
+    case REFRESH_PROJECT:
+      logReducers ??
+        console.log("reducer: REFRESH_PROJECT to ", action.payload, "");
+      // Calculate Map information
+      getMapInfo(state.projectDirectory);
+
+      return {
+        ...state,
+        filesAndFolders: action.payload,
+      };
+    case SET_MAP_INFO:
+      logReducers ??
+        console.log("reducer: SET_MAP_INFO to ", action.payload, "");
       return {
         ...state,
         maps: action.payload,
       };
-    case "SET_TILESET_INFO":
+    case SET_TILESET_INFO:
       action.payload.map((tileset: any) => {
         tileset.path = "tileset_" + tileset.tag + ".png";
       });
-      console.log("reducer: SET_TILESET_INFO to ", action.payload, "");
+      logReducers ??
+        console.log("reducer: SET_TILESET_INFO to ", action.payload, "");
 
       return {
         ...state,

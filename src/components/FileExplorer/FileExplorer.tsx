@@ -14,18 +14,15 @@ const FileExplorer: React.FC<FileExplorerProps> = ({ initialPath }) => {
   const { state, dispatch } = useProjectContext();
   const [width, setWidth] = useState(400);
   const [isResizing, setResizing] = useState(false);
-  useEffect(() => {
-    console.log(state.filesAndFolders);
-  }, [state.filesAndFolders]);
-  //New Project
-  const createFolders = () => {
-    ipcRenderer.send("create-folders");
-  };
 
-  // Load Project
-  const openFolderDialog = () => {
-    ipcRenderer.send("open-folder-dialog");
-  };
+  //New Project
+  const createFolders = React.useCallback(() => {
+    ipcRenderer.send("create-folders");
+  }, []);
+
+  const openFolderDialog = React.useCallback(() => {
+    ipcRenderer.send("select-project");
+  }, []);
 
   //Resize Component
   useEffect(() => {

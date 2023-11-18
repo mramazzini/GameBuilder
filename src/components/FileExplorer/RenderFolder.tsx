@@ -21,9 +21,19 @@ const RenderFolder = (file: File, level: number) => {
         } else {
           {
             return index === file.children.length - 1 ? (
-              <RenderFile file={child} level={level + 1} lastElement={true} />
+              <RenderFile
+                key={index}
+                file={child}
+                level={level + 1}
+                lastElement={true}
+              />
             ) : (
-              <RenderFile file={child} level={level + 1} lastElement={false} />
+              <RenderFile
+                key={index}
+                file={child}
+                level={level + 1}
+                lastElement={false}
+              />
             );
           }
         }

@@ -49,7 +49,6 @@ const MapContainer = () => {
           type: "MOVE_TILE_COLUMN_RIGHT",
         });
       }
-      console.log(state.selectedTile);
     };
     document.addEventListener("keydown", handleKeyDown);
     return () => {
@@ -164,6 +163,7 @@ const MapContainer = () => {
             row.map((col, colIndex) => {
               return (
                 <div
+                  key={`${rowIndex}-${colIndex}`}
                   onMouseEnter={() => setCurrentTileHover([rowIndex, colIndex])}
                 >
                   <RenderTile
