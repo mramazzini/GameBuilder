@@ -22,6 +22,7 @@ export interface Tileset {
   columns: number;
   rows: number;
 }
+
 export interface ProjectState {
   projectDirectory: string;
   filesAndFolders: fileOrFolder;
@@ -29,6 +30,7 @@ export interface ProjectState {
   stdLog: log[];
   tilesets: Tileset[];
   maps: Map[];
+  history: History;
 }
 export interface MapState {
   selectedMap: Map;
@@ -37,6 +39,19 @@ export interface MapState {
   colliderVision: boolean;
   addingCollider: boolean;
 }
+
+export interface tileHistory {
+  tile: Tile;
+  tilePosition: [number, number];
+}
+export interface History {
+  maps: Array<{
+    mapTag: string;
+    current: tileHistory[];
+    removed: tileHistory[];
+  }>;
+}
+
 export interface log {
   message: string;
   timestamp: string;

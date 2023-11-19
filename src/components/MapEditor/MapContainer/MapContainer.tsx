@@ -1,134 +1,56 @@
 import { useMapContext } from "../MapState/MapContext";
-import { useState, useEffect } from "react";
-import { Tileset, Map } from "../../../utils/types";
-
+import { useState, useEffect, useCallback } from "react";
+import MapContainerMouseListener from "./MapContainerMouseListener";
+import { useProjectContext } from "../../../utils/GlobalState/GlobalState";
+import MapContainerKeyListener from "./MapContainerKeyListener";
 import RenderTile from "./RenderTile";
-
+let mouseListener: MapContainerMouseListener;
 const MapContainer = () => {
   const [currentTileHover, setCurrentTileHover] = useState<number[]>([8, 8]); // [x,y]
   const { state, dispatch } = useMapContext();
-
+  const { state: projectState, dispatch: projectDispatch } =
+    useProjectContext();
+  const [beenPlaced, setBeenPlaced] = useState<boolean>(false);
   const [zoomLevel, setZoomLevel] = useState(2);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState<{
     dragging: boolean;
     mouseEvent: number;
   }>({ dragging: false, mouseEvent: 0 });
-
+  const keydownListener = (e: KeyboardEvent) => {
+    MapContainerKeyListener(e, dispatch, state, projectDispatch);
+  };
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Shift") {
-        dispatch({
-          type: "TOGGLE_COLLIDER_VISION",
-          payload: !state.colliderVision,
-        });
-      }
-      if (e.key === "Control") {
-        dispatch({
-          type: "TOGGLE_ADDING_COLLIDER",
-          payload: !state.addingCollider,
-        });
-      }
-      if (e.key === "w") {
-        dispatch({
-          type: "MOVE_TILE_ROW_UP",
-        });
-      }
-      if (e.key === "s") {
-        dispatch({
-          type: "MOVE_TILE_ROW_DOWN",
-        });
-      }
-      if (e.key === "a") {
-        dispatch({
-          type: "MOVE_TILE_COLUMN_LEFT",
-        });
-      }
-      if (e.key === "d") {
-        dispatch({
-          type: "MOVE_TILE_COLUMN_RIGHT",
-        });
-      }
-    };
-    document.addEventListener("keydown", handleKeyDown);
+    console.log("adding keydown listener");
+    document.addEventListener("keydown", keydownListener);
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keydown", keydownListener);
+      console.log("removed keydown listener");
     };
-  }, []);
+  }, [state.selectedMap]);
 
   useEffect(() => {
-    setPosition({ x: 0, y: 0 });
-    setZoomLevel(2);
+    mouseListener = new MapContainerMouseListener(
+      dispatch,
+      projectDispatch,
+      setBeenPlaced,
+      setPosition,
+      setIsDragging,
+      setZoomLevel
+    );
   }, []);
-
-  const handleZoomIn = () => {
-    const maxZoom = 5;
-    if (zoomLevel >= maxZoom) return;
-    setZoomLevel((prevZoom) => prevZoom + 0.1);
-  };
-  const handleZoomOut = () => {
-    const minZoom =
-      state.selectedMap.sizeX / state.selectedTileset.tileWidth / 3;
-    if (zoomLevel <= minZoom) return;
-
-    setZoomLevel((prevZoom) => Math.max(0.1, prevZoom - 0.1));
-  };
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    setIsDragging({ dragging: true, mouseEvent: e.button });
-  };
-  const handleMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
-    setIsDragging({ dragging: false, mouseEvent: 0 });
-    handleMouseMove(e);
-  };
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (isDragging.dragging) {
-      //left click
-      if (isDragging.mouseEvent === 0) {
-        // add tile to map
-        if (state.selectedTile === -1) return;
-
-        const newMap = { ...state.selectedMap };
-        let willAddColliderToTile = false;
-        if (state.addingCollider && state.colliderVision) {
-          willAddColliderToTile = true;
-        }
-        newMap.tiles[currentTileHover[0]][currentTileHover[1]] = {
-          collider: willAddColliderToTile,
-
-          srcX: state.selectedTile % state.selectedTileset.columns,
-          srcY: Math.floor(state.selectedTile / state.selectedTileset.columns),
-        };
-
-        dispatch({ type: "SET_MAP", payload: newMap });
-
-        //middle mouse button click
-      } else if (isDragging.mouseEvent === 1) {
-        setPosition((prevPosition) => ({
-          x: prevPosition.x + e.movementX,
-          y: prevPosition.y + e.movementY,
-        }));
-      }
-    }
-  };
-
-  const handleScroll = (e: React.WheelEvent<HTMLDivElement>) => {
-    // You can customize the sensitivity of zooming by adjusting the multiplier
-    const zoomMultiplier = 0.001;
-
-    if (e.deltaY > 0) {
-      handleZoomOut();
-    } else {
-      handleZoomIn();
-    }
-  };
 
   return (
     <div
       className='map-container text-white font-mono w-5/6 overflow-hidden grow '
-      onWheel={handleScroll}
-      onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
-      onMouseMove={handleMouseMove}
+      onWheel={(e) => mouseListener.handleScroll(e, state, zoomLevel)}
+      onMouseDown={(e) => mouseListener.handleMouseDown(e)}
+      onMouseUp={(e) =>
+        mouseListener.handleMouseUp(e, isDragging, state, currentTileHover)
+      }
+      onMouseMove={(e) =>
+        mouseListener.handleMouseMove(e, isDragging, state, currentTileHover)
+      }
     >
       {state.selectedMap.sizeX === 0 ? (
         <h1 className=' text-white font-bold text-center md:text-3xl lg:text-4xl sm:text-2xl m-5'>

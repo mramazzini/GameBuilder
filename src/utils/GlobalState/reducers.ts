@@ -6,10 +6,23 @@ import {
   REFRESH_PROJECT,
   SET_MAP_INFO,
   SET_TILESET_INFO,
+  ADD_TO_MAP_HISTORY,
+  POP_FROM_MAP_HISTORY,
+  POP_FROM_MAP_UNDO_HISTORY,
+  CLEAR_REMOVED_MAP_HISTORY,
 } from "./actions";
 import { getCurrentTime, getMapInfo } from "../helpers";
+import { ProjectState } from "../types";
 
-export const reducer = (state: any, action: any) => {
+export const reducer = (state: ProjectState, action: any): ProjectState => {
+  if (!action.type) {
+    console.error("reducer: no action type");
+    return state;
+  }
+  if (!action.payload) {
+    console.warn("reducer: no action payload");
+    return state;
+  }
   const logReducers = true;
   switch (action.type) {
     case SET_PROJECT_DIRECTORY:
@@ -85,6 +98,196 @@ export const reducer = (state: any, action: any) => {
         ...state,
         tilesets: action.payload,
       };
+    case ADD_TO_MAP_HISTORY: {
+      //check if map is already in history
+      const mapTag = action.payload.mapTag;
+      const mapIndex = state.history.maps.findIndex(
+        (map: any) => map.mapTag === mapTag
+      );
+
+      //if not, add it
+      if (mapIndex === -1) {
+        const newMap = {
+          mapTag: action.payload.mapTag,
+          current: [
+            {
+              tile: action.payload.tile,
+              tilePosition: action.payload.tilePosition,
+            },
+          ],
+          removed: [],
+        };
+        return {
+          ...state,
+          history: {
+            ...state.history,
+            maps: [...state.history.maps, newMap],
+          },
+        };
+      }
+
+      //check if repeat tile
+      const currentMap = state.history.maps[mapIndex];
+      const currentTile = currentMap.current[currentMap.current.length - 1];
+      if (currentTile) {
+        if (
+          currentTile.tilePosition[0] === action.payload.tilePosition[0] &&
+          currentTile.tilePosition[1] === action.payload.tilePosition[1] &&
+          currentTile.tile.srcX === action.payload.tile.srcX &&
+          currentTile.tile.srcY === action.payload.tile.srcY
+        ) {
+          return state;
+        }
+      }
+
+      const newMaps = state.history.maps;
+      newMaps[mapIndex].current.push({
+        tile: action.payload.tile,
+        tilePosition: action.payload.tilePosition,
+      });
+
+      return {
+        ...state,
+        history: {
+          ...state.history,
+          maps: newMaps,
+        },
+      };
+    }
+    case POP_FROM_MAP_UNDO_HISTORY: {
+      //Redo button
+      const mapTag = action.payload;
+      if (!mapTag) {
+        return state;
+      }
+      const mapHistoryIndex = state.history.maps.findIndex(
+        (map: any) => map.mapTag === mapTag
+      );
+      if (mapHistoryIndex === -1) {
+        return state;
+      }
+      console.log("POP_FROM_MAP_UNDO_HISTORY");
+      const newMapsHistory = state.history.maps;
+      console.log(newMapsHistory[mapHistoryIndex]);
+
+      const oldTile = newMapsHistory[mapHistoryIndex].removed.pop();
+      if (!oldTile) {
+        return state;
+      }
+      newMapsHistory[mapHistoryIndex].current.push(oldTile as any);
+      console.log(newMapsHistory[mapHistoryIndex]);
+      //update maps in state
+
+      const mapObjectIndex = state.maps.findIndex(
+        (map: any) => map.tag === mapTag
+      );
+
+      const newMapObject = {
+        ...state.maps[mapObjectIndex],
+      };
+
+      newMapObject.tiles[oldTile.tilePosition[0]][oldTile.tilePosition[1]] = {
+        ...oldTile.tile,
+      };
+
+      const newMaps = state.maps;
+      console.log(
+        newMaps[mapObjectIndex].tiles[oldTile.tilePosition[0]][
+          oldTile.tilePosition[1]
+        ]
+      );
+      newMaps[mapObjectIndex] = newMapObject;
+      console.log(
+        newMaps[mapObjectIndex].tiles[oldTile.tilePosition[0]][
+          oldTile.tilePosition[1]
+        ]
+      );
+      return {
+        ...state,
+        maps: newMaps,
+        history: {
+          ...state.history,
+          maps: newMapsHistory,
+        },
+      };
+    }
+    case POP_FROM_MAP_HISTORY: {
+      const mapTag = action.payload;
+      if (!mapTag) {
+        return state;
+      }
+      const mapHistoryIndex = state.history.maps.findIndex(
+        (map: any) => map.mapTag === mapTag
+      );
+      if (mapHistoryIndex === -1) {
+        return state;
+      }
+      console.log("POP_FROM_MAP_HISTORY");
+      const newMapsHistory = state.history.maps;
+      console.log(newMapsHistory[mapHistoryIndex]);
+
+      const oldTile = newMapsHistory[mapHistoryIndex].current.pop();
+      if (!oldTile) {
+        return state;
+      }
+      newMapsHistory[mapHistoryIndex].removed.push(oldTile as any);
+      console.log(newMapsHistory[mapHistoryIndex]);
+      //update maps in state
+
+      const mapObjectIndex = state.maps.findIndex(
+        (map: any) => map.tag === mapTag
+      );
+
+      const newMapObject = {
+        ...state.maps[mapObjectIndex],
+      };
+      newMapObject.tiles[oldTile.tilePosition[0]][oldTile.tilePosition[1]] = {
+        ...oldTile.tile,
+      };
+      const newMaps = state.maps;
+      console.log(
+        newMaps[mapObjectIndex].tiles[oldTile.tilePosition[0]][
+          oldTile.tilePosition[1]
+        ]
+      );
+      newMaps[mapObjectIndex] = newMapObject;
+      console.log(
+        newMaps[mapObjectIndex].tiles[oldTile.tilePosition[0]][
+          oldTile.tilePosition[1]
+        ]
+      );
+      return {
+        ...state,
+        maps: newMaps,
+        history: {
+          ...state.history,
+          maps: newMapsHistory,
+        },
+      };
+    }
+    case CLEAR_REMOVED_MAP_HISTORY: {
+      const mapTag = action.payload;
+      if (!mapTag) {
+        return state;
+      }
+      const mapHistoryIndex = state.history.maps.findIndex(
+        (map: any) => map.mapTag === mapTag
+      );
+      if (mapHistoryIndex === -1) {
+        return state;
+      }
+
+      const newMapsHistory = state.history.maps;
+      newMapsHistory[mapHistoryIndex].removed = [];
+
+      return {
+        ...state,
+        history: {
+          ...state.history,
+          maps: newMapsHistory,
+        },
+      };
+    }
     default:
       return state;
   }

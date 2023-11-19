@@ -211,6 +211,7 @@ const CreateMap = () => {
               </div>
               <div className='create-map-footer'>
                 <button
+                  className='bg-black/70 text-white px-5 py-1 rounded-md hover:bg-black/80 m-2 '
                   onClick={() => {
                     if (!validateInput()) return;
                     createMap();

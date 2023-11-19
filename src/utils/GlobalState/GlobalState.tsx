@@ -1,7 +1,7 @@
 import { createContext, useContext, useReducer } from "react";
 import { reducer } from "./reducers";
 import { ProjectState } from "../types";
-const initialState = {
+const initialState: ProjectState = {
   projectDirectory: "",
   error: "",
   stdLog: [],
@@ -11,6 +11,9 @@ const initialState = {
     name: "",
     isFolder: true,
     children: [],
+  },
+  history: {
+    maps: [],
   },
 };
 

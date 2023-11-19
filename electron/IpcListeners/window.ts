@@ -56,6 +56,7 @@ const windowListener = (
       createWindow();
     }
   });
+
   app.whenReady().then(createWindow);
 };
 
