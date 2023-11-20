@@ -19,15 +19,13 @@ export const reducer = (state: ProjectState, action: any): ProjectState => {
     console.error("reducer: no action type");
     return state;
   }
-  if (!action.payload) {
-    console.warn("reducer: no action payload");
-    return state;
-  }
+
   const logReducers = true;
   switch (action.type) {
     case SET_PROJECT_DIRECTORY:
       logReducers ??
         console.log("reducer: SET_PROJECT_DIRECTORY to ", action.payload, "");
+
       document.title = action.payload.split("\\").pop() || "";
       return {
         ...state,

@@ -25,7 +25,7 @@ export interface Tileset {
 
 export interface ProjectState {
   projectDirectory: string;
-  filesAndFolders: fileOrFolder;
+  filesAndFolders: FileOrFolder;
   error: string;
   stdLog: log[];
   tilesets: Tileset[];
@@ -61,8 +61,8 @@ export interface log {
   message: string;
   timestamp: string;
 }
-export interface fileOrFolder {
+export interface FileOrFolder {
   name: string;
   isFolder: boolean;
-  children: fileOrFolder[];
+  children: FileOrFolder[];
 }
