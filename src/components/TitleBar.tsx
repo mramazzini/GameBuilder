@@ -1,6 +1,6 @@
 import TitleDropdownMenu from "./TitleDropdownMenu";
 import Logo from "../assets/Logo.png";
-
+import { useCallback } from "react";
 const ipcRenderer = window.ipcRenderer;
 
 import { SET_PROJECT_DIRECTORY, SET_ERROR } from "../utils/GlobalState/actions";
@@ -24,17 +24,17 @@ const TitleBar = () => {
 
   // New Project ---------------------------------------------------------------
 
-  const createFolders = () => {
+  const createFolders = useCallback(() => {
     ipcRenderer.send("create-folders");
-  };
+  }, []);
 
   // ---------------------------------------------------------------------------
 
   // Load Project --------------------------------------------------------------
 
-  const openFolderDialog = () => {
-    ipcRenderer.send("open-folder-dialog");
-  };
+  const openFolderDialog = useCallback(() => {
+    ipcRenderer.send("select-project");
+  }, []);
   // ---------------------------------------------------------------------------
 
   //Run Project

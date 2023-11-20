@@ -14,7 +14,6 @@ import {
 } from "./actions";
 
 export const reducer = (state: any, action: any) => {
-  console.log(state.selectedTile, action.type);
   switch (action.type) {
     case SET_SELECTED_MAP:
       return {
@@ -39,6 +38,7 @@ export const reducer = (state: any, action: any) => {
     case SET_SELECTED_TILESET:
       return {
         ...state,
+        selectedTile: 0,
         selectedTileset: action.payload,
       };
     case TOGGLE_ADDING_COLLIDER:

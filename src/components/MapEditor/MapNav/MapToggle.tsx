@@ -8,14 +8,13 @@ const MapToggle = () => {
 
   return (
     <div className='tile-selector flex flex-row justify-between items-center p-2 overflow-hidden '>
-      <div className='flex flex-row justify-center items-center'>
+      <div className='flex flex-row justify-center items-center '>
         <div className='text-sm px-2'>Tileset:</div>
         <select
           className='bg-black/50 text-white/75 border border-white/25 rounded-sm p-1'
           value={mapState.selectedTileset.tag}
           onChange={(e) => {
             const tileset = state.tilesets.find((tileset) => {
-              console.log(tileset.tag, e.target.value);
               return tileset.tag === e.target.value;
             });
             dispatch({

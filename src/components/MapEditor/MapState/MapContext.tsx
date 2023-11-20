@@ -18,6 +18,7 @@ const initialState = {
     base64: "",
     tileCount: 0,
   },
+  undoStack: [],
   selectedTile: -1,
   colliderVision: false,
   addingCollider: false,

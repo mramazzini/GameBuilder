@@ -1,15 +1,19 @@
 import MapNav from "../components/MapEditor/MapNav/MapNav";
 import MapContainer from "../components/MapEditor/MapContainer/MapContainer";
 import { MapProvider } from "../components/MapEditor/MapState/MapContext";
-
+import { useProjectContext } from "../utils/GlobalState/GlobalState";
+import Home from "./Home";
 const MapEditor = () => {
-  return (
+  const { state } = useProjectContext();
+  return state.projectDirectory ? (
     <div className='flex flex-row justify-between grow'>
       <MapProvider>
         <MapNav />
         <MapContainer />
       </MapProvider>
     </div>
+  ) : (
+    <Home />
   );
 };
 

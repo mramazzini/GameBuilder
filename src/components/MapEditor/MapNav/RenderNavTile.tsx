@@ -19,6 +19,7 @@ const RenderNavTile = (
         width: `${16}px`,
         height: `${16}px`,
         backgroundRepeat: "no-repeat",
+        cursor: "pointer",
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.border = `2px yellow solid`;
@@ -33,7 +34,7 @@ const RenderNavTile = (
       }}
     >
       <div
-        className='selected-tile-circle'
+        className='selected-tile-circle '
         style={{
           width: `${6}px`,
           height: `${6}px`,

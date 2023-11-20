@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Tileset, Map, Tile } from "../../../utils/types";
-import { useProjectContext } from "../../../utils/GlobalState/GlobalState";
+
 import TileSelector from "./TileSelector";
 import MapToggle from "./MapToggle";
 import MapSave from "./MapSave";
@@ -8,6 +7,7 @@ import MapInfo from "./MapInfo";
 import TilePreview from "./TilePreview";
 import ColliderInfo from "./ColliderInfo";
 import CreateMap from "./CreateMap";
+import DeleteMap from "./DeleteMap";
 
 const MapNav = () => {
   const [width, setWidth] = useState(400);
@@ -63,6 +63,7 @@ const MapNav = () => {
         >
           Save Map to Project
         </button>
+        <DeleteMap />
       </div>
       <div
         style={{

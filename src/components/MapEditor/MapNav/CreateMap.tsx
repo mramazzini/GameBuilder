@@ -8,6 +8,7 @@ import {
 import { REFRESH_PROJECT } from "../../../utils/GlobalState/actions";
 import { useState, useEffect } from "react";
 const ipcRenderer = window.ipcRenderer;
+
 const CreateMap = () => {
   const { state, dispatch } = useMapContext();
   const { state: projectState, dispatch: projectDispatch } =
@@ -31,7 +32,8 @@ const CreateMap = () => {
       }
     };
     document.addEventListener("keydown", handleKeyDown);
-    ipcRenderer.on("map-created", (event, arg) => {
+    const handleMapCreated = (event: any, arg: any) => {
+      console.log(arg);
       ipcRenderer.send("refresh-project", projectState.projectDirectory);
       setLoading(false);
       dispatch({
@@ -40,12 +42,17 @@ const CreateMap = () => {
       });
       dispatch({
         type: SET_SELECTED_TILESET,
-        payload: arg.tileset,
+        payload:
+          projectState.tilesets.find(
+            (tileset) => tileset.tag === arg.tileset
+          ) || projectState.tilesets[0],
       });
-    });
+    };
+    ipcRenderer.on("map-created", handleMapCreated);
 
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
+      ipcRenderer.removeListener("map-created", handleMapCreated);
     };
   }, []);
   const validateInput = () => {
@@ -57,12 +64,14 @@ const CreateMap = () => {
     // Check if the input matches the regular expression
     if (regex.test(inputValue)) {
       setError({ hasError: false, message: "" });
+      return true;
     } else {
       setError({
         hasError: true,
         message:
           "Only alphanumeric, hypen (-), and underscore (_) characters allowed",
       });
+      return false;
     }
   };
   const createMap = () => {
@@ -75,6 +84,7 @@ const CreateMap = () => {
       },
       projectDirectory: projectState.projectDirectory,
     });
+
     dispatch({
       type: CREATE_MAP,
       payload: formdata,
@@ -188,7 +198,6 @@ const CreateMap = () => {
                         });
                       }}
                     >
-                      <option value='NONE'>none</option>
                       {projectState.tilesets.map((tileset, index) => {
                         return (
                           <option key={index} value={tileset.tag}>
@@ -202,9 +211,9 @@ const CreateMap = () => {
               </div>
               <div className='create-map-footer'>
                 <button
+                  className='bg-black/70 text-white px-5 py-1 rounded-md hover:bg-black/80 m-2 '
                   onClick={() => {
-                    validateInput();
-                    if (error.hasError) return;
+                    if (!validateInput()) return;
                     createMap();
 
                     setIsOpen(false);
