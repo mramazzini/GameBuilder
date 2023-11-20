@@ -5,6 +5,7 @@ import TitleBar from "./components/TitleBar.tsx";
 import Home from "./pages/Home.tsx";
 import AppRunner from "./pages/AppRunner.tsx";
 import MapEditor from "./pages/MapEditor.tsx";
+import TilesetEditor from "./pages/TilesetEditor.tsx";
 import FileExplorer from "./components/FileExplorer/FileExplorer.tsx";
 import Error from "./components/Error.tsx";
 import { useState } from "react";
@@ -25,6 +26,8 @@ function App() {
               <AppRunner />
             ) : currentPage === "Map Editor" ? (
               <MapEditor />
+            ) : currentPage == "Tileset Editor" ? (
+              <TilesetEditor />
             ) : (
               <h1>Page Not Found</h1>
             )}

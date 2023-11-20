@@ -40,6 +40,11 @@ export interface MapState {
   addingCollider: boolean;
 }
 
+export interface TilesetState {
+  selectedTileset: Tileset;
+  selectedTile: number;
+}
+
 export interface tileHistory {
   tile: Tile;
   tilePosition: [number, number];

@@ -1,4 +1,4 @@
-import { useProjectContext } from "../utils/GlobalState/GlobalState";
+import { useProjectContext } from "../../utils/GlobalState/GlobalState";
 import React, { useEffect, useRef } from "react";
 const GameLog = () => {
   const { state, dispatch } = useProjectContext();
@@ -16,7 +16,6 @@ const GameLog = () => {
     <div className='bg-black/75 h-5/6 border-b border-white/25'>
       <div ref={containerRef} className='scroll-active h-full '>
         {state.stdLog.map((log, index) => {
-          console.log("log", log);
           return (
             <div
               style={{ whiteSpace: "pre-wrap" }}
