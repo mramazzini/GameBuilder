@@ -62,6 +62,8 @@ const FileExplorer: React.FC<FileExplorerProps> = ({ initialPath }) => {
       className='bg-black/50 border-l border-white/25 text-white scroll-active pr-5 text-sm flex flex-row h-full justify-start'
       style={{
         width: `${width}px`,
+        overflow: "hidden",
+        maxWidth: `33vw`,
         minWidth: `max-content`,
         //  display: `${width === 0 ? "none" : ""}`,
       }}

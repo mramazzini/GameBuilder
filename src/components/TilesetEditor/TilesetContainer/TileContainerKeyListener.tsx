@@ -5,8 +5,6 @@ const TilesetContainerKeyListener = (
   dispatch: any,
   state: TilesetState,
   projectDispatch: any
-) => {
-  console.log(e.key);
-};
+) => {};
 
 export default TilesetContainerKeyListener;
