@@ -31,6 +31,7 @@ export interface ProjectState {
   tilesets: Tileset[];
   maps: Map[];
   history: History;
+  fileExplorerOpened: boolean;
 }
 export interface MapState {
   selectedMap: Map;

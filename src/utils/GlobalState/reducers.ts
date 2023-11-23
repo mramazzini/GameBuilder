@@ -10,6 +10,7 @@ import {
   POP_FROM_MAP_HISTORY,
   POP_FROM_MAP_UNDO_HISTORY,
   CLEAR_REMOVED_MAP_HISTORY,
+  TOGGLE_FILE_EXPLORER,
 } from "./actions";
 import { getCurrentTime, getMapInfo } from "../helpers";
 import { ProjectState } from "../types";
@@ -22,6 +23,13 @@ export const reducer = (state: ProjectState, action: any): ProjectState => {
 
   const logReducers = true;
   switch (action.type) {
+    case TOGGLE_FILE_EXPLORER:
+      logReducers ?? console.log("reducer: TOGGLE_FILE_EXPLORER");
+      return {
+        ...state,
+        fileExplorerOpened: !state.fileExplorerOpened,
+      };
+
     case SET_PROJECT_DIRECTORY:
       logReducers ??
         console.log("reducer: SET_PROJECT_DIRECTORY to ", action.payload, "");

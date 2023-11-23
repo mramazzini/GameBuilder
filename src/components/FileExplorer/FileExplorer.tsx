@@ -65,6 +65,7 @@ const FileExplorer: React.FC<FileExplorerProps> = ({ initialPath }) => {
         overflow: "hidden",
         maxWidth: `33vw`,
         minWidth: `max-content`,
+        display: `${state.fileExplorerOpened ? "" : "none"}`,
         //  display: `${width === 0 ? "none" : ""}`,
       }}
     >

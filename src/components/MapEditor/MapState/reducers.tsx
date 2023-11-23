@@ -1,4 +1,3 @@
-import { act } from "react-dom/test-utils";
 import {
   SET_SELECTED_MAP,
   SET_COLLIDER_VISION,

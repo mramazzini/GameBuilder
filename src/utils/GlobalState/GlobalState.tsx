@@ -15,6 +15,7 @@ const initialState: ProjectState = {
   history: {
     maps: [],
   },
+  fileExplorerOpened: true,
 };
 
 const ProjectContext = createContext<{
