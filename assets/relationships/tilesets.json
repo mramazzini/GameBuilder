@@ -1,0 +1,20 @@
+[
+  {
+    "tag": "terrain",
+    "tileWidth": 16,
+    "tileHeight": 16,
+    "tileCount": 10,
+    "columns": 10,
+    "rows": 1,
+    "base64": ""
+  },
+  {
+    "tag": "alternate",
+    "tileWidth": 32,
+    "tileHeight": 32,
+    "tileCount": 30,
+    "columns": 10,
+    "rows": 3,
+    "base64": ""
+  }
+]
