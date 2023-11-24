@@ -42,7 +42,7 @@ const MapContainer = () => {
 
   return (
     <div
-      className='map-container text-white font-mono w-5/6 overflow-hidden grow '
+      className='map-container text-white font-mono  overflow-hidden grow '
       onWheel={(e) => mouseListener.handleScroll(e, state, zoomLevel)}
       onMouseDown={(e) => mouseListener.handleMouseDown(e)}
       onMouseUp={(e) =>

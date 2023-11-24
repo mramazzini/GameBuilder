@@ -34,14 +34,15 @@ const SideNav = (props: any) => {
   return (
     <div
       className='bg-black/50 text-white  min-w-max
-      border-r border-white/25  flex flex-row justify-between items-start scroll-active '
+      border-r border-white/25  flex flex-row justify-between items-start scroll-active'
       style={{
         paddingBottom: "1rem",
         width: `${width}px`,
         height: `calc(100vh - 5rem)`,
+        maxWidth: `33vw`,
       }}
     >
-      <div className='flex flex-col justify-between items-center p-2'>
+      <div className='flex flex-col justify-between items-center p-2 w-full'>
         {props.children}
       </div>
       <div
