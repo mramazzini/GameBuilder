@@ -1,6 +1,6 @@
 import SideNav from "../../SideNav";
 import { SET_SELECTED_TILESET } from "../TilesetState/actions";
-
+import ColorSelector from "./ColorSelector/ColorSelector";
 import { useTilesetContext } from "../TilesetState/TilesetContext";
 import { useProjectContext } from "../../../utils/GlobalState/GlobalState";
 const TilesetNav = () => {
@@ -8,30 +8,38 @@ const TilesetNav = () => {
   const { state, dispatch } = useTilesetContext();
   return (
     <SideNav>
-      <select
-        className='bg-black/50 text-white/75 border border-white/25 rounded-sm p-1'
-        onChange={(e) => {
-          console.log(state);
-
-          dispatch({
-            type: SET_SELECTED_TILESET,
-            //find the tileset in the project state that matches the value of the select
-            payload: projectState.tilesets.find(
-              (tileset) => tileset.tag === e.target.value
-            ),
-          });
-        }}
-      >
-        {projectState.tilesets.map((tileset, i) => (
-          <option
-            key={i}
-            value={tileset.tag}
-            defaultValue={state.selectedTileset.tag}
+      <div className='nav-wrapper flex flex-col justify-center items-center text-white  m-2'>
+        <div className='flex flex-row justify-center items-center'>
+          <div className='text-sm px-2'>Tileset:</div>
+          <select
+            className='bg-black/50 text-white/75 border border-white/25 rounded-sm p-1'
+            onChange={(e) => {
+              console.log(state);
+              if (e.target.value !== "NONE") {
+                dispatch({
+                  type: SET_SELECTED_TILESET,
+                  //find the tileset in the project state that matches the value of the select
+                  payload: projectState.tilesets.find(
+                    (tileset) => tileset.tag === e.target.value
+                  ),
+                });
+              }
+            }}
           >
-            {tileset.tag}
-          </option>
-        ))}
-      </select>
+            <option value='NONE'>none</option>
+            {projectState.tilesets.map((tileset, i) => (
+              <option
+                key={i}
+                value={tileset.tag}
+                defaultValue={state.selectedTileset.tag}
+              >
+                {tileset.tag}
+              </option>
+            ))}
+          </select>
+        </div>
+        <ColorSelector />
+      </div>
     </SideNav>
   );
 };

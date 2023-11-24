@@ -1,6 +1,5 @@
 import { useProjectContext } from "../../../utils/GlobalState/GlobalState";
 import { useMapContext } from "../MapState/MapContext";
-import { Tileset, Map } from "../../../utils/types";
 
 const MapToggle = () => {
   const { state } = useProjectContext();

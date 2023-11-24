@@ -44,6 +44,7 @@ export interface MapState {
 export interface TilesetState {
   selectedTileset: Tileset;
   selectedTile: number;
+  selectedColor: RGBA;
 }
 
 export interface tileHistory {
@@ -66,4 +67,11 @@ export interface FileOrFolder {
   name: string;
   isFolder: boolean;
   children: FileOrFolder[];
+}
+
+export interface RGBA {
+  r: number;
+  g: number;
+  b: number;
+  a: number;
 }
