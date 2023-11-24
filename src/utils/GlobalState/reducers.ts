@@ -11,9 +11,11 @@ import {
   POP_FROM_MAP_UNDO_HISTORY,
   CLEAR_REMOVED_MAP_HISTORY,
   TOGGLE_FILE_EXPLORER,
+  RUN_COMMAND,
 } from "./actions";
+import { commandLineResolvers } from "../commandLineResolvers";
 import { getCurrentTime, getMapInfo } from "../helpers";
-import { ProjectState } from "../types";
+import { ProjectState, log } from "../types";
 
 export const reducer = (state: ProjectState, action: any): ProjectState => {
   if (!action.type) {
@@ -292,6 +294,30 @@ export const reducer = (state: ProjectState, action: any): ProjectState => {
           ...state.history,
           maps: newMapsHistory,
         },
+      };
+    }
+    case RUN_COMMAND: {
+      logReducers ??
+        console.log("reducer: RUN_COMMAND to ", action.payload, "");
+      //stop repeating messages
+
+      const command = action.payload;
+      const commandResult = commandLineResolvers(command);
+
+      const newLogEntry: log = {
+        timestamp: getCurrentTime(),
+        message: commandResult,
+      };
+
+      if (state.stdLog.length > 0) {
+        const lastLogEntry = state.stdLog[state.stdLog.length - 1];
+        if (lastLogEntry.message === action.payload) {
+          return state;
+        }
+      }
+      return {
+        ...state,
+        stdLog: [...state.stdLog, newLogEntry],
       };
     }
     default:

@@ -4,9 +4,8 @@ import Home from "./Home";
 const AppRunner = () => {
   const { state } = useProjectContext();
   return state.projectDirectory ? (
-    <div className='flex flex-col justify-end h-full'>
+    <div className='flex flex-col justify-start h-full'>
       <GameLog />
-      <div className='gap h-1/6'></div>
     </div>
   ) : (
     <Home />

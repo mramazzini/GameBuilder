@@ -1,5 +1,6 @@
 import { useProjectContext } from "../../utils/GlobalState/GlobalState";
 import React, { useEffect, useRef } from "react";
+import CommandLine from "./CommandLine";
 const GameLog = () => {
   const { state, dispatch } = useProjectContext();
 
@@ -13,8 +14,15 @@ const GameLog = () => {
   }, [state.stdLog]);
 
   return (
-    <div className='bg-black/75 h-5/6 border-b border-white/25'>
-      <div ref={containerRef} className='scroll-active h-full '>
+    <div className='bg-black/75  border-b border-white/25 '>
+      <div
+        ref={containerRef}
+        className='scroll-active'
+        style={{
+          userSelect: "text",
+          height: "calc(100vh - 7rem)",
+        }}
+      >
         {state.stdLog.map((log, index) => {
           return (
             <div
@@ -27,6 +35,7 @@ const GameLog = () => {
           );
         })}
       </div>
+      <CommandLine />
     </div>
   );
 };
