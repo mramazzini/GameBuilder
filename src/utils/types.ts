@@ -45,6 +45,7 @@ export interface TilesetState {
   selectedTileset: Tileset;
   selectedTile: number;
   selectedColor: RGBA;
+  colors: RGBA[];
 }
 
 export interface tileHistory {

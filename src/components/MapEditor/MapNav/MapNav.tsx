@@ -23,7 +23,9 @@ const MapNav = () => {
       <CreateMap />
       <button
         onClick={() => setSavingMap(true)}
-        className='hover:bg-black/70 hover:text-white/80 px-5 py-1 rounded-sm flex justify-center items-center font-bold bg-white/25 text-white border border-white/25 rounded-sm p-1 m-2  px-2 py-1 rounded-sm flex flex-col justify-center items-center'
+        className='hover:bg-black/70 hover:text-white/80 px-5 py-1 rounded-sm flex justify-center
+         items-center font-bold bg-white/25 text-white border border-white/25 rounded-sm p-1 m-2 
+          px-2 py-1 rounded-sm flex flex-col justify-center items-center'
       >
         Save Map to Project
       </button>

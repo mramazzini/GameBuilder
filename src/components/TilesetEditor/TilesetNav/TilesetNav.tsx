@@ -1,6 +1,6 @@
 import SideNav from "../../SideNav";
 import { SET_SELECTED_TILESET } from "../TilesetState/actions";
-import ColorSelector from "./ColorSelector/ColorSelector";
+import ColorWheelContainer from "./ColorWheel/ColorWheelContainer";
 import { useTilesetContext } from "../TilesetState/TilesetContext";
 import { useProjectContext } from "../../../utils/GlobalState/GlobalState";
 const TilesetNav = () => {
@@ -38,7 +38,7 @@ const TilesetNav = () => {
             ))}
           </select>
         </div>
-        <ColorSelector />
+        <ColorWheelContainer />
       </div>
     </SideNav>
   );

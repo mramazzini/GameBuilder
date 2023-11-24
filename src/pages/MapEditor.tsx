@@ -6,9 +6,10 @@ import Home from "./Home";
 const MapEditor = () => {
   const { state } = useProjectContext();
   return state.projectDirectory ? (
-    <div className='flex flex-row justify-between grow'>
+    <div className='flex flex-row justify-between grow scroll-active '>
       <MapProvider>
         <MapNav />
+
         <MapContainer />
       </MapProvider>
     </div>

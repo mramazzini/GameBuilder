@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@uiw/react-color": "^2.0.2",
     "autoprefixer": "^10.4.16",
     "electron-devtools-installer": "^3.2.0",
     "fs": "^0.0.1-security",

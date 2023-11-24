@@ -30,3 +30,6 @@
   flex-direction: column;
   overflow: hidden;
 }
+.w-color-sketch {
+  --sketch-background: #323232 !important;
+}
