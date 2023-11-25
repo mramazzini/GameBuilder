@@ -1,12 +1,4 @@
-const options = [
-  "Map Editor",
-  "Tileset Editor",
-  "Hitbox Editor",
-  "Sprite Editor",
-  "Animation Editor",
-  "Sound Editor",
-  "App Runner",
-];
+import TABLIST from "../utils/TabList";
 import { TOGGLE_FILE_EXPLORER } from "../utils/GlobalState/actions";
 import { useProjectContext } from "../utils/GlobalState/GlobalState";
 const Navbar = (props: { setCurrentPage: Function; currentPage: string }) => {
@@ -19,13 +11,15 @@ const Navbar = (props: { setCurrentPage: Function; currentPage: string }) => {
   return (
     <nav className='navbar navbar-expand-lg navbar-dark bg-slate-900 flex justify-between items-center border-b border-white/25'>
       <div className='flex'>
-        {options.map((option) => (
+        {TABLIST.map((option, i) => (
           <button
-            key={option}
-            className={getButtonClasses(option)}
-            onClick={() => props.setCurrentPage(option)}
+            key={i}
+            className={getButtonClasses(option.tab)}
+            onClick={() => {
+              props.setCurrentPage(option.id);
+            }}
           >
-            {option}
+            {option.tab}
           </button>
         ))}
       </div>
