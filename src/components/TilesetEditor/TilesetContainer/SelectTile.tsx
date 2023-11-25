@@ -82,6 +82,7 @@ const SelectTile = () => {
                   width: selectedTileset.tileWidth,
                   height: selectedTileset.tileHeight,
                   backgroundRepeat: "no-repeat",
+                  border: "1px solid black",
 
                   transform: `scale(${128 / selectedTileset.tileWidth}, ${
                     128 / selectedTileset.tileHeight

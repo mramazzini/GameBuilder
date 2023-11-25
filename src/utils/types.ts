@@ -30,6 +30,7 @@ export interface ProjectState {
   stdLog: log[];
   tilesets: Tileset[];
   maps: Map[];
+  colors: RGBA[];
   history: History;
   fileExplorerOpened: boolean;
 }
@@ -45,7 +46,6 @@ export interface TilesetState {
   selectedTileset: Tileset;
   selectedTile: number;
   selectedColor: RGBA;
-  colors: RGBA[];
 }
 
 export interface tileHistory {

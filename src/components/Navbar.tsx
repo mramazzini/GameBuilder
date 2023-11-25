@@ -28,7 +28,7 @@ const Navbar = (props: { setCurrentPage: Function; currentPage: string }) => {
         className='btn btn-outline-light font-bold font-mono  text-white text-lg px-2 py-1 m-1 hover:bg-slate-400 rounded-md'
         onClick={() => dispatch({ type: TOGGLE_FILE_EXPLORER })}
       >
-        {state.fileExplorerOpened ? "Hide" : "Show"}
+        {state.fileExplorerOpened ? "Hide" : "Show Explorer"}
       </button>
     </nav>
   );

@@ -1,7 +1,9 @@
 import { useTilesetContext } from "../../TilesetState/TilesetContext";
+import { useProjectContext } from "../../../../utils/GlobalState/GlobalState";
 import { useState, useEffect } from "react";
 import { RGBA } from "../../../../utils/types";
 import { Sketch } from "@uiw/react-color";
+import { ADD_COLOR } from "../../../../utils/GlobalState/actions";
 const Colorwheel = () => {
   const [selectedColor, setSelectedColor] = useState<RGBA>({
     r: 0,
@@ -10,21 +12,22 @@ const Colorwheel = () => {
     a: 0,
   });
   const { state, dispatch } = useTilesetContext();
+  const { state: projectState, dispatch: projectDispatch } =
+    useProjectContext();
   useEffect(() => {
     //initialize selected color
     setSelectedColor(state.selectedColor);
   }, []);
   const handleAddColor = () => {
-    dispatch({ type: "ADD_COLOR", payload: selectedColor });
+    projectDispatch({ type: ADD_COLOR, payload: selectedColor });
   };
   useEffect(() => {
-    console.log(state.colors);
-  }, [state.colors]);
+    console.log(projectState.colors);
+  }, [projectState.colors]);
 
   return (
     <div className='color-wheel flex flex-col justify-center items-center'>
       <Sketch
-        style={{ marginLeft: 20 }}
         color={`rgba(${selectedColor.r}, ${selectedColor.g}, ${selectedColor.b}, ${selectedColor.a})`}
         onChange={(color) => {
           setSelectedColor(color.rgba);

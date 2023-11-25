@@ -13,7 +13,6 @@ const initialState: TilesetState = {
   },
   selectedTile: -1,
   selectedColor: { r: 0, g: 0, b: 0, a: 0 },
-  colors: [],
 };
 
 const TilesetContext = createContext<{

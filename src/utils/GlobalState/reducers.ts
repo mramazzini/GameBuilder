@@ -12,6 +12,8 @@ import {
   CLEAR_REMOVED_MAP_HISTORY,
   TOGGLE_FILE_EXPLORER,
   RUN_COMMAND,
+  ADD_COLOR,
+  REMOVE_COLOR,
 } from "./actions";
 import { commandLineResolvers } from "../commandLineResolvers";
 import { getCurrentTime, getMapInfo } from "../helpers";
@@ -320,6 +322,16 @@ export const reducer = (state: ProjectState, action: any): ProjectState => {
         stdLog: [...state.stdLog, newLogEntry],
       };
     }
+    case ADD_COLOR:
+      return {
+        ...state,
+        colors: [...state.colors, action.payload],
+      };
+    case REMOVE_COLOR:
+      return {
+        ...state,
+        colors: state.colors.filter((color) => color !== action.payload),
+      };
     default:
       return state;
   }

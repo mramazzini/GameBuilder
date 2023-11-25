@@ -16,6 +16,7 @@ const initialState: ProjectState = {
     maps: [],
   },
   fileExplorerOpened: true,
+  colors: [],
 };
 
 const ProjectContext = createContext<{
