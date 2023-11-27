@@ -14,6 +14,7 @@ import {
   RUN_COMMAND,
   ADD_COLOR,
   REMOVE_COLOR,
+  SET_NEW_BASE_64_IMAGE,
 } from "./actions";
 import { commandLineResolvers } from "../commandLineResolvers";
 import { getCurrentTime, getMapInfo } from "../helpers";
@@ -323,6 +324,19 @@ export const reducer = (state: ProjectState, action: any): ProjectState => {
       };
     }
     case ADD_COLOR:
+      //check for duplicates
+      const colorIndex = state.colors.findIndex((color) => {
+        return (
+          color.r === action.payload.r &&
+          color.g === action.payload.g &&
+          color.b === action.payload.b &&
+          color.a === action.payload.a
+        );
+      });
+      if (colorIndex !== -1) {
+        return state;
+      }
+
       return {
         ...state,
         colors: [...state.colors, action.payload],
@@ -332,6 +346,63 @@ export const reducer = (state: ProjectState, action: any): ProjectState => {
         ...state,
         colors: state.colors.filter((color) => color !== action.payload),
       };
+    case SET_NEW_BASE_64_IMAGE: {
+      const tile = action.payload.tile;
+      const tileset = action.payload.tileset;
+      const imageDataToReplaceTile = action.payload.image;
+
+      //find tileset
+      const tilesetIndex = state.tilesets.findIndex(
+        (tilesetObject) => tilesetObject.tag === tileset.tag
+      );
+
+      //update tileset base64 image data at tile with new image by
+      // drawing it to a canvas
+      const oldTilesetImage =
+        "data:image/png;base64," + state.tilesets[tilesetIndex].base64;
+
+      const canvas = document.createElement("canvas");
+      canvas.width = tileset.tileWidth * tileset.columns;
+      canvas.height = tileset.tileHeight * tileset.rows;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        return state;
+      }
+
+      const image = new Image();
+      image.src = oldTilesetImage;
+      image.onload = () => {
+        ctx.drawImage(image, 0, 0);
+
+        //get tile x and y based on tileset col and rows
+        const tileX = tile % tileset.columns;
+        const tileY = Math.floor(tile / tileset.columns);
+        //set image data
+        ctx.putImageData(
+          imageDataToReplaceTile,
+          tileX * tileset.tileWidth,
+          tileY * tileset.tileHeight
+        );
+        //update base64 image
+        const newBase64 = canvas.toDataURL("image/png").split(",")[1];
+
+        //update tileset
+        const newTileset = {
+          ...state.tilesets[tilesetIndex],
+          base64: newBase64,
+        };
+
+        //update tileset in state
+        const newTilesets = state.tilesets;
+        newTilesets[tilesetIndex] = newTileset;
+
+        return {
+          ...state,
+          tilesets: newTilesets,
+        };
+      };
+      return state;
+    }
     default:
       return state;
   }

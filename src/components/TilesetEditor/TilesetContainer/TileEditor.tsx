@@ -1,12 +1,18 @@
-import { useTilesetContext } from "../TilesetState/TilesetContext";
+import { useTilesetContext } from "../../../utils/TilesetState/TilesetContext";
+import { useProjectContext } from "../../../utils/GlobalState/GlobalState";
 import { useEffect, useRef, useState } from "react";
+import { SET_NEW_BASE_64_IMAGE } from "../../../utils/GlobalState/actions";
+import { SET_SELECTED_COLOR } from "../../../utils/TilesetState/actions";
+
 import RenderPixel from "./RenderPixel";
 const TileEditor = ({ tileNum }: { tileNum: number }) => {
-  const { state } = useTilesetContext();
+  const { state, dispatch } = useTilesetContext();
+  const { state: projectState, dispatch: projectDispatch } =
+    useProjectContext();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [zoom, setZoom] = useState(30);
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [pixelData, setPixelData] = useState<number[][][]>([]);
+  const [pixelData, setPixelData] = useState<number[][][]>([[[]]]);
   const [currentPixelHover, setCurrentPixelHover] = useState<{
     x: number;
     y: number;
@@ -16,11 +22,77 @@ const TileEditor = ({ tileNum }: { tileNum: number }) => {
     mouseEvent: number;
   }>({ dragging: false, mouseEvent: 0 });
 
+  useEffect(() => {
+    dispatch({ type: SET_SELECTED_COLOR, payload: 0 });
+  }, [tileNum]);
+
+  useEffect(() => {
+    const canvas = document.createElement("canvas");
+    canvas.id = "tile_editor_canvas";
+    canvasRef.current = canvas;
+    const handleUnMount = (canvas: any) => {
+      const ctx = canvas?.getContext("2d");
+
+      if (ctx) {
+        const newCanvasPixelArr = [];
+        for (let i = 0; i < pixelData.length; i++) {
+          for (let j = 0; j < pixelData[0].length; j++) {
+            const pixel = pixelData[i][j];
+            newCanvasPixelArr.push(pixel[0]);
+            newCanvasPixelArr.push(pixel[1]);
+            newCanvasPixelArr.push(pixel[2]);
+            newCanvasPixelArr.push(pixel[3]);
+          }
+        }
+        const newCanvasPixelData = new Uint8ClampedArray(newCanvasPixelArr);
+        const newImageData = new ImageData(
+          newCanvasPixelData,
+          pixelData[0].length,
+          pixelData.length
+        );
+        ctx.putImageData(newImageData, 0, 0);
+
+        // update pixel data in global state on unmount
+        projectDispatch({
+          type: SET_NEW_BASE_64_IMAGE,
+          payload: {
+            tile: tileNum,
+            image: newImageData,
+
+            tileset: state.selectedTileset,
+          },
+        });
+      }
+    };
+
+    // Pass the callback ref to the cleanup function
+    return () => {
+      handleUnMount(canvasRef.current);
+      //remove canvas from dom by id
+      const canvas = document.getElementById("tile_editor_canvas");
+      canvas?.remove();
+    };
+  }, [pixelData]);
+
   const changePixel = (i: number, j: number) => {
     if (!isDragging.dragging || isDragging.mouseEvent != 0) return;
+    if (
+      pixelData[i][j][0] === projectState.colors[state.selectedColor].r &&
+      pixelData[i][j][1] === projectState.colors[state.selectedColor].g &&
+      pixelData[i][j][2] === projectState.colors[state.selectedColor].b &&
+      pixelData[i][j][3] === projectState.colors[state.selectedColor].a
+    )
+      return;
     setPixelData((prevPixelData) => {
       const newPixelData = [...prevPixelData];
-      newPixelData[i][j] = [0, 0, 0, 255];
+      if (typeof state.selectedColor !== "number") return newPixelData;
+      newPixelData[i][j] = [
+        projectState.colors[state.selectedColor].r,
+        projectState.colors[state.selectedColor].g,
+        projectState.colors[state.selectedColor].b,
+        projectState.colors[state.selectedColor].a * 255,
+      ];
+
       return newPixelData;
     });
   };
@@ -106,6 +178,7 @@ const TileEditor = ({ tileNum }: { tileNum: number }) => {
             );
             const imageData = ctx.getImageData(0, 0, tileWidth, tileHeight);
             const pixelData = imageData.data;
+
             // Process the pixelArray if needed
             const pixelValues = [];
             for (let i = 0; i < pixelData.length; i += 4) {
@@ -124,8 +197,8 @@ const TileEditor = ({ tileNum }: { tileNum: number }) => {
             for (let i = 0; i < pixelValues.length; i += tileWidth) {
               pixelValues2D.push(pixelValues.slice(i, i + tileHeight));
             }
+
             setPixelData(pixelValues2D);
-            console.log(pixelValues2D);
           }
         }
       };
@@ -170,7 +243,6 @@ const TileEditor = ({ tileNum }: { tileNum: number }) => {
           ))
         )}
       </div>
-      <canvas ref={canvasRef} style={{ display: "none" }} />
     </div>
   );
 };

@@ -14,3 +14,4 @@ export const TOGGLE_FILE_EXPLORER = "TOGGLE_FILE_EXPLORER";
 export const RUN_COMMAND = "RUN_COMMAND";
 export const ADD_COLOR = "ADD_COLOR";
 export const REMOVE_COLOR = "REMOVE_COLOR";
+export const SET_NEW_BASE_64_IMAGE = "SET_NEW_BASE_64_IMAGE";

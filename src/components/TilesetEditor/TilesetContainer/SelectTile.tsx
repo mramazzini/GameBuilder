@@ -1,8 +1,10 @@
-import { useTilesetContext } from "../TilesetState/TilesetContext";
-import { SET_SELECTED_TILE } from "../TilesetState/actions";
+import { useTilesetContext } from "../../../utils/TilesetState/TilesetContext";
+import { SET_SELECTED_TILE } from "../../../utils/TilesetState/actions";
 import { useEffect, useState } from "react";
+
 const SelectTile = () => {
   const { state, dispatch } = useTilesetContext();
+
   const [periodString, setPeriodString] = useState("");
   const { selectedTileset, selectedTile } = state;
 
@@ -30,11 +32,11 @@ const SelectTile = () => {
 
   const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
     const tile = e.currentTarget;
-    tile.style.border = `${1}px solid white`;
+    tile.style.border = `${3}px solid white`;
   };
   const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
     const tile = e.currentTarget;
-    tile.style.border = "none";
+    tile.style.border = "3px solid black";
   };
 
   return (
@@ -70,6 +72,8 @@ const SelectTile = () => {
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
               style={{
+                border: "3px solid black",
+
                 overflow: "hidden",
                 width: 128,
                 height: 128,
@@ -82,7 +86,6 @@ const SelectTile = () => {
                   width: selectedTileset.tileWidth,
                   height: selectedTileset.tileHeight,
                   backgroundRepeat: "no-repeat",
-                  border: "1px solid black",
 
                   transform: `scale(${128 / selectedTileset.tileWidth}, ${
                     128 / selectedTileset.tileHeight

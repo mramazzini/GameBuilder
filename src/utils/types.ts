@@ -33,7 +33,9 @@ export interface ProjectState {
   colors: RGBA[];
   history: History;
   fileExplorerOpened: boolean;
+  tilesetPixelData: number[];
 }
+
 export interface MapState {
   selectedMap: Map;
   selectedTileset: Tileset;
@@ -45,7 +47,7 @@ export interface MapState {
 export interface TilesetState {
   selectedTileset: Tileset;
   selectedTile: number;
-  selectedColor: RGBA;
+  selectedColor: number;
 }
 
 export interface tileHistory {

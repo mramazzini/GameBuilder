@@ -1,10 +1,10 @@
-import { useMapContext } from "../MapState/MapContext";
+import { useMapContext } from "../../../utils/MapState/MapContext";
 import { useProjectContext } from "../../../utils/GlobalState/GlobalState";
 import {
   CREATE_MAP,
   SET_SELECTED_MAP,
   SET_SELECTED_TILESET,
-} from "../MapState/actions";
+} from "../../../utils/MapState/actions";
 import { REFRESH_PROJECT } from "../../../utils/GlobalState/actions";
 import { useState, useEffect } from "react";
 const ipcRenderer = window.ipcRenderer;

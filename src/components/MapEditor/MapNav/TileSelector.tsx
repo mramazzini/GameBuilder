@@ -1,7 +1,7 @@
 import React from "react";
 import { Tile, Tileset } from "../../../utils/types";
 import RenderNavTile from "./RenderNavTile";
-import { useMapContext } from "../MapState/MapContext";
+import { useMapContext } from "../../../utils/MapState/MapContext";
 
 const TileSelector = () => {
   const { state, dispatch } = useMapContext();

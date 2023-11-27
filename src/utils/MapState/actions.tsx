@@ -10,4 +10,3 @@ export const MOVE_TILE_COLUMN_RIGHT = "MOVE_TILE_COLUMN_RIGHT";
 export const MOVE_TILE_ROW_UP = "MOVE_TILE_ROW_UP";
 export const MOVE_TILE_ROW_DOWN = "MOVE_TILE_ROW_DOWN";
 export const CREATE_MAP = "CREATE_MAP";
-export const UNDO = "UNDO";

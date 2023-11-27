@@ -5,7 +5,7 @@ import {
   MOVE_TILE_COLUMN_RIGHT,
   MOVE_TILE_ROW_UP,
   MOVE_TILE_ROW_DOWN,
-} from "../MapState/actions";
+} from "../../../utils/MapState/actions";
 import {
   POP_FROM_MAP_HISTORY,
   POP_FROM_MAP_UNDO_HISTORY,

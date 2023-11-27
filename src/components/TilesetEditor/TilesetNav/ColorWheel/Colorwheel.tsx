@@ -1,4 +1,4 @@
-import { useTilesetContext } from "../../TilesetState/TilesetContext";
+import { useTilesetContext } from "../../../../utils/TilesetState/TilesetContext";
 import { useProjectContext } from "../../../../utils/GlobalState/GlobalState";
 import { useState, useEffect } from "react";
 import { RGBA } from "../../../../utils/types";
@@ -16,14 +16,12 @@ const Colorwheel = () => {
     useProjectContext();
   useEffect(() => {
     //initialize selected color
-    setSelectedColor(state.selectedColor);
+    if (!projectState.colors[state.selectedColor]) return;
+    setSelectedColor(projectState.colors[state.selectedColor]);
   }, []);
   const handleAddColor = () => {
     projectDispatch({ type: ADD_COLOR, payload: selectedColor });
   };
-  useEffect(() => {
-    console.log(projectState.colors);
-  }, [projectState.colors]);
 
   return (
     <div className='color-wheel flex flex-col justify-center items-center'>

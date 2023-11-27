@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Tileset } from "../../../utils/types";
-import { useMapContext } from "../MapState/MapContext";
+import { useMapContext } from "../../../utils/MapState/MapContext";
 
 const TilePreview = () => {
   const { state } = useMapContext();

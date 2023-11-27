@@ -1,5 +1,5 @@
 import { useProjectContext } from "../../../utils/GlobalState/GlobalState";
-import { useMapContext } from "../MapState/MapContext";
+import { useMapContext } from "../../../utils/MapState/MapContext";
 const ipcRenderer = window.ipcRenderer;
 interface MapSaveProps {
   setSavingMap: React.Dispatch<React.SetStateAction<boolean>>;

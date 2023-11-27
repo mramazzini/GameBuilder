@@ -1,8 +1,11 @@
-import { useMapContext } from "../MapState/MapContext";
+import { useMapContext } from "../../../utils/MapState/MapContext";
 import { useProjectContext } from "../../../utils/GlobalState/GlobalState";
 const ipcRenderer = window.ipcRenderer;
 import { useCallback, useEffect, useState } from "react";
-import { SET_SELECTED_MAP, SET_SELECTED_TILESET } from "../MapState/actions";
+import {
+  SET_SELECTED_MAP,
+  SET_SELECTED_TILESET,
+} from "../../../utils/MapState/actions";
 
 const DeleteMap = () => {
   const { state, dispatch } = useMapContext();

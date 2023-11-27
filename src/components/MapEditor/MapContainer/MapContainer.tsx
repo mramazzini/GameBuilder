@@ -1,9 +1,13 @@
-import { useMapContext } from "../MapState/MapContext";
+import { useMapContext } from "../../../utils/MapState/MapContext";
 import { useState, useEffect, useCallback } from "react";
 import MapContainerMouseListener from "./MapContainerMouseListener";
 import { useProjectContext } from "../../../utils/GlobalState/GlobalState";
 import MapContainerKeyListener from "./MapContainerKeyListener";
 import RenderTile from "./RenderTile";
+import {
+  SET_SELECTED_MAP,
+  SET_SELECTED_TILESET,
+} from "../../../utils/MapState/actions";
 let mouseListener: MapContainerMouseListener;
 const MapContainer = () => {
   const [currentTileHover, setCurrentTileHover] = useState<number[]>([8, 8]); // [x,y]
@@ -40,6 +44,22 @@ const MapContainer = () => {
     );
   }, []);
 
+  useEffect(() => {
+    //set default map and tileset
+    console.log(projectState.maps);
+    if (projectState.maps.length > 0) {
+      dispatch({
+        type: SET_SELECTED_MAP,
+        payload: projectState.maps[0],
+      });
+    }
+    if (projectState.tilesets.length > 0) {
+      dispatch({
+        type: SET_SELECTED_TILESET,
+        payload: projectState.tilesets[0],
+      });
+    }
+  }, [projectState.tilesets, projectState.maps]);
   return (
     <div
       className='map-container text-white font-mono  overflow-hidden grow '

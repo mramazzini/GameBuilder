@@ -1,5 +1,5 @@
 import { createContext, useContext, useReducer } from "react";
-import { MapState } from "../../../utils/types";
+import { MapState } from "../types";
 import { reducer } from "./reducers";
 const initialState = {
   selectedMap: {

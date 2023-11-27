@@ -6,6 +6,7 @@ const initialState: ProjectState = {
   error: "",
   stdLog: [],
   tilesets: [],
+  tilesetPixelData: [],
   maps: [],
   filesAndFolders: {
     name: "",
@@ -15,8 +16,19 @@ const initialState: ProjectState = {
   history: {
     maps: [],
   },
+
   fileExplorerOpened: true,
-  colors: [],
+  //default colors
+  colors: [
+    { r: 0, g: 0, b: 0, a: 1 }, //black
+    { r: 255, g: 255, b: 255, a: 1 }, //white
+    { r: 255, g: 0, b: 0, a: 1 }, //red
+    { r: 0, g: 255, b: 0, a: 1 }, //green
+    { r: 0, g: 0, b: 255, a: 1 }, //blue
+    { r: 255, g: 255, b: 0, a: 1 }, //yellow
+    { r: 255, g: 0, b: 255, a: 1 }, //magenta
+    { r: 0, g: 255, b: 255, a: 1 }, //cyan
+  ],
 };
 
 const ProjectContext = createContext<{

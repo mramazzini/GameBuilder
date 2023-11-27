@@ -1,5 +1,5 @@
 import { createContext, useContext, useReducer } from "react";
-import { Tile, TilesetState } from "../../../utils/types";
+import { Tile, TilesetState } from "../types";
 import { reducer } from "./reducers";
 const initialState: TilesetState = {
   selectedTileset: {
@@ -12,7 +12,7 @@ const initialState: TilesetState = {
     tileCount: 0,
   },
   selectedTile: -1,
-  selectedColor: { r: 0, g: 0, b: 0, a: 0 },
+  selectedColor: 0,
 };
 
 const TilesetContext = createContext<{

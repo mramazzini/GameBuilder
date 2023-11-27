@@ -1,5 +1,5 @@
 import { Tileset, Map } from "../../../utils/types";
-import { useMapContext } from "../MapState/MapContext";
+import { useMapContext } from "../../../utils/MapState/MapContext";
 
 const MapInfo = () => {
   const { state } = useMapContext();

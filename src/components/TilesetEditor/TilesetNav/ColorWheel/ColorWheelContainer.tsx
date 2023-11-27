@@ -23,7 +23,7 @@ const ColorWheelContainer = () => {
          flex flex-col justify-center items-center'
         onClick={() => setIsOpen(true)}
       >
-        Open Color Select
+        Add Colors
       </button>
       {isOpen && (
         <div
