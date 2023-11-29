@@ -1,5 +1,5 @@
 import { useMapContext } from "../../../utils/MapState/MapContext";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import MapContainerMouseListener from "./MapContainerMouseListener";
 import { useProjectContext } from "../../../utils/GlobalState/GlobalState";
 import MapContainerKeyListener from "./MapContainerKeyListener";
@@ -10,13 +10,14 @@ import {
 } from "../../../utils/MapState/actions";
 let mouseListener: MapContainerMouseListener;
 const MapContainer = () => {
+  const mapContainerRef = useRef<HTMLDivElement>(null);
   const [currentTileHover, setCurrentTileHover] = useState<number[]>([8, 8]); // [x,y]
   const { state, dispatch } = useMapContext();
   const { state: projectState, dispatch: projectDispatch } =
     useProjectContext();
   const [beenPlaced, setBeenPlaced] = useState<boolean>(false);
-  const [zoomLevel, setZoomLevel] = useState(2);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [zoomLevel, setZoomLevel] = useState<number>();
+  const [position, setPosition] = useState<{ x: number; y: number }>();
   const [isDragging, setIsDragging] = useState<{
     dragging: boolean;
     mouseEvent: number;
@@ -32,6 +33,24 @@ const MapContainer = () => {
       console.log("removed keydown listener");
     };
   }, [state.selectedMap]);
+
+  useEffect(() => {
+    if (mapContainerRef.current) {
+      const containerWidth = mapContainerRef.current.clientWidth;
+      const containerHeight = mapContainerRef.current.clientHeight;
+
+      setZoomLevel(16 / state.selectedTileset.tileWidth);
+
+      setPosition({
+        x:
+          containerWidth / 2 -
+          (state.selectedMap.sizeX * state.selectedTileset.tileWidth) / 2,
+        y:
+          containerHeight / 2 -
+          (state.selectedMap.sizeY * state.selectedTileset.tileHeight) / 2,
+      });
+    }
+  }, [state.selectedMap, state.selectedTileset]);
 
   useEffect(() => {
     mouseListener = new MapContainerMouseListener(
@@ -63,7 +82,8 @@ const MapContainer = () => {
   return (
     <div
       className='map-container text-white font-mono  overflow-hidden grow '
-      onWheel={(e) => mouseListener.handleScroll(e, state, zoomLevel)}
+      ref={mapContainerRef}
+      onWheel={(e) => mouseListener.handleScroll(e, state, zoomLevel || 1)}
       onMouseDown={(e) => mouseListener.handleMouseDown(e)}
       onMouseUp={(e) =>
         mouseListener.handleMouseUp(e, isDragging, state, currentTileHover)
@@ -97,8 +117,9 @@ const MapContainer = () => {
             }px`,
             gap: "0px",
             position: "relative",
-            left: `${position.x}px`,
-            top: `${position.y}px`,
+
+            left: `${position ? position.x : 0}px`,
+            top: `${position ? position.y : 0}px`,
           }}
         >
           {state.selectedMap.tiles.map((row, rowIndex) =>

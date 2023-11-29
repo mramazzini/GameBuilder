@@ -1,60 +1,21 @@
-import { useMapContext } from "../../../utils/MapState/MapContext";
+import { useTilesetContext } from "../../../utils/TilesetState/TilesetContext";
 import { useProjectContext } from "../../../utils/GlobalState/GlobalState";
-import {
-  CREATE_MAP,
-  SET_SELECTED_MAP,
-  SET_SELECTED_TILESET,
-} from "../../../utils/MapState/actions";
-
-import { useState, useEffect } from "react";
-const ipcRenderer = window.ipcRenderer;
-
-const CreateMap = () => {
-  const { state, dispatch } = useMapContext();
+import { useEffect, useRef, useState } from "react";
+import { SET_SELECTED_TILESET } from "../../../utils/TilesetState/actions";
+import { CREATE_TILESET } from "../../../utils/GlobalState/actions";
+const CreateTileset = () => {
+  const { state, dispatch } = useTilesetContext();
   const { state: projectState, dispatch: projectDispatch } =
     useProjectContext();
+
   const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState({ hasError: false, message: "" });
   const [loading, setLoading] = useState(false);
   const [formdata, setFormdata] = useState({
     tag: "",
-    sizeX: 10,
-    sizeY: 10,
-    tileset: "NONE",
+    tileSize: 1,
   });
-  //key listener for escape key to close modal
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        if (loading) return;
-        setIsOpen(false);
-        setError({ hasError: false, message: "" });
-      }
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    const handleMapCreated = (event: any, arg: any) => {
-      console.log(arg);
-      ipcRenderer.send("refresh-project", projectState.projectDirectory);
-      setLoading(false);
-      dispatch({
-        type: SET_SELECTED_MAP,
-        payload: arg,
-      });
-      dispatch({
-        type: SET_SELECTED_TILESET,
-        payload:
-          projectState.tilesets.find(
-            (tileset) => tileset.tag === arg.tileset
-          ) || projectState.tilesets[0],
-      });
-    };
-    ipcRenderer.on("map-created", handleMapCreated);
 
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      ipcRenderer.removeListener("map-created", handleMapCreated);
-    };
-  }, []);
   const validateInput = () => {
     const inputValue = (formdata.tag = formdata.tag.replace(/\s/g, "")); // Remove whitespace
 
@@ -74,22 +35,35 @@ const CreateMap = () => {
       return false;
     }
   };
-  const createMap = () => {
-    ipcRenderer.send("create-map", {
-      map: {
+
+  const handleCreateTileset = () => {
+    if (formdata.tag === "") {
+      setError({ hasError: true, message: "Tileset name cannot be empty" });
+      return;
+    }
+    if (projectState.tilesets.find((tileset) => tileset.tag === formdata.tag)) {
+      setError({ hasError: true, message: "Tileset already exists" });
+      return;
+    }
+    projectDispatch({
+      type: CREATE_TILESET,
+      payload: {
         tag: formdata.tag,
-        sizeX: formdata.sizeX,
-        sizeY: formdata.sizeY,
-        tileset: formdata.tileset,
+        tileSize: formdata.tileSize,
       },
-      projectDirectory: projectState.projectDirectory,
     });
 
     dispatch({
-      type: CREATE_MAP,
-      payload: formdata,
+      type: SET_SELECTED_TILESET,
+      payload: projectState.tilesets[projectState.tilesets.length - 1],
     });
+    setFormdata({
+      tag: "",
+      tileSize: 1,
+    });
+    setIsOpen(false);
   };
+
   return (
     <div>
       <button
@@ -98,7 +72,7 @@ const CreateMap = () => {
           setIsOpen(true);
         }}
       >
-        Create Map
+        Create Tileset
       </button>
       {isOpen && (
         <div className='w-screen h-screen bg-black/50 absolute z-10 top-0 left-0 flex justify-center items-center'>
@@ -111,8 +85,8 @@ const CreateMap = () => {
               <button
                 className='close-button hover:bg-black/70 hover:text-white/80 px-5 py-1 rounded-sm flex justify-center items-center font-bold'
                 onClick={() => {
-                  setLoading(false);
                   setError({ hasError: false, message: "" });
+                  setLoading(false);
                 }}
               >
                 Go back
@@ -123,7 +97,7 @@ const CreateMap = () => {
               className='w-96  shadow-xl border-3 border-black  flex items-center flex-col bg-slate-950 absolute top-1/2
          left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-4 rounded-md shadow-lg text-white font-mono'
             >
-              Attempting to create Map...
+              Attempting to create Tileset...
             </div>
           ) : (
             <div
@@ -131,7 +105,7 @@ const CreateMap = () => {
            left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-4 rounded-md shadow-lg text-white font-mono'
             >
               <div className='w-full h-full bg-black/50 text-white/75 border border-white/25 rounded-sm p-1 m-2  px-2 py-1 rounded-sm flex flex-col justify-center items-center '>
-                <div className='title text-xl'>Create Map</div>
+                <div className='title text-xl'>Create Tileset</div>
                 <div className='close'>
                   <button
                     className='close-button hover:bg-black/70 hover:text-white/80 px-5 py-1 rounded-sm flex justify-center items-center font-bold'
@@ -146,7 +120,9 @@ const CreateMap = () => {
               <div className='create-map-body'>
                 <div className='create-map-form'>
                   <div className='create-map-form-item'>
-                    <div className='create-map-form-item-label'>Map Name:</div>
+                    <div className='create-map-form-item-label'>
+                      Tileset Name:
+                    </div>
                     <input
                       type='text'
                       value={formdata.tag}
@@ -159,54 +135,25 @@ const CreateMap = () => {
                       }}
                     />
                   </div>
+
                   <div className='create-map-form-item'>
-                    <div className='create-map-form-item-label'>Size X:</div>
+                    <div className='create-map-form-item-label'>
+                      Tile Size (px):
+                    </div>
                     <input
                       type='number'
+                      value={formdata.tileSize}
                       className='bg-black/50 text-white/75 border border-white/25 rounded-sm p-1 m-2  px-2 py-1 rounded-sm flex flex-col justify-center items-center'
-                      value={formdata.sizeX}
                       onChange={(e) => {
                         setFormdata({
                           ...formdata,
-                          sizeX: parseInt(e.target.value),
+                          tileSize:
+                            parseInt(e.target.value) > 1
+                              ? parseInt(e.target.value)
+                              : 1,
                         });
                       }}
                     />
-                  </div>
-                  <div className='create-map-form-item'>
-                    <div className='create-map-form-item-label'>Size Y:</div>
-                    <input
-                      type='number'
-                      value={formdata.sizeY}
-                      className='bg-black/50 text-white/75 border border-white/25 rounded-sm p-1 m-2  px-2 py-1 rounded-sm flex flex-col justify-center items-center'
-                      onChange={(e) => {
-                        setFormdata({
-                          ...formdata,
-                          sizeY: parseInt(e.target.value),
-                        });
-                      }}
-                    />
-                  </div>
-                  <div className='create-map-form-item'>
-                    <div className='create-map-form-item-label'>Tileset:</div>
-                    <select
-                      value={formdata.tileset}
-                      className='bg-black/50 text-white/75 border border-white/25 rounded-sm p-1 m-2  px-2 py-1 rounded-sm flex flex-col justify-center items-center'
-                      onChange={(e) => {
-                        setFormdata({
-                          ...formdata,
-                          tileset: e.target.value,
-                        });
-                      }}
-                    >
-                      {projectState.tilesets.map((tileset, index) => {
-                        return (
-                          <option key={index} value={tileset.tag}>
-                            {tileset.tag}
-                          </option>
-                        );
-                      })}
-                    </select>
                   </div>
                 </div>
               </div>
@@ -215,7 +162,7 @@ const CreateMap = () => {
                   className='bg-black/70 text-white px-5 py-1 rounded-md hover:bg-black/80 m-2 '
                   onClick={() => {
                     if (!validateInput()) return;
-                    createMap();
+                    handleCreateTileset();
 
                     setIsOpen(false);
                     setLoading(true);
@@ -232,4 +179,4 @@ const CreateMap = () => {
   );
 };
 
-export default CreateMap;
+export default CreateTileset;

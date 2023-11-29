@@ -11,7 +11,7 @@ const AddTile = () => {
   const { state, dispatch } = useTilesetContext();
   const { state: projectState, dispatch: projectDispatch } =
     useProjectContext();
-  const [isOpen, setIsOpen] = useState(false);
+
   const handleAddTile = () => {
     projectDispatch({
       type: ADD_TILE_TO_TILESET,

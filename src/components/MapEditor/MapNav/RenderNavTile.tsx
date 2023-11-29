@@ -7,6 +7,8 @@ const RenderNavTile = (
   tileSet: Tileset,
   selectedTile: boolean
 ) => {
+  // Calculate the scaling factors for the background image
+
   return (
     <div
       key={`tile-${rowIndex}-${colIndex}`}
@@ -16,13 +18,17 @@ const RenderNavTile = (
         backgroundPosition: `-${tile.srcX * tileSet.tileWidth}px -${
           tile.srcY * tileSet.tileHeight
         }px`,
-        width: `${16}px`,
-        height: `${16}px`,
+        width: `${tileSet.tileWidth}px`,
+        height: `${tileSet.tileHeight}px`,
         backgroundRepeat: "no-repeat",
+
         cursor: "pointer",
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.border = `2px yellow solid`;
+        e.currentTarget.style.border =
+          2 / (16 / tileSet.tileHeight) > 1
+            ? `${2 / (16 / tileSet.tileHeight)}px yellow solid`
+            : "none";
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.border = `none`;
@@ -33,19 +39,20 @@ const RenderNavTile = (
         }px -${tile.srcY * tileSet.tileHeight}px`;
       }}
     >
-      <div
+      {/* <div
         className='selected-tile-circle '
         style={{
-          width: `${6}px`,
-          height: `${6}px`,
-          borderRadius: `${3}px`,
+          width: `6px`,
+          height: `6px`,
+          borderRadius: `3px`,
           border: `3px  solid`,
           position: "absolute",
+
           zIndex: 1,
           display: `${selectedTile ? "block" : "none"}`,
           mixBlendMode: "difference",
         }}
-      ></div>
+      ></div> */}
     </div>
   );
 };

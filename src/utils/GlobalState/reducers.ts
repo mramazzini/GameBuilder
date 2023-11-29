@@ -17,10 +17,11 @@ import {
   ADD_TILE_TO_TILESET,
   REMOVE_TILE_FROM_TILESET,
   SET_NEW_BASE_64_IMAGE,
+  CREATE_TILESET,
 } from "./actions";
 import { commandLineResolvers } from "../commandLineResolvers";
 import { getCurrentTime, getMapInfo } from "../helpers";
-import { ProjectState, log } from "../types";
+import { ProjectState, Tileset, log } from "../types";
 
 export const reducer = (state: ProjectState, action: any): ProjectState => {
   if (!action.type) {
@@ -439,6 +440,26 @@ export const reducer = (state: ProjectState, action: any): ProjectState => {
       return {
         ...state,
         tilesets: newTilesets,
+      };
+    }
+    case CREATE_TILESET: {
+      const tilesetTag = action.payload.tag;
+      const tileSize = action.payload.tileSize;
+
+      const newTileset: Tileset = {
+        tag: tilesetTag,
+        tileWidth: tileSize,
+        tileHeight: tileSize,
+        base64:
+          "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR42mP8/wcAAwAB/ep9lpAAAAABJRU5ErkJggg==",
+        tileCount: 1,
+        rows: 1,
+        columns: 1,
+      };
+
+      return {
+        ...state,
+        tilesets: [...state.tilesets, newTileset],
       };
     }
     default:

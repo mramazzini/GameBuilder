@@ -2,6 +2,7 @@ import React from "react";
 import { Tile, Tileset } from "../../../utils/types";
 import RenderNavTile from "./RenderNavTile";
 import { useMapContext } from "../../../utils/MapState/MapContext";
+import { SET_SELECTED_TILE } from "../../../utils/MapState/actions";
 
 const TileSelector = () => {
   const { state, dispatch } = useMapContext();
@@ -26,25 +27,19 @@ const TileSelector = () => {
             return (
               <div
                 key={index}
-                className='tile'
+                className='tile flex flex-row justify-center items-center w-full h-full'
                 style={{
-                  backgroundImage: `url(${state.selectedTileset.base64})`,
-                  backgroundPosition: `-${
-                    (index % state.selectedTileset.columns) *
-                    state.selectedTileset.tileWidth
-                  }px -${
-                    Math.floor(index / state.selectedTileset.columns) *
-                    state.selectedTileset.tileHeight
-                  }px`,
                   width: `${16}px`,
                   height: `${16}px`,
                 }}
               >
                 <div
                   className='tile-reader'
-                  style={{ width: "16px", height: "16px" }}
+                  style={{
+                    transform: `scale(${16 / state.selectedTileset.tileWidth})`,
+                  }}
                   onClick={() =>
-                    dispatch({ type: "SET_SELECTED_TILE", payload: index })
+                    dispatch({ type: SET_SELECTED_TILE, payload: index })
                   }
                 >
                   {RenderNavTile(

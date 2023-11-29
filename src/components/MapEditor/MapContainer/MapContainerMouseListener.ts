@@ -28,17 +28,16 @@ class MapContainerMouseListener {
     this.setZoomLevel = setZoomLevel;
   }
 
-  handleZoomIn = (zoomLevel: number) => {
-    const maxZoom = 5;
+  handleZoomIn = (state: MapState, zoomLevel: number) => {
+    const maxZoom = 128 / state.selectedTileset.tileWidth;
     if (zoomLevel >= maxZoom) return;
-    this.setZoomLevel((prevZoom: any) => prevZoom + 0.1);
+    this.setZoomLevel((prevZoom: any) => (prevZoom *= 1.1));
   };
   handleZoomOut = (state: MapState, zoomLevel: number) => {
-    const minZoom =
-      state.selectedMap.sizeX / state.selectedTileset.tileWidth / 3;
+    const minZoom = 8 / state.selectedTileset.tileWidth;
     if (zoomLevel <= minZoom) return;
 
-    this.setZoomLevel((prevZoom: any) => Math.max(0.1, prevZoom - 0.1));
+    this.setZoomLevel((prevZoom: any) => Math.max(0.01, (prevZoom *= 0.9)));
   };
   handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     this.setIsDragging({ dragging: true, mouseEvent: e.button });
@@ -130,7 +129,7 @@ class MapContainerMouseListener {
     if (e.deltaY > 0) {
       this.handleZoomOut(state, zoomLevel);
     } else {
-      this.handleZoomIn(zoomLevel);
+      this.handleZoomIn(state, zoomLevel);
     }
   };
 }
