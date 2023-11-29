@@ -17,31 +17,17 @@ const RenderPixel = ({ pixel, row, col }: RenderTileProps) => {
     if (pixel[3] !== 0) {
       return `rgba(${pixel[0]}, ${pixel[1]}, ${pixel[2]}, ${pixel[3]})`;
     }
-    //return grey or white depending on row and col
-    if (row % 2 === 0 && col % 2 === 0) {
-      return `rgba(${100}, ${100}, ${100}, ${255})`;
-    }
-    if (row % 2 === 0 && col % 2 !== 0) {
-      return `rgba(${255}, ${255}, ${255}, ${255})`;
-    }
-    if (row % 2 !== 0 && col % 2 === 0) {
-      return `rgba(${255}, ${255}, ${255}, ${255})`;
-    }
-    if (row % 2 !== 0 && col % 2 !== 0) {
-      return `rgba(${100}, ${100}, ${100}, ${255})`;
-    }
-
-    return `rgba(${0}, ${0}, ${0}, ${255})`;
+    return `rgba(${0}, ${0}, ${0}, ${0})`;
   };
 
-  return (
+  return pixel[3] !== 0 ? (
     <div
       key={`tile-${row}-${col}`}
       className='tile'
       style={{
         backgroundColor: calculateColor(),
-        width: `1px`,
-        height: `1px`,
+        width: `2px`,
+        height: `2px`,
       }}
       onMouseEnter={() => {
         isHovered.current = true;
@@ -50,6 +36,51 @@ const RenderPixel = ({ pixel, row, col }: RenderTileProps) => {
         isHovered.current = false;
       }}
     />
+  ) : (
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: `repeat(2, 1fr)`,
+        gridTemplateRows: `repeat(2, 1fr)`,
+        gap: "0px",
+        width: "2px",
+        height: "2px",
+        backgroundColor: "rgba(255, 255, 255, 1)",
+      }}
+    >
+      <div
+        className='tile-reader'
+        style={{
+          width: "1px",
+          height: "1px",
+          backgroundColor: "rgba(0,0, 0, 0.2)",
+        }}
+      />
+      <div
+        className='tile-reader'
+        style={{
+          width: "1px",
+          height: "1px",
+          backgroundColor: "rgba(0,0, 0, 0.1)",
+        }}
+      />
+      <div
+        className='tile-reader'
+        style={{
+          width: "1px",
+          height: "1px",
+          backgroundColor: "rgba(0,0, 0, 0.1)",
+        }}
+      />
+      <div
+        className='tile-reader'
+        style={{
+          width: "1px",
+          height: "1px",
+          backgroundColor: "rgba(0,0, 0, 0.2)",
+        }}
+      />
+    </div>
   );
 };
 

@@ -1,4 +1,5 @@
 import SideNav from "../../SideNav";
+import AddTile from "./AddTile";
 import { SET_SELECTED_TILESET } from "../../../utils/TilesetState/actions";
 import ColorWheelContainer from "./ColorWheel/ColorWheelContainer";
 import { useTilesetContext } from "../../../utils/TilesetState/TilesetContext";
@@ -45,6 +46,7 @@ const TilesetNav = () => {
         </div>
         <ColorWheelContainer />
         <ColorSelector />
+        <AddTile />
         <button
           onClick={() => setSavingTile(true)}
           className='hover:bg-black/70 hover:text-white/80 px-5 py-1 rounded-sm flex justify-center
@@ -53,6 +55,7 @@ const TilesetNav = () => {
         >
           Save Tileset to Project
         </button>
+
         {savingTile && <SaveTile setSavingTile={setSavingTile} />}
       </div>
     </SideNav>

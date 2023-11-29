@@ -5,7 +5,7 @@ import {
   SET_SELECTED_MAP,
   SET_SELECTED_TILESET,
 } from "../../../utils/MapState/actions";
-import { REFRESH_PROJECT } from "../../../utils/GlobalState/actions";
+
 import { useState, useEffect } from "react";
 const ipcRenderer = window.ipcRenderer;
 

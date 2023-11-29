@@ -97,6 +97,17 @@ const TileEditor = ({ tileNum }: { tileNum: number }) => {
     });
   };
 
+  const removePixel = (i: number, j: number) => {
+    if (!isDragging.dragging || isDragging.mouseEvent != 2) return;
+
+    setPixelData((prevPixelData) => {
+      const newPixelData = [...prevPixelData];
+      newPixelData[i][j] = [0, 0, 0, 0];
+
+      return newPixelData;
+    });
+  };
+
   const handleMouseScroll = (e: React.WheelEvent<HTMLDivElement>) => {
     setZoom((prevZoom) => {
       const scrollSpeed = 2;
@@ -109,6 +120,7 @@ const TileEditor = ({ tileNum }: { tileNum: number }) => {
   };
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     setIsDragging({ dragging: true, mouseEvent: e.button });
+    handleMouseMove(e);
     console.log(e);
   };
   const handleMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -125,6 +137,9 @@ const TileEditor = ({ tileNum }: { tileNum: number }) => {
           x: prevPosition.x + e.movementX,
           y: prevPosition.y + e.movementY,
         }));
+      } else if (isDragging.mouseEvent === 2) {
+        // place pixel based on currentPixelHover
+        removePixel(currentPixelHover.x, currentPixelHover.y);
       }
     }
   };

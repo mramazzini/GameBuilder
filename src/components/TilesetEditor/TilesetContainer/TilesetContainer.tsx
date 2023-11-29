@@ -35,7 +35,7 @@ const TilesetContainer = () => {
         payload: projectState.tilesets[0],
       });
     }
-  }, [projectState.tilesets, state.selectedTile]);
+  }, [projectState.tilesets, state.selectedTile, state.selectedTileset]);
 
   return (
     <div className='tileset-container w-full'>

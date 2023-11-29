@@ -14,6 +14,8 @@ import {
   RUN_COMMAND,
   ADD_COLOR,
   REMOVE_COLOR,
+  ADD_TILE_TO_TILESET,
+  REMOVE_TILE_FROM_TILESET,
   SET_NEW_BASE_64_IMAGE,
 } from "./actions";
 import { commandLineResolvers } from "../commandLineResolvers";
@@ -402,6 +404,42 @@ export const reducer = (state: ProjectState, action: any): ProjectState => {
         };
       };
       return state;
+    }
+    case ADD_TILE_TO_TILESET: {
+      const tilesetTag = action.payload.tileset;
+
+      const tilesetIndex = state.tilesets.findIndex(
+        (tilesetObject) => tilesetObject.tag === tilesetTag
+      );
+      if (tilesetIndex === -1) {
+        return state;
+      }
+      const tileset = state.tilesets[tilesetIndex];
+      let rows = tileset.rows;
+      let columns = tileset.columns;
+      if (tileset.tileCount + 1 >= 10) {
+        rows = Math.ceil(tileset.tileCount / 10);
+        columns = 10;
+      } else {
+        columns = tileset.tileCount;
+        rows = 1;
+      }
+
+      //calculate base64 image
+
+      const newTileset = {
+        ...state.tilesets[tilesetIndex],
+        tileCount: state.tilesets[tilesetIndex].tileCount + 1,
+        rows,
+        columns,
+      };
+      const newTilesets = state.tilesets;
+      newTilesets[tilesetIndex] = newTileset;
+
+      return {
+        ...state,
+        tilesets: newTilesets,
+      };
     }
     default:
       return state;
