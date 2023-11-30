@@ -7,7 +7,7 @@ import { MapState } from "../../../utils/types";
 class MapContainerMouseListener {
   dispatch: any;
   projectDispatch: any;
-  setBeenPlaced: Function;
+
   setPosition: Function;
   setIsDragging: Function;
   setZoomLevel: Function;
@@ -15,14 +15,14 @@ class MapContainerMouseListener {
   constructor(
     dispatch: any,
     projectDispatch: any,
-    setBeenPlaced: Function,
+
     setPosition: Function,
     setIsDragging: Function,
     setZoomLevel: Function
   ) {
     this.dispatch = dispatch;
     this.projectDispatch = projectDispatch;
-    this.setBeenPlaced = setBeenPlaced;
+
     this.setPosition = setPosition;
     this.setIsDragging = setIsDragging;
     this.setZoomLevel = setZoomLevel;
@@ -61,16 +61,20 @@ class MapContainerMouseListener {
     if (isDragging.dragging) {
       //left click
       if (isDragging.mouseEvent === 0) {
+        if (state.selectedLayer == -1) return;
         //check if tile attempting to be placed is the same as the one already there
         if (
-          state.selectedMap.tiles[currentTileHover[0]][currentTileHover[1]]
-            .srcX ===
+          state.selectedMap.layers[state.selectedLayer].tiles[
+            currentTileHover[0]
+          ][currentTileHover[1]].srcX ===
             state.selectedTile % state.selectedTileset.columns &&
-          state.selectedMap.tiles[currentTileHover[0]][currentTileHover[1]]
-            .srcY ===
+          state.selectedMap.layers[state.selectedLayer].tiles[
+            currentTileHover[0]
+          ][currentTileHover[1]].srcY ===
             Math.floor(state.selectedTile / state.selectedTileset.columns) &&
-          state.selectedMap.tiles[currentTileHover[0]][currentTileHover[1]]
-            .collider === state.addingCollider
+          state.selectedMap.layers[state.selectedLayer].tiles[
+            currentTileHover[0]
+          ][currentTileHover[1]].collider === state.addingCollider
         ) {
           return;
         }
@@ -88,7 +92,10 @@ class MapContainerMouseListener {
           srcX: state.selectedTile % state.selectedTileset.columns,
           srcY: Math.floor(state.selectedTile / state.selectedTileset.columns),
         };
-        const oldTile = newMap.tiles[currentTileHover[0]][currentTileHover[1]];
+        const oldTile =
+          newMap.layers[state.selectedLayer].tiles[currentTileHover[0]][
+            currentTileHover[1]
+          ];
         const payload = {
           mapTag: state.selectedMap.tag,
           tile: oldTile,
@@ -100,14 +107,15 @@ class MapContainerMouseListener {
           payload: payload,
         });
 
-        newMap.tiles[currentTileHover[0]][currentTileHover[1]] = newTile;
+        newMap.layers[state.selectedLayer].tiles[currentTileHover[0]][
+          currentTileHover[1]
+        ] = newTile;
         this.projectDispatch({
           type: CLEAR_REMOVED_MAP_HISTORY,
           payload: state.selectedMap.tag,
         });
         //add to history (for undo/redo)
 
-        this.setBeenPlaced(true);
         //middle mouse button click
       } else if (isDragging.mouseEvent === 1) {
         this.setPosition((prevPosition: any) => ({
@@ -123,9 +131,6 @@ class MapContainerMouseListener {
     state: MapState,
     zoomLevel: number
   ) => {
-    // You can customize the sensitivity of zooming by adjusting the multiplier
-    const zoomMultiplier = 0.001;
-
     if (e.deltaY > 0) {
       this.handleZoomOut(state, zoomLevel);
     } else {

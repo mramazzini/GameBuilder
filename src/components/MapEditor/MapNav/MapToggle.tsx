@@ -1,5 +1,10 @@
 import { useProjectContext } from "../../../utils/GlobalState/GlobalState";
 import { useMapContext } from "../../../utils/MapState/MapContext";
+import {
+  SET_SELECTED_LAYER,
+  SET_SELECTED_MAP,
+  SET_SELECTED_TILESET,
+} from "../../../utils/MapState/actions";
 
 const MapToggle = () => {
   const { state } = useProjectContext();
@@ -17,7 +22,7 @@ const MapToggle = () => {
               return tileset.tag === e.target.value;
             });
             dispatch({
-              type: "SET_SELECTED_TILESET",
+              type: SET_SELECTED_TILESET,
               payload: tileset ? tileset : mapState.selectedTileset,
             });
           }}
@@ -40,15 +45,19 @@ const MapToggle = () => {
           onChange={(e) => {
             const map = state.maps.find((map) => map.tag === e.target.value);
             dispatch({
-              type: "SET_SELECTED_MAP",
+              type: SET_SELECTED_MAP,
               payload: map ? map : mapState.selectedMap,
             });
             const tileset = state.tilesets.find(
               (tileset) => tileset.tag === map?.tileset
             );
             dispatch({
-              type: "SET_SELECTED_TILESET",
+              type: SET_SELECTED_TILESET,
               payload: tileset ? tileset : mapState.selectedTileset,
+            });
+            dispatch({
+              type: SET_SELECTED_LAYER,
+              payload: -1,
             });
           }}
         >

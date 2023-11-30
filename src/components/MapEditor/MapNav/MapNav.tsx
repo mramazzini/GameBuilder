@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import SideNav from "../../SideNav";
 import TileSelector from "./TileSelector";
 import MapToggle from "./MapToggle";

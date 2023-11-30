@@ -42,24 +42,38 @@ const RenderTile = ({
     <div
       key={`tile-${rowIndex}-${colIndex}`}
       className='tile'
-      style={{
-        backgroundImage: `url("data:image/png;base64,${tileSet.base64}")`,
-        backgroundPosition: `-${
-          (isHovered.current ? selectedTile % tileSet.columns : tile.srcX) *
-          tileSet.tileWidth
-        }px -${
-          (isHovered.current
-            ? Math.floor(selectedTile / tileSet.columns)
-            : tile.srcY) * tileSet.tileHeight
-        }px`,
-        width: `${tileSet.tileWidth}px`,
-        height: `${tileSet.tileHeight}px`,
-        backgroundRepeat: "no-repeat",
-        transform: `scale(${width / tileSet.tileWidth}, ${
-          height / tileSet.tileHeight
-        })`,
-        border: calculateBorder(),
-      }}
+      style={
+        tile.srcX === -1
+          ? {
+              width: `${tileSet.tileWidth}px`,
+              height: `${tileSet.tileHeight}px`,
+
+              transform: `scale(${width / tileSet.tileWidth}, ${
+                height / tileSet.tileHeight
+              })`,
+              border: calculateBorder(),
+            }
+          : {
+              backgroundImage: `url("data:image/png;base64,${tileSet.base64}")`,
+              backgroundPosition: `-${
+                (isHovered.current
+                  ? selectedTile % tileSet.columns
+                  : tile.srcX) * tileSet.tileWidth
+              }px -${
+                (isHovered.current
+                  ? Math.floor(selectedTile / tileSet.columns)
+                  : tile.srcY) * tileSet.tileHeight
+              }px`,
+              width: `${tileSet.tileWidth}px`,
+              height: `${tileSet.tileHeight}px`,
+
+              backgroundRepeat: "no-repeat",
+              transform: `scale(${width / tileSet.tileWidth}, ${
+                height / tileSet.tileHeight
+              })`,
+              border: calculateBorder(),
+            }
+      }
       onMouseEnter={() => {
         isHovered.current = true;
       }}

@@ -10,6 +10,7 @@ import {
   MOVE_TILE_COLUMN_RIGHT,
   MOVE_TILE_ROW_UP,
   MOVE_TILE_ROW_DOWN,
+  SET_SELECTED_LAYER,
 } from "./actions";
 
 export const reducer = (state: any, action: any) => {
@@ -18,6 +19,11 @@ export const reducer = (state: any, action: any) => {
       return {
         ...state,
         selectedMap: action.payload,
+      };
+    case SET_SELECTED_LAYER:
+      return {
+        ...state,
+        selectedLayer: action.payload,
       };
     case SET_COLLIDER_VISION:
       return {

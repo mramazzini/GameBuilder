@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import MapContainerMouseListener from "./MapContainerMouseListener";
 import { useProjectContext } from "../../../utils/GlobalState/GlobalState";
 import MapContainerKeyListener from "./MapContainerKeyListener";
-import RenderTile from "./RenderTile";
+import MapLayer from "./MapLayer";
 import {
   SET_SELECTED_MAP,
   SET_SELECTED_TILESET,
@@ -15,7 +15,7 @@ const MapContainer = () => {
   const { state, dispatch } = useMapContext();
   const { state: projectState, dispatch: projectDispatch } =
     useProjectContext();
-  const [beenPlaced, setBeenPlaced] = useState<boolean>(false);
+
   const [zoomLevel, setZoomLevel] = useState<number>();
   const [position, setPosition] = useState<{ x: number; y: number }>();
   const [isDragging, setIsDragging] = useState<{
@@ -28,6 +28,7 @@ const MapContainer = () => {
   useEffect(() => {
     console.log("adding keydown listener");
     document.addEventListener("keydown", keydownListener);
+
     return () => {
       document.removeEventListener("keydown", keydownListener);
       console.log("removed keydown listener");
@@ -50,13 +51,12 @@ const MapContainer = () => {
           (state.selectedMap.sizeY * state.selectedTileset.tileHeight) / 2,
       });
     }
-  }, [state.selectedMap, state.selectedTileset]);
+  }, [state.selectedMap, state.selectedTileset, state.selectedLayer]);
 
   useEffect(() => {
     mouseListener = new MapContainerMouseListener(
       dispatch,
       projectDispatch,
-      setBeenPlaced,
       setPosition,
       setIsDragging,
       setZoomLevel
@@ -65,7 +65,7 @@ const MapContainer = () => {
 
   useEffect(() => {
     //set default map and tileset
-    console.log(projectState.maps);
+
     if (projectState.maps.length > 0) {
       dispatch({
         type: SET_SELECTED_MAP,
@@ -96,54 +96,28 @@ const MapContainer = () => {
         <h1 className=' text-white font-bold text-center md:text-3xl lg:text-4xl sm:text-2xl m-5'>
           Select A Map to get started
         </h1>
+      ) : state.selectedLayer !== -1 ? (
+        <div style={{ position: "relative" }}>
+          <MapLayer
+            layer={state.selectedMap.layers[state.selectedLayer]}
+            zoomLevel={zoomLevel || 1}
+            position={position || { x: 0, y: 0 }}
+            setCurrentTileHover={setCurrentTileHover}
+          />
+        </div>
       ) : (
-        <div
-          className='grid-container '
-          style={{
-            display: "grid",
-            gridTemplateColumns: `repeat(${
-              state.selectedMap?.tiles[0]?.length || 0
-            }, 1fr)`,
-            gridTemplateRows: `repeat(${
-              state.selectedMap?.tiles?.length || 0
-            }, 1fr)`,
-
-            transform: `scale(${zoomLevel})`,
-            width: `${
-              state.selectedMap.sizeX * state.selectedTileset.tileWidth
-            }px`,
-            height: `${
-              state.selectedMap.sizeY * state.selectedTileset.tileHeight
-            }px`,
-            gap: "0px",
-            position: "relative",
-
-            left: `${position ? position.x : 0}px`,
-            top: `${position ? position.y : 0}px`,
-          }}
-        >
-          {state.selectedMap.tiles.map((row, rowIndex) =>
-            row.map((col, colIndex) => {
-              return (
-                <div
-                  key={`${rowIndex}-${colIndex}`}
-                  onMouseEnter={() => setCurrentTileHover([rowIndex, colIndex])}
-                >
-                  <RenderTile
-                    tile={col}
-                    tileSet={state.selectedTileset}
-                    rowIndex={rowIndex}
-                    colIndex={colIndex}
-                    width={state.selectedTileset.tileWidth}
-                    height={state.selectedTileset.tileHeight}
-                    addingCollider={state.addingCollider}
-                    colliderVision={state.colliderVision}
-                    selectedTile={state.selectedTile}
-                  />
-                </div>
-              );
-            })
-          )}
+        <div style={{ position: "relative" }}>
+          {state.selectedMap.layers.map((layer, i) => {
+            return (
+              <MapLayer
+                layer={layer}
+                key={i}
+                zoomLevel={zoomLevel || 1}
+                position={position || { x: 0, y: 0 }}
+                setCurrentTileHover={setCurrentTileHover}
+              />
+            );
+          })}
         </div>
       )}
     </div>

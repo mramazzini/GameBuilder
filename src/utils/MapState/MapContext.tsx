@@ -7,7 +7,7 @@ const initialState = {
     sizeX: 0,
     sizeY: 0,
     tileset: "",
-    tiles: [],
+    layers: [{ tag: "", tiles: [] }],
   },
   selectedTileset: {
     tag: "",
@@ -18,6 +18,7 @@ const initialState = {
     base64: "",
     tileCount: 0,
   },
+  selectedLayer: -1,
   undoStack: [],
   selectedTile: -1,
   colliderVision: false,

@@ -1,9 +1,13 @@
 export interface Map {
   sizeX: number;
   sizeY: number;
-  tiles: Tile[][];
+  layers: MapLayer[];
   tag: string;
   tileset: string;
+}
+export interface MapLayer {
+  tiles: Tile[][];
+  tag: string;
 }
 
 export interface Tile {
@@ -40,6 +44,7 @@ export interface MapState {
   selectedMap: Map;
   selectedTileset: Tileset;
   selectedTile: number;
+  selectedLayer: number;
   colliderVision: boolean;
   addingCollider: boolean;
 }

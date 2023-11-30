@@ -1,5 +1,3 @@
-import React from "react";
-import { Tile, Tileset } from "../../../utils/types";
 import RenderNavTile from "./RenderNavTile";
 import { useMapContext } from "../../../utils/MapState/MapContext";
 import { SET_SELECTED_TILE } from "../../../utils/MapState/actions";
@@ -32,28 +30,21 @@ const TileSelector = () => {
                   width: `${16}px`,
                   height: `${16}px`,
                 }}
+                onClick={() =>
+                  dispatch({ type: SET_SELECTED_TILE, payload: index })
+                }
               >
-                <div
-                  className='tile-reader'
-                  style={{
-                    transform: `scale(${16 / state.selectedTileset.tileWidth})`,
-                  }}
-                  onClick={() =>
-                    dispatch({ type: SET_SELECTED_TILE, payload: index })
-                  }
-                >
-                  {RenderNavTile(
-                    {
-                      collider: false,
-                      srcX: index % state.selectedTileset.columns,
-                      srcY: Math.floor(index / state.selectedTileset.columns),
-                    },
-                    index % state.selectedTileset.columns,
-                    Math.floor(index / state.selectedTileset.columns),
-                    state.selectedTileset,
-                    state.selectedTile === index ? true : false
-                  )}
-                </div>
+                {RenderNavTile(
+                  {
+                    collider: false,
+                    srcX: index % state.selectedTileset.columns,
+                    srcY: Math.floor(index / state.selectedTileset.columns),
+                  },
+                  index % state.selectedTileset.columns,
+                  Math.floor(index / state.selectedTileset.columns),
+                  state.selectedTileset,
+                  state.selectedTile === index ? true : false
+                )}
               </div>
             );
           })}

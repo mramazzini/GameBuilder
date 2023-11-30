@@ -10,8 +10,8 @@ import { useState, useEffect } from "react";
 const ipcRenderer = window.ipcRenderer;
 
 const CreateMap = () => {
-  const { state, dispatch } = useMapContext();
-  const { state: projectState, dispatch: projectDispatch } =
+  const { dispatch } = useMapContext();
+  const { state: projectState } =
     useProjectContext();
   const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState({ hasError: false, message: "" });
