@@ -44,6 +44,38 @@ const MapInfo = () => {
           <div className='text-white text-sm'>Tile height (px): </div>
           <div>{state.selectedTileset.tileHeight}</div>
         </div>
+
+        {/*Inform user of layer rendering order*/}
+        <div className='flex flex-row  w-60 justify-between items-start'>
+          <div className='text-white text-sm'>Render Order: </div>
+          <div className='flex flex-col justify-end items-end '>
+            {state.selectedMap.layers.map((layer, i) => {
+              return (
+                <div
+                  key={i}
+                  className='flex flex-row justify-center items-center'
+                >
+                  <span className='text-white text-sm px-1'>{i + 1}. </span>
+                  <span className='text-white text-sm'>{layer.tag}</span>
+                  <div
+                    className='layer-selector-dot'
+                    style={{
+                      backgroundColor: `${
+                        i === state.selectedLayer ? "white" : "transparent"
+                      }`,
+                      border: `${
+                        i === state.selectedLayer
+                          ? "1px solid white"
+                          : "1px solid transparent"
+                      }`,
+                      borderRadius: "50%",
+                    }}
+                  ></div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );

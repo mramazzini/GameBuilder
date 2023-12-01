@@ -18,13 +18,13 @@ const decode = (data: any) => {
 
 const IpcListener = () => {
   const { state, dispatch } = useProjectContext();
-  const handleEngineStdout = (event: any, data: any) => {
+  const handleEngineStdout = async (event: any, data: any) => {
     const decodedData = decode(data);
     // Update state asynchronously without triggering immediate rerender
-    dispatch({ type: ADD_STD_TO_LOG, payload: decodedData });
+    await dispatch({ type: ADD_STD_TO_LOG, payload: decodedData });
   };
 
-  const handleEngineStderr = (event: any, data: any) => {
+  const handleEngineStderr = async (event: any, data: any) => {
     const decodedData = decode(data);
     // Update state asynchronously without triggering immediate rerender
     dispatch({ type: ADD_STD_TO_LOG, payload: decodedData });
@@ -37,83 +37,83 @@ const IpcListener = () => {
   const handleEngineInitialized = (event: any, data: any) => {
     // Handle engine initialization if needed
   };
-  const selectedProject = (
+  const selectedProject = async (
     event: any,
     {
       selectedFolderPath,
       filesAndFolders,
     }: { selectedFolderPath: string; filesAndFolders: any }
   ) => {
-    dispatch({
+    await dispatch({
       type: SET_PROJECT_DIRECTORY,
       payload: selectedFolderPath,
     });
 
-    dispatch({
+    await dispatch({
       type: SET_FILES_AND_FOLDERS,
       payload: filesAndFolders,
     });
   };
 
-  const createFolders = (
+  const createFolders = async (
     event: any,
     {
       selectedFolderPath,
       filesAndFolders,
     }: { selectedFolderPath: string; filesAndFolders: any }
   ) => {
-    dispatch({
+    await dispatch({
       type: SET_PROJECT_DIRECTORY,
       payload: selectedFolderPath,
     });
 
-    dispatch({
+    await dispatch({
       type: SET_FILES_AND_FOLDERS,
       payload: filesAndFolders,
     });
   };
 
-  const handleError = (event: any, err: any) => {
+  const handleError = async (event: any, err: any) => {
     //Error handling
 
-    dispatch({
+    await dispatch({
       type: SET_ERROR,
       payload: err,
     });
   };
-  const requestMapInfo = (event: any, mapInfo: any) => {
-    dispatch({
+  const requestMapInfo = async (event: any, mapInfo: any) => {
+    await dispatch({
       type: SET_MAP_INFO,
       payload: mapInfo,
     });
   };
 
-  const requestTileSetInfo = (event: any, tileSetInfo: any) => {
-    dispatch({
+  const requestTileSetInfo = async (event: any, tileSetInfo: any) => {
+    await dispatch({
       type: SET_TILESET_INFO,
       payload: tileSetInfo,
     });
   };
-  const createMap = (event: any, args: any) => {
+  const createMap = async (event: any, args: any) => {
     if (args.success) {
-      dispatch({
+      await dispatch({
         type: SET_MAP_INFO,
         payload: args.mapInfo,
       });
     }
   };
-  const refreshProject = (event: any, args: any) => {
+  const refreshProject = async (event: any, args: any) => {
     console.log("refreshing project");
 
-    dispatch({
+    await dispatch({
       type: SET_FILES_AND_FOLDERS,
       payload: args.filesAndFolders,
     });
-    dispatch({
+    await dispatch({
       type: SET_MAP_INFO,
       payload: args.mapInfo,
     });
-    dispatch({
+    await dispatch({
       type: SET_TILESET_INFO,
       payload: args.tilesetInfo,
     });

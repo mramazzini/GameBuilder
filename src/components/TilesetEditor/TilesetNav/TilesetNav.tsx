@@ -20,10 +20,10 @@ const TilesetNav = () => {
           <select
             value={state.selectedTileset.tag}
             className='bg-black/50 text-white/75 border border-white/25 rounded-sm p-1'
-            onChange={(e) => {
+            onChange={async (e) => {
               console.log(state);
               if (e.target.value !== "NONE") {
-                dispatch({
+                await dispatch({
                   type: SET_SELECTED_TILESET,
                   //find the tileset in the project state that matches the value of the select
                   payload: projectState.tilesets.find(

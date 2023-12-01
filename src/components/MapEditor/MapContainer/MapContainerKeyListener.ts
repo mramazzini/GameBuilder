@@ -13,61 +13,61 @@ import {
 
 import { MapState } from "../../../utils/types";
 
-const MapContainerKeyListener = (
+const MapContainerKeyListener = async (
   e: KeyboardEvent,
   dispatch: any,
   state: MapState,
   projectDispatch: any
 ) => {
   if (e.key === "Shift") {
-    dispatch({
+    await dispatch({
       type: TOGGLE_COLLIDER_VISION,
       payload: !state.colliderVision,
     });
     return;
   }
   if (e.key === "z") {
-    projectDispatch({
+    await projectDispatch({
       type: POP_FROM_MAP_HISTORY,
       payload: state.selectedMap.tag,
     });
     return;
   }
   if (e.key === "y") {
-    projectDispatch({
+    await projectDispatch({
       type: POP_FROM_MAP_UNDO_HISTORY,
       payload: state.selectedMap.tag,
     });
     return;
   }
   if (e.key === "Control") {
-    dispatch({
+    await dispatch({
       type: TOGGLE_ADDING_COLLIDER,
       payload: !state.addingCollider,
     });
     return;
   }
   if (e.key === "w") {
-    dispatch({
+    await dispatch({
       type: MOVE_TILE_ROW_UP,
     });
     return;
   }
   if (e.key === "s") {
-    dispatch({
+    await dispatch({
       type: MOVE_TILE_ROW_DOWN,
     });
     return;
   }
   if (e.key === "a") {
     console.log("a");
-    dispatch({
+    await dispatch({
       type: MOVE_TILE_COLUMN_LEFT,
     });
     return;
   }
   if (e.key === "d") {
-    dispatch({
+    await dispatch({
       type: MOVE_TILE_COLUMN_RIGHT,
     });
     return;

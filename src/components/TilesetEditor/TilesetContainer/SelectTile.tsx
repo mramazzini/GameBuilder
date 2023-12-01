@@ -24,10 +24,10 @@ const SelectTile = () => {
     };
   }, []);
 
-  const handleSelectTile = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleSelectTile = async (e: React.MouseEvent<HTMLDivElement>) => {
     const tile = e.currentTarget.dataset.tile;
     if (tile) {
-      dispatch({ type: SET_SELECTED_TILE, payload: parseInt(tile) });
+      await dispatch({ type: SET_SELECTED_TILE, payload: parseInt(tile) });
     }
   };
 

@@ -1,13 +1,11 @@
-import React, { useEffect } from "react";
-import { Tileset } from "../../../utils/types";
 import { useMapContext } from "../../../utils/MapState/MapContext";
 
 const TilePreview = () => {
   const { state } = useMapContext();
   // Displays an image preview of the selected tile
 
-  const scaleFactor = 128 / state.selectedTileset.tileWidth;
-  return (
+  const scaleFactor = 128 / (state.selectedTileset?.tileWidth || 128);
+  return state.selectedTileset ? (
     <div
       className='flex flex-col justify-center items-center h-full border-4 border-black m-4 '
       style={{
@@ -32,6 +30,8 @@ const TilePreview = () => {
         }}
       />
     </div>
+  ) : (
+    ""
   );
 };
 

@@ -18,8 +18,6 @@ import {
   REMOVE_TILE_FROM_TILESET,
   SET_NEW_BASE_64_IMAGE,
   CREATE_TILESET,
-  ADD_MAP_LAYER,
-  REMOVE_MAP_LAYER,
 } from "./actions";
 import { commandLineResolvers } from "../commandLineResolvers";
 import { getCurrentTime, getMapInfo } from "../helpers";
@@ -464,53 +462,7 @@ export const reducer = (state: ProjectState, action: any): ProjectState => {
         tilesets: [...state.tilesets, newTileset],
       };
     }
-    case ADD_MAP_LAYER: {
-      logReducers ?? console.log("reducer: ADD_MAP_LAYER");
 
-      const mapTag = action.payload;
-
-      const mapIndex = state.maps.findIndex((map) => map.tag === mapTag);
-
-      if (mapIndex === -1) {
-        return state;
-      }
-      const tiles: Tile[][] = [];
-
-      for (let i = 0; i < state.maps[mapIndex].sizeX; i++) {
-        const row: Tile[] = [];
-        for (let j = 0; j < state.maps[mapIndex].sizeY; j++) {
-          row.push({
-            collider: false,
-            srcX: -1,
-            srcY: -1,
-          });
-        }
-        tiles.push(row);
-      }
-
-      //find how many untitled layers there are
-      const untitledLayers = state.maps[mapIndex].layers.filter(
-        (layer) => layer.tag.split("-")[0] === "untitled"
-      );
-
-      const newLayer = {
-        tag: "untitled-" + untitledLayers.length,
-        tiles: tiles,
-      };
-
-      const newMap = {
-        ...state.maps[mapIndex],
-        layers: [...state.maps[mapIndex].layers, newLayer],
-      };
-
-      const newMaps = state.maps;
-      newMaps[mapIndex] = newMap;
-
-      return {
-        ...state,
-        maps: newMaps,
-      };
-    }
     default:
       return state;
   }

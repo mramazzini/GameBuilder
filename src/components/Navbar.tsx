@@ -26,7 +26,7 @@ const Navbar = (props: { setCurrentPage: Function; currentPage: string }) => {
       {/* hide the navbar button*/}
       <button
         className='btn btn-outline-light font-bold font-mono  text-white text-lg px-2 py-1 m-1 hover:bg-slate-400 rounded-md'
-        onClick={() => dispatch({ type: TOGGLE_FILE_EXPLORER })}
+        onClick={async () => await dispatch({ type: TOGGLE_FILE_EXPLORER })}
       >
         {state.fileExplorerOpened ? "Hide" : "Show Explorer"}
       </button>

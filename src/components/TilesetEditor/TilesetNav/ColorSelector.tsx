@@ -55,8 +55,8 @@ const ColorSelector = () => {
                         : "transparent"
                     }`,
                   }}
-                  onClick={() =>
-                    dispatch({
+                  onClick={async () =>
+                    await dispatch({
                       type: "SET_SELECTED_COLOR",
                       payload: index,
                     })

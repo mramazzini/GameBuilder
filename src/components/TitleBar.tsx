@@ -39,9 +39,9 @@ const TitleBar = () => {
 
   //Run Project
 
-  const runProjectGame = () => {
+  const runProjectGame = async () => {
     if (state.projectDirectory === "") {
-      dispatch({
+      await dispatch({
         type: SET_ERROR,
         payload: "Please create or load a project first",
       });

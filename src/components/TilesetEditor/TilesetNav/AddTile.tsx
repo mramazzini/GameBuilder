@@ -12,20 +12,20 @@ const AddTile = () => {
   const { state: projectState, dispatch: projectDispatch } =
     useProjectContext();
 
-  const handleAddTile = () => {
-    projectDispatch({
+  const handleAddTile = async () => {
+    await projectDispatch({
       type: ADD_TILE_TO_TILESET,
       payload: {
         tileset: state.selectedTileset.tag,
       },
     });
-    dispatch({
+    await dispatch({
       type: SET_SELECTED_TILESET,
       payload: projectState.tilesets.find(
         (tileset) => tileset.tag === state.selectedTileset.tag
       ),
     });
-    dispatch({
+    await dispatch({
       type: SET_SELECTED_TILE,
       payload: -1,
     });

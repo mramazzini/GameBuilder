@@ -4,7 +4,7 @@ import {
   SET_SELECTED_TILE,
 } from "../../../utils/TilesetState/actions";
 
-const TilesetContainerKeyListener = (
+const TilesetContainerKeyListener = async (
   e: KeyboardEvent,
   dispatch: any,
   state: TilesetState,
@@ -12,35 +12,35 @@ const TilesetContainerKeyListener = (
   projectDispatch: any
 ) => {
   if (e.key === "Escape") {
-    dispatch({
+    await dispatch({
       type: SET_SELECTED_TILE,
       payload: -1,
     });
   }
   if (e.key === "w") {
     if (state.selectedColor < 10) return;
-    dispatch({
+    await dispatch({
       type: SET_SELECTED_COLOR,
       payload: state.selectedColor - 10,
     });
   }
   if (e.key === "a") {
     if (state.selectedColor === 0) return;
-    dispatch({
+    await dispatch({
       type: SET_SELECTED_COLOR,
       payload: state.selectedColor - 1,
     });
   }
   if (e.key === "s") {
     if (state.selectedColor > projectState.colors.length - 11) return;
-    dispatch({
+    await dispatch({
       type: SET_SELECTED_COLOR,
       payload: state.selectedColor + 10,
     });
   }
   if (e.key === "d") {
     if (state.selectedColor === projectState.colors.length - 1) return;
-    dispatch({
+    await dispatch({
       type: SET_SELECTED_COLOR,
       payload: state.selectedColor + 1,
     });

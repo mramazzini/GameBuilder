@@ -14,9 +14,9 @@ const ColliderInfo = () => {
           <input
             type='checkbox'
             checked={state.colliderVision}
-            onChange={(e) => {
+            onChange={async (e) => {
               console.log(e.target.checked);
-              dispatch({
+              await dispatch({
                 type: "SET_COLLIDER_VISION",
                 payload: e.target.checked,
               });
@@ -32,8 +32,8 @@ const ColliderInfo = () => {
           <input
             type='checkbox'
             checked={state.addingCollider}
-            onChange={(e) => {
-              dispatch({
+            onChange={async (e) => {
+              await dispatch({
                 type: "SET_ADDING_COLLIDER",
                 payload: e.target.checked,
               });

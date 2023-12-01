@@ -8,11 +8,11 @@ import TilePreview from "./TilePreview";
 import ColliderInfo from "./ColliderInfo";
 import CreateMap from "./CreateMap";
 import DeleteMap from "./DeleteMap";
-
+import { useMapContext } from "../../../utils/MapState/MapContext";
 const MapNav = () => {
   const [savingMap, setSavingMap] = useState(false);
-
-  return (
+  const { state } = useMapContext();
+  return state && state.selectedMap && state.selectedTileset ? (
     <SideNav>
       <MapToggle />
       <TileSelector />
@@ -31,6 +31,15 @@ const MapNav = () => {
       </button>
       <DeleteMap />
       {savingMap && <MapSave setSavingMap={setSavingMap} />}
+    </SideNav>
+  ) : (
+    <SideNav>
+      <MapToggle />
+      <TileSelector />
+      <TilePreview />
+      <ColliderInfo />
+      <CreateMap />
+      <DeleteMap />
     </SideNav>
   );
 };

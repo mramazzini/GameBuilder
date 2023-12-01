@@ -52,18 +52,19 @@ class MapContainerMouseListener {
     this.setIsDragging({ dragging: false, mouseEvent: 0 });
     this.handleMouseMove(e, isDragging, state, currentTileHover);
   };
-  handleMouseMove = (
+  handleMouseMove = async (
     e: React.MouseEvent<HTMLDivElement>,
     isDragging: { dragging: boolean; mouseEvent: number },
     state: MapState,
     currentTileHover: any
   ) => {
     if (isDragging.dragging) {
-      //left click
-      if (isDragging.mouseEvent === 0) {
+      //left click or right click
+      if (isDragging.mouseEvent === 0 || isDragging.mouseEvent === 2) {
         if (state.selectedLayer == -1) return;
         //check if tile attempting to be placed is the same as the one already there
         if (
+          isDragging.mouseEvent === 0 &&
           state.selectedMap.layers[state.selectedLayer].tiles[
             currentTileHover[0]
           ][currentTileHover[1]].srcX ===
@@ -86,12 +87,21 @@ class MapContainerMouseListener {
         if (state.addingCollider && state.colliderVision) {
           willAddColliderToTile = true;
         }
-        const newTile = {
-          collider: willAddColliderToTile,
+        const newTile =
+          isDragging.mouseEvent === 0
+            ? {
+                collider: willAddColliderToTile,
 
-          srcX: state.selectedTile % state.selectedTileset.columns,
-          srcY: Math.floor(state.selectedTile / state.selectedTileset.columns),
-        };
+                srcX: state.selectedTile % state.selectedTileset.columns,
+                srcY: Math.floor(
+                  state.selectedTile / state.selectedTileset.columns
+                ),
+              }
+            : {
+                collider: false,
+                srcX: -1,
+                srcY: -1,
+              };
         const oldTile =
           newMap.layers[state.selectedLayer].tiles[currentTileHover[0]][
             currentTileHover[1]
@@ -102,7 +112,7 @@ class MapContainerMouseListener {
           tilePosition: currentTileHover,
         };
 
-        this.projectDispatch({
+        await this.projectDispatch({
           type: ADD_TO_MAP_HISTORY,
           payload: payload,
         });
@@ -110,7 +120,7 @@ class MapContainerMouseListener {
         newMap.layers[state.selectedLayer].tiles[currentTileHover[0]][
           currentTileHover[1]
         ] = newTile;
-        this.projectDispatch({
+        await this.projectDispatch({
           type: CLEAR_REMOVED_MAP_HISTORY,
           payload: state.selectedMap.tag,
         });

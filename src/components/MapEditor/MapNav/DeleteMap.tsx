@@ -31,17 +31,17 @@ const DeleteMap = () => {
       map: state.selectedMap.tag,
       projectDirectory: projectState.projectDirectory,
     });
-  }, [state.selectedMap.tag, projectState.projectDirectory]);
+  }, [state.selectedMap, projectState.projectDirectory]);
 
   useEffect(() => {
-    const handleMapDeleted = (event: any) => {
+    const handleMapDeleted = async (event: any) => {
       //set to first map in list and its tileset
       ipcRenderer.send("refresh-project", projectState.projectDirectory);
-      dispatch({
+      await dispatch({
         type: SET_SELECTED_MAP,
         payload: projectState.maps[0],
       });
-      dispatch({
+      await dispatch({
         type: SET_SELECTED_TILESET,
         payload:
           projectState.tilesets.find(

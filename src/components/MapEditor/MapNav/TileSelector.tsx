@@ -4,17 +4,16 @@ import { SET_SELECTED_TILE } from "../../../utils/MapState/actions";
 
 const TileSelector = () => {
   const { state, dispatch } = useMapContext();
-  return (
+
+  return state.selectedTileset ? (
     <div className='flex flex-col justify-between items-center h-full p-3 bg-black/75 w-full border border-white/25 overflow-hidden '>
       <h1 className='text-2xl'>Tile Selector</h1>
       <div
         className='tile-selector  grid-container bg-white'
         style={{
           display: "grid",
-          gridTemplateColumns: `repeat(${
-            state.selectedTileset.columns || 0
-          }, 1fr)`,
-          gridTemplateRows: `repeat(${state.selectedTileset.rows || 0}, 1fr)`,
+          gridTemplateColumns: `repeat(${state.selectedTileset.columns}, 1fr)`,
+          gridTemplateRows: `repeat(${state.selectedTileset.rows}, 1fr)`,
           gap: "0px",
         }}
       >
@@ -30,8 +29,8 @@ const TileSelector = () => {
                   width: `${16}px`,
                   height: `${16}px`,
                 }}
-                onClick={() =>
-                  dispatch({ type: SET_SELECTED_TILE, payload: index })
+                onClick={async () =>
+                  await dispatch({ type: SET_SELECTED_TILE, payload: index })
                 }
               >
                 {RenderNavTile(
@@ -50,6 +49,8 @@ const TileSelector = () => {
           })}
       </div>
     </div>
+  ) : (
+    ""
   );
 };
 

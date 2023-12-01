@@ -1,6 +1,7 @@
 import { getMapInfo, getTilesetInfo } from "./helpers";
 import fs from "fs";
 import path from "path";
+import { Map, MapLayer } from "../../src/utils/types";
 
 const mapListener = (ipcMain: any) => {
   ipcMain.on("get-map-info", function (event: any, projectDirectory: string) {
@@ -81,21 +82,33 @@ const mapListener = (ipcMain: any) => {
     try {
       console.log("Received create-map message with map:", payload.map);
 
-      let tilesArr = [];
+      const layers: MapLayer[] = [
+        { tag: "background", tiles: [] },
+        { tag: "foreground", tiles: [] },
+        { tag: "preground", tiles: [] },
+      ];
+
       for (let i = 0; i < payload.map.sizeX; i++) {
-        let subArr = [];
+        const row = [];
         for (let j = 0; j < payload.map.sizeY; j++) {
-          subArr.push({
-            srcX: 0,
-            srcY: 0,
+          const tile = {
             collider: false,
-          });
+            srcX: -1,
+            srcY: -1,
+          };
+          row.push(tile);
         }
-        tilesArr.push(subArr);
+        layers[0].tiles.push(row);
+        layers[1].tiles.push(row);
+        layers[2].tiles.push(row);
       }
-      const newMap = {
-        tiles: tilesArr,
-        ...payload.map,
+
+      const newMap: Map = {
+        sizeX: payload.map.sizeX,
+        sizeY: payload.map.sizeY,
+        tag: payload.map.tag,
+        layers: layers,
+        tileset: payload.map.tileset,
       };
 
       const mapPath = path.join(

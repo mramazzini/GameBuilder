@@ -2,6 +2,7 @@ export interface Map {
   sizeX: number;
   sizeY: number;
   layers: MapLayer[];
+
   tag: string;
   tileset: string;
 }

@@ -8,6 +8,7 @@ interface MapLayerProps {
   position: { x: number; y: number };
   setCurrentTileHover: React.Dispatch<React.SetStateAction<number[]>>;
   layer: MapLayerType;
+  fullView: boolean;
 }
 
 const MapLayer = ({
@@ -15,6 +16,7 @@ const MapLayer = ({
   position,
   setCurrentTileHover,
   layer,
+  fullView,
 }: MapLayerProps) => {
   const { state } = useMapContext();
 
@@ -55,6 +57,7 @@ const MapLayer = ({
                 addingCollider={state.addingCollider}
                 colliderVision={state.colliderVision}
                 selectedTile={state.selectedTile}
+                fullView={fullView}
               />
             </div>
           );

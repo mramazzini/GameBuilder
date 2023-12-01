@@ -79,9 +79,9 @@ const MapContainer = () => {
       });
     }
   }, [projectState.tilesets, projectState.maps]);
-  return (
+  return state.selectedTileset && state.selectedMap ? (
     <div
-      className='map-container text-white font-mono  overflow-hidden grow '
+      className='map-container text-white font-mono flex overflow-hidden grow '
       ref={mapContainerRef}
       onWheel={(e) => mouseListener.handleScroll(e, state, zoomLevel || 1)}
       onMouseDown={(e) => mouseListener.handleMouseDown(e)}
@@ -103,6 +103,7 @@ const MapContainer = () => {
             zoomLevel={zoomLevel || 1}
             position={position || { x: 0, y: 0 }}
             setCurrentTileHover={setCurrentTileHover}
+            fullView={false}
           />
         </div>
       ) : (
@@ -115,12 +116,15 @@ const MapContainer = () => {
                 zoomLevel={zoomLevel || 1}
                 position={position || { x: 0, y: 0 }}
                 setCurrentTileHover={setCurrentTileHover}
+                fullView={true}
               />
             );
           })}
         </div>
       )}
     </div>
+  ) : (
+    ""
   );
 };
 export default MapContainer;

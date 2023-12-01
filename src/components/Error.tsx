@@ -11,7 +11,9 @@ const Error = () => {
           <h1>{state.error}</h1>
           <button
             className='bg-black/70 text-white px-5 py-1 rounded-md hover:bg-black/80 '
-            onClick={() => dispatch({ type: SET_ERROR, payload: "" })}
+            onClick={async () =>
+              await dispatch({ type: SET_ERROR, payload: "" })
+            }
           >
             Ok
           </button>

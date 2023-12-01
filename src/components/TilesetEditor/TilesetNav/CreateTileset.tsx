@@ -36,7 +36,7 @@ const CreateTileset = () => {
     }
   };
 
-  const handleCreateTileset = () => {
+  const handleCreateTileset = async () => {
     if (formdata.tag === "") {
       setError({ hasError: true, message: "Tileset name cannot be empty" });
       return;
@@ -45,7 +45,7 @@ const CreateTileset = () => {
       setError({ hasError: true, message: "Tileset already exists" });
       return;
     }
-    projectDispatch({
+    await projectDispatch({
       type: CREATE_TILESET,
       payload: {
         tag: formdata.tag,
@@ -53,7 +53,7 @@ const CreateTileset = () => {
       },
     });
 
-    dispatch({
+    await dispatch({
       type: SET_SELECTED_TILESET,
       payload: projectState.tilesets[projectState.tilesets.length - 1],
     });
