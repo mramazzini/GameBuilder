@@ -87,20 +87,23 @@ const mapListener = (ipcMain: any) => {
         { tag: "foreground", tiles: [] },
         { tag: "preground", tiles: [] },
       ];
-
+      const colliders: boolean[][] = [];
       for (let i = 0; i < payload.map.sizeX; i++) {
         const row = [];
+        const row2 = [];
         for (let j = 0; j < payload.map.sizeY; j++) {
           const tile = {
-            collider: false,
             srcX: -1,
             srcY: -1,
           };
+          const collider = false;
+          row2.push(collider);
           row.push(tile);
         }
         layers[0].tiles.push(row);
         layers[1].tiles.push(row);
         layers[2].tiles.push(row);
+        colliders.push(row2);
       }
 
       const newMap: Map = {
@@ -108,6 +111,7 @@ const mapListener = (ipcMain: any) => {
         sizeY: payload.map.sizeY,
         tag: payload.map.tag,
         layers: layers,
+        colliders: colliders,
         tileset: payload.map.tileset,
       };
 

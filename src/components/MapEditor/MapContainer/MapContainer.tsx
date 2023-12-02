@@ -98,13 +98,21 @@ const MapContainer = () => {
         </h1>
       ) : state.selectedLayer !== -1 ? (
         <div style={{ position: "relative" }}>
-          <MapLayer
-            layer={state.selectedMap.layers[state.selectedLayer]}
-            zoomLevel={zoomLevel || 1}
-            position={position || { x: 0, y: 0 }}
-            setCurrentTileHover={setCurrentTileHover}
-            fullView={false}
-          />
+          {/*Render selected layer and all layers behind it */}
+          {state.selectedMap.layers.map((layer, i) => {
+            if (i <= state.selectedLayer) {
+              return (
+                <MapLayer
+                  layer={layer}
+                  key={i}
+                  zoomLevel={zoomLevel || 1}
+                  position={position || { x: 0, y: 0 }}
+                  setCurrentTileHover={setCurrentTileHover}
+                  fullView={true}
+                />
+              );
+            }
+          })}
         </div>
       ) : (
         <div style={{ position: "relative" }}>

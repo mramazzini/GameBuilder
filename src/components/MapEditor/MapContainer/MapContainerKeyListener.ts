@@ -5,6 +5,8 @@ import {
   MOVE_TILE_COLUMN_RIGHT,
   MOVE_TILE_ROW_UP,
   MOVE_TILE_ROW_DOWN,
+  SET_SELECTED_LAYER,
+  TAB_SELECTED_LAYER,
 } from "../../../utils/MapState/actions";
 import {
   POP_FROM_MAP_HISTORY,
@@ -26,6 +28,12 @@ const MapContainerKeyListener = async (
     });
     return;
   }
+  if (e.key === "Tab") {
+    e.preventDefault();
+    await dispatch({
+      type: TAB_SELECTED_LAYER,
+    });
+  }
   if (e.key === "z") {
     await projectDispatch({
       type: POP_FROM_MAP_HISTORY,
@@ -40,13 +48,7 @@ const MapContainerKeyListener = async (
     });
     return;
   }
-  if (e.key === "Control") {
-    await dispatch({
-      type: TOGGLE_ADDING_COLLIDER,
-      payload: !state.addingCollider,
-    });
-    return;
-  }
+
   if (e.key === "w") {
     await dispatch({
       type: MOVE_TILE_ROW_UP,

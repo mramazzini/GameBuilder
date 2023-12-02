@@ -42,7 +42,7 @@ const LayerSelector = () => {
             borderRadius: "50%",
           }}
         ></div>
-        <div className='layer-selector-text truncate'>Full View</div>
+        <div className='layer-selector-text truncate'>Colliders</div>
         <div
           className='layer-selector-dot ml-1'
           style={{
@@ -58,6 +58,7 @@ const LayerSelector = () => {
           }}
         ></div>
       </button>
+
       {state.selectedMap.layers.map((layer, i) => {
         return (
           <button

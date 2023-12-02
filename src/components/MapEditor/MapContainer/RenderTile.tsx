@@ -1,13 +1,14 @@
-import { Tileset } from "../../../utils/types";
+import { Tile, Tileset } from "../../../utils/types";
 import { useRef } from "react";
 interface RenderTileProps {
-  tile: any;
+  tile: Tile;
   rowIndex: number;
   colIndex: number;
   tileSet: Tileset;
+  collider: boolean;
   width: number;
   height: number;
-  addingCollider: boolean;
+
   colliderVision: boolean;
   selectedTile: number;
   fullView: boolean;
@@ -20,33 +21,31 @@ const RenderTile = ({
   tileSet,
   width,
   height,
-  addingCollider,
+
   colliderVision,
   selectedTile,
-
+  collider,
   fullView,
 }: RenderTileProps) => {
   const isHovered = useRef(false);
 
   const calculateBorder = () => {
     if (isHovered.current) {
-      if (addingCollider && colliderVision) {
-        return `1px solid red`;
-      }
       return `1px solid yellow`;
     }
-    if (colliderVision && tile.collider) {
+    if (colliderVision && collider) {
       return `1px solid red`;
     }
     return `none`;
   };
 
-  return tile.srcX !== -1 || tile.srcY !== -1 ? (
+  return tile.srcX !== -1 || tile.srcY !== -1 || isHovered.current ? (
     <div
       key={`tile-${rowIndex}-${colIndex}`}
       className='tile'
       style={{
         backgroundImage: `url("data:image/png;base64,${tileSet.base64}")`,
+
         backgroundPosition: `-${
           (isHovered.current ? selectedTile % tileSet.columns : tile.srcX) *
           tileSet.tileWidth
@@ -59,15 +58,17 @@ const RenderTile = ({
         height: `${tileSet.tileHeight}px`,
 
         backgroundRepeat: "no-repeat",
+
         transform: `scale(${width / tileSet.tileWidth}, ${
           height / tileSet.tileHeight
         })`,
-        border: !fullView ? calculateBorder() : "none",
+        border: calculateBorder(),
       }}
       onMouseEnter={() => {
-        isHovered.current = fullView ? false : true;
+        console.log("hovered");
+        isHovered.current = true;
       }}
-      onMouseLeave={() => {
+      onMouseOut={() => {
         isHovered.current = false;
       }}
     />
@@ -76,7 +77,7 @@ const RenderTile = ({
       key={`tile-${rowIndex}-${colIndex}`}
       className='tile'
       style={{
-        display: fullView ? "none" : "grid",
+        display: "grid",
         gap: "0px",
         gridTemplateColumns: `repeat(${2}, 1fr)`,
         gridTemplateRows: `repeat(${2}, 1fr)`,
@@ -85,33 +86,38 @@ const RenderTile = ({
         transform: `scale(${width / tileSet.tileWidth}, ${
           height / tileSet.tileHeight
         })`,
-        border: !fullView ? calculateBorder() : "none",
-        backgroundColor: "rgba(255, 255, 255,1)",
+        border: calculateBorder(),
+        backgroundColor: fullView ? "transparent" : "rgba(255, 255, 255,1)",
       }}
       onMouseEnter={() => {
-        isHovered.current = fullView ? false : true;
+        console.log("hovered");
+        isHovered.current = true;
       }}
-      onMouseLeave={() => {
+      onMouseOut={() => {
         isHovered.current = false;
       }}
     >
       <div
         style={{
+          display: fullView ? "none" : "block",
           backgroundColor: "rgba(0,0, 0, 0.2)",
         }}
       />
       <div
         style={{
+          display: fullView ? "none" : "block",
           backgroundColor: "rgba(0,0, 0, 0.1)",
         }}
       />
       <div
         style={{
+          display: fullView ? "none" : "block",
           backgroundColor: "rgba(0,0, 0, 0.1)",
         }}
       />
       <div
         style={{
+          display: fullView ? "none" : "block",
           backgroundColor: "rgba(0,0, 0, 0.2)",
         }}
       />

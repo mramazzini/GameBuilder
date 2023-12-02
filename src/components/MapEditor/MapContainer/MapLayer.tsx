@@ -54,10 +54,10 @@ const MapLayer = ({
                 colIndex={colIndex}
                 width={state.selectedTileset.tileWidth}
                 height={state.selectedTileset.tileHeight}
-                addingCollider={state.addingCollider}
                 colliderVision={state.colliderVision}
                 selectedTile={state.selectedTile}
                 fullView={fullView}
+                collider={state.selectedMap.colliders[rowIndex][colIndex]}
               />
             </div>
           );

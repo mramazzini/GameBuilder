@@ -1,3 +1,4 @@
+import { MapState } from "../types";
 import {
   SET_SELECTED_MAP,
   SET_COLLIDER_VISION,
@@ -11,9 +12,10 @@ import {
   MOVE_TILE_ROW_UP,
   MOVE_TILE_ROW_DOWN,
   SET_SELECTED_LAYER,
+  TAB_SELECTED_LAYER,
 } from "./actions";
 
-export const reducer = (state: any, action: any) => {
+export const reducer = (state: MapState, action: any): MapState => {
   switch (action.type) {
     case SET_SELECTED_MAP:
       return {
@@ -30,11 +32,7 @@ export const reducer = (state: any, action: any) => {
         ...state,
         colliderVision: action.payload,
       };
-    case SET_ADDING_COLLIDER:
-      return {
-        ...state,
-        addingCollider: action.payload,
-      };
+
     case SET_SELECTED_TILE:
       return {
         ...state,
@@ -46,18 +44,11 @@ export const reducer = (state: any, action: any) => {
         selectedTile: 0,
         selectedTileset: action.payload,
       };
-    case TOGGLE_ADDING_COLLIDER:
-      return {
-        ...state,
-        addingCollider: !state.addingCollider,
-        colliderVision:
-          !state.addingCollider === true ? true : state.colliderVision,
-      };
+
     case TOGGLE_COLLIDER_VISION:
       return {
         ...state,
         colliderVision: !state.colliderVision,
-        addingCollider: false,
       };
 
     case MOVE_TILE_COLUMN_LEFT:
@@ -104,7 +95,18 @@ export const reducer = (state: any, action: any) => {
         ...state,
         selectedTile: state.selectedTile + 10,
       };
-
+    case TAB_SELECTED_LAYER: {
+      const newTab = state.selectedLayer + 1;
+      if (newTab < state.selectedMap.layers.length)
+        return {
+          ...state,
+          selectedLayer: newTab,
+        };
+      return {
+        ...state,
+        selectedLayer: -1,
+      };
+    }
     default:
       return state;
   }

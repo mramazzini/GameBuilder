@@ -61,7 +61,22 @@ class MapContainerMouseListener {
     if (isDragging.dragging) {
       //left click or right click
       if (isDragging.mouseEvent === 0 || isDragging.mouseEvent === 2) {
-        if (state.selectedLayer == -1) return;
+        if (state.selectedLayer == -1) {
+          //prevent repeat
+          if (
+            state.selectedMap.colliders[currentTileHover[0]][
+              currentTileHover[1]
+            ] === (isDragging.mouseEvent === 0 ? true : false)
+          )
+            return;
+          //add colliders instead of tiles
+          const newMap = { ...state.selectedMap };
+          const newColliders = [...newMap.colliders];
+          newColliders[currentTileHover[0]][currentTileHover[1]] =
+            isDragging.mouseEvent === 0 ? true : false;
+          newMap.colliders = newColliders;
+          return;
+        }
         //check if tile attempting to be placed is the same as the one already there
         if (
           isDragging.mouseEvent === 0 &&
@@ -72,10 +87,7 @@ class MapContainerMouseListener {
           state.selectedMap.layers[state.selectedLayer].tiles[
             currentTileHover[0]
           ][currentTileHover[1]].srcY ===
-            Math.floor(state.selectedTile / state.selectedTileset.columns) &&
-          state.selectedMap.layers[state.selectedLayer].tiles[
-            currentTileHover[0]
-          ][currentTileHover[1]].collider === state.addingCollider
+            Math.floor(state.selectedTile / state.selectedTileset.columns)
         ) {
           return;
         }
@@ -83,22 +95,16 @@ class MapContainerMouseListener {
         if (state.selectedTile === -1) return;
 
         const newMap = { ...state.selectedMap };
-        let willAddColliderToTile = false;
-        if (state.addingCollider && state.colliderVision) {
-          willAddColliderToTile = true;
-        }
+
         const newTile =
           isDragging.mouseEvent === 0
             ? {
-                collider: willAddColliderToTile,
-
                 srcX: state.selectedTile % state.selectedTileset.columns,
                 srcY: Math.floor(
                   state.selectedTile / state.selectedTileset.columns
                 ),
               }
             : {
-                collider: false,
                 srcX: -1,
                 srcY: -1,
               };

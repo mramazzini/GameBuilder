@@ -21,13 +21,14 @@ function App() {
       <TitleBar />
       <main className='bg-gray-800  h-full flex-col w-screen min-w-fit'>
         <div className='flex flex-row  h-full   '>
-          <div className='flex  flex-col  w-full  h-full '>
+          <div className='flex  flex-col w-full  h-full '>
             <Navbar
               setCurrentPage={setCurrentPage}
               currentPage={TABLIST[currentPage].tab}
             />
-
-            {renderActiveTab()}
+            <div className='flex-grow bg-black/25 h-full overflow-y-auto'>
+              {renderActiveTab()}
+            </div>
           </div>
           <div className='flex justify-start grow flex-col'>
             <FileExplorer initialPath='/root' />

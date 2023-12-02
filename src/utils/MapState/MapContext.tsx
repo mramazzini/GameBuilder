@@ -8,6 +8,7 @@ const initialState = {
     sizeY: 0,
     tileset: "",
     layers: [{ tag: "", tiles: [] }],
+    colliders: [],
   },
   selectedTileset: {
     tag: "",
@@ -22,7 +23,6 @@ const initialState = {
   undoStack: [],
   selectedTile: -1,
   colliderVision: false,
-  addingCollider: false,
 };
 
 const MapContext = createContext<{
