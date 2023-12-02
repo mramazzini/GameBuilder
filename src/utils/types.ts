@@ -56,6 +56,7 @@ export interface TilesetState {
 export interface tileHistory {
   tile: Tile;
   tilePosition: [number, number];
+  layer: number;
 }
 export interface History {
   maps: Array<{

@@ -65,7 +65,6 @@ const RenderTile = ({
         border: calculateBorder(),
       }}
       onMouseEnter={() => {
-        console.log("hovered");
         isHovered.current = true;
       }}
       onMouseOut={() => {
@@ -90,7 +89,6 @@ const RenderTile = ({
         backgroundColor: fullView ? "transparent" : "rgba(255, 255, 255,1)",
       }}
       onMouseEnter={() => {
-        console.log("hovered");
         isHovered.current = true;
       }}
       onMouseOut={() => {

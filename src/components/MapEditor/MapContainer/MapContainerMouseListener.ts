@@ -116,8 +116,9 @@ class MapContainerMouseListener {
           mapTag: state.selectedMap.tag,
           tile: oldTile,
           tilePosition: currentTileHover,
+          layer: state.selectedLayer,
         };
-
+        console.log(payload);
         await this.projectDispatch({
           type: ADD_TO_MAP_HISTORY,
           payload: payload,

@@ -127,6 +127,7 @@ export const reducer = (state: ProjectState, action: any): ProjectState => {
             {
               tile: action.payload.tile,
               tilePosition: action.payload.tilePosition,
+              layer: action.payload.layer,
             },
           ],
           removed: [],
@@ -158,6 +159,7 @@ export const reducer = (state: ProjectState, action: any): ProjectState => {
       newMaps[mapIndex].current.push({
         tile: action.payload.tile,
         tilePosition: action.payload.tilePosition,
+        layer: action.payload.layer,
       });
 
       return {
@@ -168,117 +170,108 @@ export const reducer = (state: ProjectState, action: any): ProjectState => {
         },
       };
     }
-    // case POP_FROM_MAP_UNDO_HISTORY: {
-    //   //Redo button
-    //   const mapTag = action.payload;
-    //   if (!mapTag) {
-    //     return state;
-    //   }
-    //   const mapHistoryIndex = state.history.maps.findIndex(
-    //     (map: any) => map.mapTag === mapTag
-    //   );
-    //   if (mapHistoryIndex === -1) {
-    //     return state;
-    //   }
-    //   console.log("POP_FROM_MAP_UNDO_HISTORY");
-    //   const newMapsHistory = state.history.maps;
-    //   console.log(newMapsHistory[mapHistoryIndex]);
+    case POP_FROM_MAP_UNDO_HISTORY: {
+      //Redo button
+      const mapTag = action.payload;
+      if (!mapTag) {
+        return state;
+      }
+      const mapHistoryIndex = state.history.maps.findIndex(
+        (map: any) => map.mapTag === mapTag
+      );
+      if (mapHistoryIndex === -1) {
+        return state;
+      }
+      console.log("POP_FROM_MAP_UNDO_HISTORY");
+      const newMapsHistory = state.history.maps;
+      console.log(newMapsHistory[mapHistoryIndex]);
 
-    //   const oldTile = newMapsHistory[mapHistoryIndex].removed.pop();
-    //   if (!oldTile) {
-    //     return state;
-    //   }
-    //   newMapsHistory[mapHistoryIndex].current.push(oldTile as any);
-    //   console.log(newMapsHistory[mapHistoryIndex]);
-    //   //update maps in state
+      const oldTile = newMapsHistory[mapHistoryIndex].removed.pop();
+      if (!oldTile) {
+        return state;
+      }
+      newMapsHistory[mapHistoryIndex].current.push(oldTile as any);
+      console.log(newMapsHistory[mapHistoryIndex]);
+      //update maps in state
 
-    //   const mapObjectIndex = state.maps.findIndex(
-    //     (map: any) => map.tag === mapTag
-    //   );
+      const mapObjectIndex = state.maps.findIndex(
+        (map: any) => map.tag === mapTag
+      );
 
-    //   const newMapObject = {
-    //     ...state.maps[mapObjectIndex],
-    //   };
+      const newMapObject = {
+        ...state.maps[mapObjectIndex],
+      };
 
-    //   newMapObject.tiles[oldTile.tilePosition[0]][oldTile.tilePosition[1]] = {
-    //     ...oldTile.tile,
-    //   };
+      newMapObject.layers[oldTile.layer].tiles[oldTile.tilePosition[0]][
+        oldTile.tilePosition[1]
+      ] = {
+        ...oldTile.tile,
+      };
 
-    //   const newMaps = state.maps;
-    //   console.log(
-    //     newMaps[mapObjectIndex].tiles[oldTile.tilePosition[0]][
-    //       oldTile.tilePosition[1]
-    //     ]
-    //   );
-    //   newMaps[mapObjectIndex] = newMapObject;
-    //   console.log(
-    //     newMaps[mapObjectIndex].tiles[oldTile.tilePosition[0]][
-    //       oldTile.tilePosition[1]
-    //     ]
-    //   );
-    //   return {
-    //     ...state,
-    //     maps: newMaps,
-    //     history: {
-    //       ...state.history,
-    //       maps: newMapsHistory,
-    //     },
-    //   };
-    // }
-    // case POP_FROM_MAP_HISTORY: {
-    //   const mapTag = action.payload;
-    //   if (!mapTag) {
-    //     return state;
-    //   }
-    //   const mapHistoryIndex = state.history.maps.findIndex(
-    //     (map: any) => map.mapTag === mapTag
-    //   );
-    //   if (mapHistoryIndex === -1) {
-    //     return state;
-    //   }
-    //   console.log("POP_FROM_MAP_HISTORY");
-    //   const newMapsHistory = state.history.maps;
-    //   console.log(newMapsHistory[mapHistoryIndex]);
+      const newMaps = state.maps;
 
-    //   const oldTile = newMapsHistory[mapHistoryIndex].current.pop();
-    //   if (!oldTile) {
-    //     return state;
-    //   }
-    //   newMapsHistory[mapHistoryIndex].removed.push(oldTile as any);
-    //   console.log(newMapsHistory[mapHistoryIndex]);
-    //   //update maps in state
+      newMaps[mapObjectIndex] = newMapObject;
 
-    //   const mapObjectIndex = state.maps.findIndex(
-    //     (map: any) => map.tag === mapTag
-    //   );
+      return {
+        ...state,
+        maps: newMaps,
+        history: {
+          ...state.history,
+          maps: newMapsHistory,
+        },
+      };
+    }
+    case POP_FROM_MAP_HISTORY: {
+      logReducers ??
+        console.log("reducer: POP_FROM_MAP_HISTORY", action.payload);
+      const mapTag = action.payload.tag;
+      const selectedLayer = action.payload.layer;
+      if (!mapTag) {
+        return state;
+      }
+      const mapHistoryIndex = state.history.maps.findIndex(
+        (map: any) => map.mapTag === mapTag
+      );
+      if (mapHistoryIndex === -1) {
+        return state;
+      }
 
-    //   const newMapObject = {
-    //     ...state.maps[mapObjectIndex],
-    //   };
-    //   newMapObject.tiles[oldTile.tilePosition[0]][oldTile.tilePosition[1]] = {
-    //     ...oldTile.tile,
-    //   };
-    //   const newMaps = state.maps;
-    //   console.log(
-    //     newMaps[mapObjectIndex].tiles[oldTile.tilePosition[0]][
-    //       oldTile.tilePosition[1]
-    //     ]
-    //   );
-    //   newMaps[mapObjectIndex] = newMapObject;
-    //   console.log(
-    //     newMaps[mapObjectIndex].tiles[oldTile.tilePosition[0]][
-    //       oldTile.tilePosition[1]
-    //     ]
-    //   );
-    //   return {
-    //     ...state,
-    //     maps: newMaps,
-    //     history: {
-    //       ...state.history,
-    //       maps: newMapsHistory,
-    //     },
-    //   };
-    // }
+      const newMapsHistory = state.history.maps;
+      console.log(newMapsHistory[mapHistoryIndex]);
+
+      const oldTile = newMapsHistory[mapHistoryIndex].current.pop();
+      if (!oldTile) {
+        return state;
+      }
+      newMapsHistory[mapHistoryIndex].removed.push(oldTile as any);
+      console.log(newMapsHistory[mapHistoryIndex]);
+      //update maps in state
+
+      const mapObjectIndex = state.maps.findIndex(
+        (map: any) => map.tag === mapTag
+      );
+
+      const newMapObject = {
+        ...state.maps[mapObjectIndex],
+      };
+      newMapObject.layers[oldTile.layer].tiles[oldTile.tilePosition[0]][
+        oldTile.tilePosition[1]
+      ] = {
+        ...oldTile.tile,
+      };
+      const newMaps = state.maps;
+
+      newMaps[mapObjectIndex] = newMapObject;
+
+      return {
+        ...state,
+        maps: newMaps,
+        history: {
+          ...state.history,
+          maps: newMapsHistory,
+        },
+      };
+    }
     case CLEAR_REMOVED_MAP_HISTORY: {
       const mapTag = action.payload;
       if (!mapTag) {

@@ -33,7 +33,7 @@ const MapContainer = () => {
       document.removeEventListener("keydown", keydownListener);
       console.log("removed keydown listener");
     };
-  }, [state.selectedMap]);
+  }, [state.selectedMap, state.selectedTileset, state.selectedLayer]);
 
   useEffect(() => {
     if (mapContainerRef.current) {

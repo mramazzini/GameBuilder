@@ -34,17 +34,17 @@ const MapContainerKeyListener = async (
       type: TAB_SELECTED_LAYER,
     });
   }
-  if (e.key === "z") {
+  if (e.key === "z" && e.ctrlKey) {
     await projectDispatch({
       type: POP_FROM_MAP_HISTORY,
-      payload: state.selectedMap.tag,
+      payload: { tag: state.selectedMap.tag, layer: state.selectedLayer },
     });
     return;
   }
-  if (e.key === "y") {
+  if (e.key === "y" && e.ctrlKey) {
     await projectDispatch({
       type: POP_FROM_MAP_UNDO_HISTORY,
-      payload: state.selectedMap.tag,
+      payload: { tag: state.selectedMap.tag, layer: state.selectedLayer },
     });
     return;
   }
