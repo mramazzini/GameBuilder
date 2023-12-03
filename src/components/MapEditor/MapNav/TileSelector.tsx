@@ -4,7 +4,10 @@ import { SET_SELECTED_TILE } from "../../../utils/MapState/actions";
 
 const TileSelector = () => {
   const { state, dispatch } = useMapContext();
-
+  const getArray = (length: number) => {
+    console.log(length);
+    return [...Array(length)];
+  };
   return state.selectedTileset ? (
     <div className='flex flex-col justify-between items-center h-full p-3 bg-black/75 w-full border border-white/25 overflow-hidden '>
       <h1 className='text-2xl'>Tile Selector</h1>
@@ -43,6 +46,35 @@ const TileSelector = () => {
                   Math.floor(index / state.selectedTileset.columns),
                   state.selectedTileset,
                   state.selectedTile === index ? true : false
+                )}
+              </div>
+            );
+          })}
+        {/*Render placeholder tiles to fill row */}
+        {state.selectedTileset.tileCount !== 0 &&
+          getArray(
+            state.selectedTileset.columns -
+              (state.selectedTileset.tileCount % state.selectedTileset.columns)
+          ).map((_, index) => {
+            return (
+              <div
+                key={index}
+                className='tile flex flex-row justify-center items-center w-full h-full'
+                style={{
+                  width: `${16}px`,
+                  height: `${16}px`,
+                }}
+              >
+                {RenderNavTile(
+                  {
+                    collider: false,
+                    srcX: -1,
+                    srcY: -1,
+                  },
+                  -1,
+                  -1,
+                  state.selectedTileset,
+                  false
                 )}
               </div>
             );

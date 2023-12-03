@@ -52,49 +52,39 @@ export const reducer = (state: MapState, action: any): MapState => {
       };
 
     case MOVE_TILE_COLUMN_LEFT:
-      if (state.selectedTile % 10 == 0)
-        return {
-          ...state,
-          selectedTile: state.selectedTile + 9,
-        };
+      if (state.selectedTile === 0) return state;
       return {
         ...state,
         selectedTile: state.selectedTile - 1,
       };
-    case MOVE_TILE_COLUMN_RIGHT:
-      if (state.selectedTile % 10 == state.selectedTileset.columns - 1)
-        return {
-          ...state,
-          selectedTile: Math.floor(state.selectedTile / 10) * 10,
-        };
 
+    case MOVE_TILE_COLUMN_RIGHT:
+      if (state.selectedTile === state.selectedTileset.tileCount - 1)
+        return state;
       return {
         ...state,
         selectedTile: state.selectedTile + 1,
       };
+
     case MOVE_TILE_ROW_UP:
-      if (state.selectedTile < 10)
-        return {
-          ...state,
-          selectedTile:
-            state.selectedTile +
-            state.selectedTileset.columns * (state.selectedTileset.rows - 1),
-        };
+      if (state.selectedTile <= 9) return state;
       return {
         ...state,
-        selectedTile: state.selectedTile - 10,
+        selectedTile: state.selectedTile - state.selectedTileset.columns,
       };
 
     case MOVE_TILE_ROW_DOWN:
-      if (Math.floor(state.selectedTile / 10) >= state.selectedTileset.rows - 1)
-        return {
-          ...state,
-          selectedTile: state.selectedTile % state.selectedTileset.columns,
-        };
+      if (
+        state.selectedTile === state.selectedTileset.tileCount - 1 ||
+        state.selectedTile + state.selectedTileset.columns >
+          state.selectedTileset.tileCount - 1
+      )
+        return state;
       return {
         ...state,
-        selectedTile: state.selectedTile + 10,
+        selectedTile: state.selectedTile + state.selectedTileset.columns,
       };
+
     case TAB_SELECTED_LAYER: {
       const newTab = state.selectedLayer + 1;
       if (newTab < state.selectedMap.layers.length)

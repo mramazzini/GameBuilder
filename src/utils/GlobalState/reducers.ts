@@ -254,7 +254,7 @@ export const reducer = (state: ProjectState, action: any): ProjectState => {
       const newMapObject = {
         ...state.maps[mapObjectIndex],
       };
-      newMapObject.layers[oldTile.layer].tiles[oldTile.tilePosition[0]][
+      newMapObject.layers[oldTile.layer ].tiles[oldTile.tilePosition[0]][
         oldTile.tilePosition[1]
       ] = {
         ...oldTile.tile,

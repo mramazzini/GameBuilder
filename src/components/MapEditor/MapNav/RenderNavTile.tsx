@@ -9,7 +9,7 @@ const RenderNavTile = (
 ) => {
   // Calculate the scaling factors for the background image
 
-  return (
+  return (rowIndex !== -1 && colIndex !== -1) || selectedTile ? (
     <div className='flex  flex-col justify-center items-center'>
       <div
         className='selected-tile-circle '
@@ -60,6 +60,51 @@ const RenderNavTile = (
           }}
         />
       </div>
+    </div>
+  ) : (
+    <div
+      className='tile'
+      style={{
+        width: `${16}px`,
+        height: `${16}px`,
+        display: "grid",
+        gridTemplateColumns: `repeat(2, 1fr)`,
+        gridTemplateRows: `repeat(2, 1fr)`,
+        gap: "0px",
+      }}
+    >
+      <div
+        className='tile-reader'
+        style={{
+          width: "8px",
+          height: "8px",
+          backgroundColor: "grey",
+        }}
+      />
+      <div
+        className='tile-reader'
+        style={{
+          width: "8px",
+          height: "8px",
+          backgroundColor: "white",
+        }}
+      />
+      <div
+        className='tile-reader'
+        style={{
+          width: "8px",
+          height: "8px",
+          backgroundColor: "white",
+        }}
+      />
+      <div
+        className='tile-reader'
+        style={{
+          width: "8px",
+          height: "8px",
+          backgroundColor: "grey",
+        }}
+      />
     </div>
   );
 };
