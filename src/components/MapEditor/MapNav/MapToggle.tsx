@@ -1,10 +1,15 @@
-import { useProjectContext } from "../../../utils/GlobalState/GlobalState";
-import { useMapContext } from "../MapState/MapContext";
-import { Tileset, Map } from "../../../utils/types";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../../utils/redux/store";
+import {
+  setSelectedLayer,
+  setSelectedMap,
+  setSelectedTileset,
+} from "../../../utils/redux/reducers/MapReducers";
 
 const MapToggle = () => {
-  const { state } = useProjectContext();
-  const { state: mapState, dispatch } = useMapContext();
+  const state = useSelector((state: RootState) => state.global);
+  const mapState = useSelector((state: RootState) => state.map);
+  const dispatch = useDispatch();
 
   return (
     <div className='tile-selector flex flex-row justify-between items-center p-2 overflow-hidden '>
@@ -12,15 +17,17 @@ const MapToggle = () => {
         <div className='text-sm px-2'>Tileset:</div>
         <select
           className='bg-black/50 text-white/75 border border-white/25 rounded-sm p-1'
-          value={mapState.selectedTileset.tag}
-          onChange={(e) => {
+          value={
+            mapState.selectedTileset ? mapState.selectedTileset.tag : "NONE"
+          }
+          onChange={async (e) => {
             const tileset = state.tilesets.find((tileset) => {
               return tileset.tag === e.target.value;
             });
-            dispatch({
-              type: "SET_SELECTED_TILESET",
-              payload: tileset ? tileset : mapState.selectedTileset,
-            });
+
+            await dispatch(
+              setSelectedTileset(tileset ? tileset : mapState.selectedTileset)
+            );
           }}
         >
           <option value='NONE'>none</option>
@@ -36,27 +43,30 @@ const MapToggle = () => {
       <div className='flex flex-row justify-between items-center'>
         <div className='text-sm px-2'>Map: </div>
         <select
-          className='bg-black/50 text-white/75 border border-white/25 rounded-sm p-1'
-          value={mapState.selectedMap.tag}
-          onChange={(e) => {
+          value={mapState.selectedMap ? mapState.selectedMap.tag : "NONE"}
+          className='bg-black/50 truncate  w-24 text-white/75 border border-white/25 rounded-sm p-1'
+          onChange={async (e) => {
             const map = state.maps.find((map) => map.tag === e.target.value);
-            dispatch({
-              type: "SET_SELECTED_MAP",
-              payload: map ? map : mapState.selectedMap,
-            });
+            await dispatch(setSelectedMap(map ? map : mapState.selectedMap));
             const tileset = state.tilesets.find(
               (tileset) => tileset.tag === map?.tileset
             );
-            dispatch({
-              type: "SET_SELECTED_TILESET",
-              payload: tileset ? tileset : mapState.selectedTileset,
-            });
+            await dispatch(
+              setSelectedTileset(tileset ? tileset : mapState.selectedTileset)
+            );
+            await dispatch(setSelectedLayer(-1));
           }}
         >
           <option value='NONE'>none</option>
           {state.maps.map((map, index) => {
             return (
-              <option key={index} value={map.tag}>
+              <option
+                key={index}
+                value={map.tag}
+                className='
+            w-24 text-white/75 border border-white/25 rounded-sm p-1
+              '
+              >
                 {map.tag}
               </option>
             );

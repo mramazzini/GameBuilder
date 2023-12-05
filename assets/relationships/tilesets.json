@@ -1,0 +1,21 @@
+[
+  {
+    "tag": "terrain",
+    "tileWidth": 16,
+    "tileHeight": 16,
+    "tileCount": 10,
+    "columns": 10,
+    "rows": 1,
+    "base64": "iVBORw0KGgoAAAANSUhEUgAAAKAAAAAQCAYAAACRBXRYAAAAaElEQVR42u3SQQ2AMBQFwa+DYx3goR4wUClcsEGqEANUxOtxNlkHU3O0P7k/R/T5ftF13dlV6UoCEEAAAQQQQAABBBBAAAEEEEAAAQQQQAABBBBAAAEEEEAAAQQQQAABBBBAAAEEcEcLDRmsiCI4bdQAAAAASUVORK5CYII=",
+    "path": "tileset_terrain.png"
+  },
+  {
+    "tag": "alternate",
+    "tileWidth": 32,
+    "tileHeight": 32,
+    "tileCount": 30,
+    "columns": 10,
+    "rows": 3,
+    "base64": ""
+  }
+]

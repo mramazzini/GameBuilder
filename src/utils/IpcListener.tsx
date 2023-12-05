@@ -1,14 +1,15 @@
 const ipcRenderer = window.ipcRenderer;
 import { useEffect } from "react";
+
 import {
-  ADD_STD_TO_LOG,
-  SET_PROJECT_DIRECTORY,
-  SET_ERROR,
-  SET_FILES_AND_FOLDERS,
-  SET_MAP_INFO,
-  SET_TILESET_INFO,
-} from "./GlobalState/actions";
-import { useProjectContext } from "./GlobalState/GlobalState";
+  addSTDToLog,
+  setProjectDirectory,
+  setError,
+  setFilesAndFolders,
+  setMapInfo,
+  setTilesetInfo,
+} from "./redux/reducers/GlobalReducers";
+import { useDispatch } from "react-redux";
 
 const textDecoder = new TextDecoder("utf-8");
 
@@ -17,17 +18,18 @@ const decode = (data: any) => {
 };
 
 const IpcListener = () => {
-  const { state, dispatch } = useProjectContext();
-  const handleEngineStdout = (event: any, data: any) => {
+  const dispatch = useDispatch();
+
+  const handleEngineStdout = async (event: any, data: any) => {
     const decodedData = decode(data);
     // Update state asynchronously without triggering immediate rerender
-    dispatch({ type: ADD_STD_TO_LOG, payload: decodedData });
+    await dispatch(addSTDToLog(decodedData));
   };
 
-  const handleEngineStderr = (event: any, data: any) => {
+  const handleEngineStderr = async (event: any, data: any) => {
     const decodedData = decode(data);
     // Update state asynchronously without triggering immediate rerender
-    dispatch({ type: ADD_STD_TO_LOG, payload: decodedData });
+    await dispatch(addSTDToLog(decodedData));
   };
 
   const handleEngineExit = (event: any, data: any) => {
@@ -37,86 +39,50 @@ const IpcListener = () => {
   const handleEngineInitialized = (event: any, data: any) => {
     // Handle engine initialization if needed
   };
-  const selectedProject = (
+  const selectedProject = async (
     event: any,
     {
       selectedFolderPath,
       filesAndFolders,
     }: { selectedFolderPath: string; filesAndFolders: any }
   ) => {
-    dispatch({
-      type: SET_PROJECT_DIRECTORY,
-      payload: selectedFolderPath,
-    });
-
-    dispatch({
-      type: SET_FILES_AND_FOLDERS,
-      payload: filesAndFolders,
-    });
+    await dispatch(setProjectDirectory(selectedFolderPath));
+    await dispatch(setFilesAndFolders(filesAndFolders));
   };
 
-  const createFolders = (
+  const createFolders = async (
     event: any,
     {
       selectedFolderPath,
       filesAndFolders,
     }: { selectedFolderPath: string; filesAndFolders: any }
   ) => {
-    dispatch({
-      type: SET_PROJECT_DIRECTORY,
-      payload: selectedFolderPath,
-    });
-
-    dispatch({
-      type: SET_FILES_AND_FOLDERS,
-      payload: filesAndFolders,
-    });
+    await dispatch(setProjectDirectory(selectedFolderPath));
+    await dispatch(setFilesAndFolders(filesAndFolders));
   };
 
-  const handleError = (event: any, err: any) => {
+  const handleError = async (event: any, err: any) => {
     //Error handling
-
-    dispatch({
-      type: SET_ERROR,
-      payload: err,
-    });
+    await dispatch(setError(err));
   };
-  const requestMapInfo = (event: any, mapInfo: any) => {
-    dispatch({
-      type: SET_MAP_INFO,
-      payload: mapInfo,
-    });
+  const requestMapInfo = async (event: any, mapInfo: any) => {
+    await dispatch(setMapInfo(mapInfo));
   };
 
-  const requestTileSetInfo = (event: any, tileSetInfo: any) => {
-    dispatch({
-      type: SET_TILESET_INFO,
-      payload: tileSetInfo,
-    });
+  const requestTileSetInfo = async (event: any, tileSetInfo: any) => {
+    await dispatch(setTilesetInfo(tileSetInfo));
   };
-  const createMap = (event: any, args: any) => {
+  const createMap = async (event: any, args: any) => {
     if (args.success) {
-      dispatch({
-        type: SET_MAP_INFO,
-        payload: args.mapInfo,
-      });
+      await dispatch(setMapInfo(args.mapInfo));
     }
   };
-  const refreshProject = (event: any, args: any) => {
+  const refreshProject = async (event: any, args: any) => {
     console.log("refreshing project");
+    await dispatch(setFilesAndFolders(args.filesAndFolders));
+    await dispatch(setMapInfo(args.mapInfo));
+    await dispatch(setTilesetInfo(args.tilesetInfo));
 
-    dispatch({
-      type: SET_FILES_AND_FOLDERS,
-      payload: args.filesAndFolders,
-    });
-    dispatch({
-      type: SET_MAP_INFO,
-      payload: args.mapInfo,
-    });
-    dispatch({
-      type: SET_TILESET_INFO,
-      payload: args.tilesetInfo,
-    });
     console.log("refreshed project");
   };
 

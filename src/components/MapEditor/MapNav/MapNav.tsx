@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
-
+import { useState } from "react";
+import SideNav from "../../SideNav";
 import TileSelector from "./TileSelector";
 import MapToggle from "./MapToggle";
 import MapSave from "./MapSave";
@@ -8,74 +8,41 @@ import TilePreview from "./TilePreview";
 import ColliderInfo from "./ColliderInfo";
 import CreateMap from "./CreateMap";
 import DeleteMap from "./DeleteMap";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../utils/redux/store";
 
 const MapNav = () => {
-  const [width, setWidth] = useState(400);
-  const [resizing, setResizing] = useState(false);
   const [savingMap, setSavingMap] = useState(false);
+  const state = useSelector((state: RootState) => state.map);
+  return state && state.selectedMap && state.selectedTileset ? (
+    <SideNav>
+      <MapToggle />
+      <TileSelector />
 
-  useEffect(() => {
-    const handleMouseMove = (e: any) => {
-      if (resizing) {
-        let width = e.clientX;
-
-        if (width < 100) {
-          width = 20;
-        }
-        setWidth(width);
-      }
-    };
-    const handleMouseUp = () => {
-      setResizing(false);
-    };
-
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
-
-    return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-    };
-  }, [resizing]);
-
-  const handleMouseDown = () => {
-    setResizing(true);
-  };
-
-  return (
-    <div
-      className='map-nav  bg-black/50 text-white h-full  overflow-ellipsis border-r border-white/25 overflow-hidden flex flex-row justify-between items-start'
-      style={{
-        width: `${width}px`,
-      }}
-    >
-      <div className='flex flex-col justify-between items-center p-2 overflow-hidden'>
-        <MapToggle />
-        <TileSelector />
-
-        <TilePreview />
-        <ColliderInfo />
-        <MapInfo />
-        <CreateMap />
-        <button
-          onClick={() => setSavingMap(true)}
-          className='hover:bg-black/70 hover:text-white/80 px-5 py-1 rounded-sm flex justify-center items-center font-bold bg-white/25 text-white border border-white/25 rounded-sm p-1 m-2  px-2 py-1 rounded-sm flex flex-col justify-center items-center'
-        >
-          Save Map to Project
-        </button>
-        <DeleteMap />
-      </div>
-      <div
-        style={{
-          cursor: "ew-resize",
-          height: "100%",
-          width: "10px",
-          minWidth: "10px",
-        }}
-        onMouseDown={handleMouseDown}
-      ></div>
+      <TilePreview />
+      <ColliderInfo />
+      <MapInfo />
+      <CreateMap />
+      <button
+        onClick={() => setSavingMap(true)}
+        className='hover:bg-black/70 hover:text-white/80 px-5 py-1 rounded-sm flex justify-center
+         items-center font-bold bg-white/25 text-white border border-white/25 rounded-sm p-1 m-2 
+          px-2 py-1 rounded-sm flex flex-col justify-center items-center'
+      >
+        Save Map to Project
+      </button>
+      <DeleteMap />
       {savingMap && <MapSave setSavingMap={setSavingMap} />}
-    </div>
+    </SideNav>
+  ) : (
+    <SideNav>
+      <MapToggle />
+      <TileSelector />
+      <TilePreview />
+      <ColliderInfo />
+      <CreateMap />
+      <DeleteMap />
+    </SideNav>
   );
 };
 

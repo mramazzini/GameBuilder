@@ -3,12 +3,15 @@ import Logo from "../assets/Logo.png";
 import { useCallback } from "react";
 const ipcRenderer = window.ipcRenderer;
 
-import { SET_PROJECT_DIRECTORY, SET_ERROR } from "../utils/GlobalState/actions";
-
-import { useProjectContext } from "../utils/GlobalState/GlobalState";
-
+import { useSelector, useDispatch } from "react-redux";
+import {
+  setProjectDirectory,
+  setError,
+} from "../utils/redux/reducers/GlobalReducers";
+import { RootState } from "../utils/redux/store";
 const TitleBar = () => {
-  const { state, dispatch } = useProjectContext();
+  const state = useSelector((state: RootState) => state.global);
+  const dispatch = useDispatch();
 
   // Window Controls -----------------------------------------------------------
   const maximize = () => {
@@ -39,12 +42,10 @@ const TitleBar = () => {
 
   //Run Project
 
-  const runProjectGame = () => {
+  const runProjectGame = async () => {
     if (state.projectDirectory === "") {
-      dispatch({
-        type: SET_ERROR,
-        payload: "Please create or load a project first",
-      });
+      await dispatch(setError("Please create or load a project first"));
+
       return;
     }
     ipcRenderer.send("initialize-engine", state.projectDirectory);
@@ -54,10 +55,11 @@ const TitleBar = () => {
 
   return (
     <div
-      className='title-bar  flex justify-between  items-center bg-black/80 text-white text-sm font-semibold plx-4 h-9 w-full  border-b border-white/25'
+      className='title-bar  flex justify-between  items-center bg-black/80 text-white text-sm font-semibold plx-4
+       h-9 w-full  border-b border-white/75'
       id='title-bar'
     >
-      <div className='title-bar-controls  flex h-full '>
+      <div className='title-bar-controls bg-black/50  flex h-full'>
         <img src={Logo} className='w-5 mx-2 my-2' />
         <TitleDropdownMenu
           options={[
@@ -91,12 +93,12 @@ const TitleBar = () => {
         />
       </div>
       <div
-        className='title-bar-title bg-black/50 text-center  flex-grow h-full flex items-center justify-center'
+        className='title-bar-title bg-black/50  text-center  flex-grow h-full flex items-center justify-center'
         id='title-bar-draggable'
       >
         {document.title ? document.title : "Untitled"}
       </div>
-      <div className='title-bar-window-controls flex justify-end '>
+      <div className='title-bar-window-controls bg-black/50 h-full flex justify-end '>
         <button
           className='hover:bg-gray-400 hover:text-black hover:font-bold px-2 py-1 '
           aria-label='Minimize'

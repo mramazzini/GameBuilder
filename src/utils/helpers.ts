@@ -1,5 +1,5 @@
 const ipcRenderer = window.ipcRenderer;
-import { fileOrFolder } from "./types";
+import { FileOrFolder } from "./types";
 
 const getCurrentTime = () => {
   const currentDate: Date = new Date();

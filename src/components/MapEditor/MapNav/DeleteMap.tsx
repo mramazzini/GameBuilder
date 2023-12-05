@@ -1,13 +1,17 @@
-import { useMapContext } from "../MapState/MapContext";
-import { useProjectContext } from "../../../utils/GlobalState/GlobalState";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../../utils/redux/store";
 const ipcRenderer = window.ipcRenderer;
 import { useCallback, useEffect, useState } from "react";
-import { SET_SELECTED_MAP, SET_SELECTED_TILESET } from "../MapState/actions";
+
+import {
+  setSelectedMap,
+  setSelectedTileset,
+} from "../../../utils/redux/reducers/MapReducers";
 
 const DeleteMap = () => {
-  const { state, dispatch } = useMapContext();
-  const { state: projectState, dispatch: projectDispatch } =
-    useProjectContext();
+  const state = useSelector((state: RootState) => state.map);
+  const projectState = useSelector((state: RootState) => state.global);
+  const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
@@ -28,23 +32,21 @@ const DeleteMap = () => {
       map: state.selectedMap.tag,
       projectDirectory: projectState.projectDirectory,
     });
-  }, [state.selectedMap.tag, projectState.projectDirectory]);
+  }, [state.selectedMap, projectState.projectDirectory]);
 
   useEffect(() => {
-    const handleMapDeleted = (event: any) => {
+    const handleMapDeleted = async (event: any) => {
       //set to first map in list and its tileset
       ipcRenderer.send("refresh-project", projectState.projectDirectory);
-      dispatch({
-        type: SET_SELECTED_MAP,
-        payload: projectState.maps[0],
-      });
-      dispatch({
-        type: SET_SELECTED_TILESET,
-        payload:
+      await dispatch(setSelectedMap(projectState.maps[0]));
+
+      await dispatch(
+        setSelectedTileset(
           projectState.tilesets.find(
             (tileset) => tileset.tag === projectState.maps[0].tileset
-          ) || "none",
-      });
+          ) || projectState.tilesets[0]
+        )
+      );
     };
     ipcRenderer.on("map-deleted", handleMapDeleted);
     return () => {

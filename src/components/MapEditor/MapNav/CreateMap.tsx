@@ -1,18 +1,19 @@
-import { useMapContext } from "../MapState/MapContext";
-import { useProjectContext } from "../../../utils/GlobalState/GlobalState";
+import { useSelector, useDispatch } from "react-redux";
+
 import {
-  CREATE_MAP,
-  SET_SELECTED_MAP,
-  SET_SELECTED_TILESET,
-} from "../MapState/actions";
-import { REFRESH_PROJECT } from "../../../utils/GlobalState/actions";
+  setSelectedLayer,
+  setSelectedMap,
+  setSelectedTileset,
+} from "../../../utils/redux/reducers/MapReducers";
+import { RootState } from "../../../utils/redux/store";
+
 import { useState, useEffect } from "react";
 const ipcRenderer = window.ipcRenderer;
 
 const CreateMap = () => {
-  const { state, dispatch } = useMapContext();
-  const { state: projectState, dispatch: projectDispatch } =
-    useProjectContext();
+  const projectState = useSelector((state: RootState) => state.global);
+  const dispatch = useDispatch();
+
   const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState({ hasError: false, message: "" });
   const [loading, setLoading] = useState(false);
@@ -32,21 +33,9 @@ const CreateMap = () => {
       }
     };
     document.addEventListener("keydown", handleKeyDown);
-    const handleMapCreated = (event: any, arg: any) => {
-      console.log(arg);
+    const handleMapCreated = async () => {
       ipcRenderer.send("refresh-project", projectState.projectDirectory);
       setLoading(false);
-      dispatch({
-        type: SET_SELECTED_MAP,
-        payload: arg,
-      });
-      dispatch({
-        type: SET_SELECTED_TILESET,
-        payload:
-          projectState.tilesets.find(
-            (tileset) => tileset.tag === arg.tileset
-          ) || projectState.tilesets[0],
-      });
     };
     ipcRenderer.on("map-created", handleMapCreated);
 
@@ -55,6 +44,20 @@ const CreateMap = () => {
       ipcRenderer.removeListener("map-created", handleMapCreated);
     };
   }, []);
+
+  useEffect(() => {
+    //if map created succesfully, set selected map and tileset to new map
+
+    dispatch(setSelectedMap(projectState.maps[projectState.maps.length - 1]));
+    const newTileset =
+      projectState.tilesets.find(
+        (tileset) =>
+          tileset.tag ===
+          projectState.maps[projectState.maps.length - 1]?.tileset
+      ) || projectState.tilesets[0];
+    dispatch(setSelectedTileset(newTileset));
+  }, [projectState.maps]);
+
   const validateInput = () => {
     const inputValue = (formdata.tag = formdata.tag.replace(/\s/g, "")); // Remove whitespace
 
@@ -62,19 +65,23 @@ const CreateMap = () => {
     var regex = /^[a-zA-Z0-9_-]+$/;
 
     // Check if the input matches the regular expression
-    if (regex.test(inputValue)) {
-      setError({ hasError: false, message: "" });
-      return true;
-    } else {
+    if (!regex.test(inputValue)) {
       setError({
         hasError: true,
         message:
           "Only alphanumeric, hypen (-), and underscore (_) characters allowed",
       });
       return false;
+    } else if (formdata.tileset === "NONE") {
+      setError({ hasError: true, message: "Please select a tileset" });
+
+      return false;
     }
+    return true;
   };
   const createMap = () => {
+    console.log(formdata);
+
     ipcRenderer.send("create-map", {
       map: {
         tag: formdata.tag,
@@ -84,11 +91,7 @@ const CreateMap = () => {
       },
       projectDirectory: projectState.projectDirectory,
     });
-
-    dispatch({
-      type: CREATE_MAP,
-      payload: formdata,
-    });
+    dispatch(setSelectedLayer(-1));
   };
   return (
     <div>
@@ -111,6 +114,7 @@ const CreateMap = () => {
               <button
                 className='close-button hover:bg-black/70 hover:text-white/80 px-5 py-1 rounded-sm flex justify-center items-center font-bold'
                 onClick={() => {
+                  setLoading(false);
                   setError({ hasError: false, message: "" });
                 }}
               >
@@ -196,8 +200,10 @@ const CreateMap = () => {
                           ...formdata,
                           tileset: e.target.value,
                         });
+                        console.log(formdata, e.target.value);
                       }}
                     >
+                      <option value='NONE'>none</option>
                       {projectState.tilesets.map((tileset, index) => {
                         return (
                           <option key={index} value={tileset.tag}>

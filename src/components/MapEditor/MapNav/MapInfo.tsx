@@ -1,8 +1,9 @@
-import { Tileset, Map } from "../../../utils/types";
-import { useMapContext } from "../MapState/MapContext";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../utils/redux/store";
 
 const MapInfo = () => {
-  const { state } = useMapContext();
+  const state = useSelector((state: RootState) => state.map);
+
   return (
     <div className='flex flex-col justify-between items-center h-full '>
       <div className='flex flex-col justify-center items-end'>
@@ -10,7 +11,6 @@ const MapInfo = () => {
           <div className='text-white text-sm'>Map: </div>
           <div>{state.selectedMap.tag}</div>
         </div>
-
         <div className='flex flex-row justify-between w-60 items-center'>
           <div className='text-white text-sm'>Width (Tiles): </div>
           <div>{state.selectedMap.sizeX}</div>
@@ -18,6 +18,21 @@ const MapInfo = () => {
         <div className='flex flex-row justify-between w-60 items-center'>
           <div className='text-white text-sm'>Height (Tiles): </div>
           <div>{state.selectedMap.sizeY}</div>
+        </div>
+        {state.selectedMap.layers[state.selectedLayer] ? (
+          <div className='flex flex-row justify-between w-60 items-center'>
+            <div className='text-white text-sm'>Layer: </div>
+            <div>{state.selectedMap.layers[state.selectedLayer].tag}</div>
+          </div>
+        ) : (
+          <div className='flex flex-row justify-between w-60 items-center'>
+            <div className='text-white text-sm'>Layer: </div>
+            <div>Colliders</div>
+          </div>
+        )}
+        <div className='flex flex-row justify-between w-60 items-center'>
+          <div className='text-white text-sm'># of Layers: </div>
+          <div>{state.selectedMap.layers.length}</div>
         </div>
         <div className='flex flex-row justify-between w-60 items-center'>
           <div className='text-white text-sm'>Tileset Width : </div>
