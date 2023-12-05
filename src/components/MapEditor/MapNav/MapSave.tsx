@@ -1,13 +1,13 @@
-import { useProjectContext } from "../../../utils/GlobalState/GlobalState";
-import { useMapContext } from "../../../utils/MapState/MapContext";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../utils/redux/store";
 const ipcRenderer = window.ipcRenderer;
 interface MapSaveProps {
   setSavingMap: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const MapSave = ({ setSavingMap }: MapSaveProps) => {
-  const { state } = useProjectContext();
-  const { state: mapState } = useMapContext();
+  const mapState = useSelector((state: RootState) => state.map);
+  const state = useSelector((state: RootState) => state.global);
   const saveMap = () => {
     const payload = {
       map: mapState.selectedMap,

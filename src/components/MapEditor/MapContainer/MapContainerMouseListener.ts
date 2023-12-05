@@ -1,12 +1,15 @@
 import {
-  ADD_TO_MAP_HISTORY,
-  CLEAR_REMOVED_MAP_HISTORY,
-} from "../../../utils/GlobalState/actions";
+  addToMapHistory,
+  clearRemovedMapHistory,
+} from "../../../utils/redux/reducers/GlobalReducers";
+import {
+  setColliderAtSelectedMap,
+  addTileToMap,
+} from "../../../utils/redux/reducers/MapReducers";
 import { MapState } from "../../../utils/types";
 
 class MapContainerMouseListener {
   dispatch: any;
-  projectDispatch: any;
 
   setPosition: Function;
   setIsDragging: Function;
@@ -14,14 +17,12 @@ class MapContainerMouseListener {
 
   constructor(
     dispatch: any,
-    projectDispatch: any,
 
     setPosition: Function,
     setIsDragging: Function,
     setZoomLevel: Function
   ) {
     this.dispatch = dispatch;
-    this.projectDispatch = projectDispatch;
 
     this.setPosition = setPosition;
     this.setIsDragging = setIsDragging;
@@ -56,7 +57,7 @@ class MapContainerMouseListener {
     e: React.MouseEvent<HTMLDivElement>,
     isDragging: { dragging: boolean; mouseEvent: number },
     state: MapState,
-    currentTileHover: any
+    currentTileHover: { x: number; y: number }
   ) => {
     if (isDragging.dragging) {
       //left click or right click
@@ -64,37 +65,46 @@ class MapContainerMouseListener {
         if (state.selectedLayer == -1) {
           //prevent repeat
           if (
-            state.selectedMap.colliders[currentTileHover[0]][
-              currentTileHover[1]
+            state.selectedMap.colliders[currentTileHover.y][
+              currentTileHover.x
             ] === (isDragging.mouseEvent === 0 ? true : false)
           )
             return;
-          //add colliders instead of tiles
-          const newMap = { ...state.selectedMap };
-          const newColliders = [...newMap.colliders];
-          newColliders[currentTileHover[0]][currentTileHover[1]] =
-            isDragging.mouseEvent === 0 ? true : false;
-          newMap.colliders = newColliders;
+
+          this.dispatch(
+            setColliderAtSelectedMap({
+              tilePosition: currentTileHover,
+              collider: isDragging.mouseEvent === 0 ? true : false,
+            })
+          );
           return;
         }
         //check if tile attempting to be placed is the same as the one already there
         if (
           isDragging.mouseEvent === 0 &&
           state.selectedMap.layers[state.selectedLayer].tiles[
-            currentTileHover[0]
-          ][currentTileHover[1]].srcX ===
+            currentTileHover.y
+          ][currentTileHover.x].srcX ===
             state.selectedTile % state.selectedTileset.columns &&
           state.selectedMap.layers[state.selectedLayer].tiles[
-            currentTileHover[0]
-          ][currentTileHover[1]].srcY ===
+            currentTileHover.y
+          ][currentTileHover.x].srcY ===
             Math.floor(state.selectedTile / state.selectedTileset.columns)
+        ) {
+          return;
+        } else if (
+          isDragging.mouseEvent === 2 &&
+          state.selectedMap.layers[state.selectedLayer].tiles[
+            currentTileHover.y
+          ][currentTileHover.x].srcX === -1 &&
+          state.selectedMap.layers[state.selectedLayer].tiles[
+            currentTileHover.y
+          ][currentTileHover.x].srcY === -1
         ) {
           return;
         }
 
         if (state.selectedTile === -1) return;
-
-        const newMap = { ...state.selectedMap };
 
         const newTile =
           isDragging.mouseEvent === 0
@@ -109,28 +119,21 @@ class MapContainerMouseListener {
                 srcY: -1,
               };
         const oldTile =
-          newMap.layers[state.selectedLayer].tiles[currentTileHover[0]][
-            currentTileHover[1]
-          ];
+          state.selectedMap.layers[state.selectedLayer].tiles[
+            currentTileHover.y
+          ][currentTileHover.x];
         const payload = {
           mapTag: state.selectedMap.tag,
           tile: oldTile,
+          newTile: newTile,
           tilePosition: currentTileHover,
           layer: state.selectedLayer,
         };
-        console.log(payload);
-        await this.projectDispatch({
-          type: ADD_TO_MAP_HISTORY,
-          payload: payload,
-        });
 
-        newMap.layers[state.selectedLayer].tiles[currentTileHover[0]][
-          currentTileHover[1]
-        ] = newTile;
-        await this.projectDispatch({
-          type: CLEAR_REMOVED_MAP_HISTORY,
-          payload: state.selectedMap.tag,
-        });
+        this.dispatch(addTileToMap(payload));
+        this.dispatch(addToMapHistory(payload));
+        this.dispatch(clearRemovedMapHistory(state.selectedMap.tag));
+
         //add to history (for undo/redo)
 
         //middle mouse button click

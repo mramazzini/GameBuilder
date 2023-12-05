@@ -1,13 +1,14 @@
 import Navbar from "./components/Navbar.tsx";
 import "./App.css";
-import { ProjectProvider } from "./utils/GlobalState/GlobalState.tsx";
-import TitleBar from "./components/TitleBar.tsx";
 
+import TitleBar from "./components/TitleBar.tsx";
+import { Provider } from "react-redux";
 import FileExplorer from "./components/FileExplorer/FileExplorer.tsx";
 import Error from "./components/Error.tsx";
 import { useState } from "react";
 import IpcListener from "./utils/IpcListener.tsx";
 import TABLIST from "./utils/TabList.ts";
+import store from "./utils/redux/store.ts";
 import GlobalKeyListener from "./components/GlobalKeyListener.tsx";
 function App() {
   const renderActiveTab = () => {
@@ -16,7 +17,7 @@ function App() {
   };
   const [currentPage, setCurrentPage] = useState(0);
   return (
-    <ProjectProvider>
+    <Provider store={store}>
       <GlobalKeyListener setCurrentPage={setCurrentPage} />
       <TitleBar />
       <main className='bg-gray-800  h-full flex-col w-screen min-w-fit'>
@@ -37,7 +38,7 @@ function App() {
         <IpcListener />
         <Error />
       </main>
-    </ProjectProvider>
+    </Provider>
   );
 }
 

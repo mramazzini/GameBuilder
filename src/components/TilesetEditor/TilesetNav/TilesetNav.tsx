@@ -1,17 +1,20 @@
 import SideNav from "../../SideNav";
 import AddTile from "./AddTile";
 import CreateTileset from "./CreateTileset";
-import { SET_SELECTED_TILESET } from "../../../utils/TilesetState/actions";
+
+import { setSelectedTileset } from "../../../utils/redux/reducers/TilesetReducers";
+import { RootState } from "../../../utils/redux/store";
+import { useSelector, useDispatch } from "react-redux";
 import ColorWheelContainer from "./ColorWheel/ColorWheelContainer";
-import { useTilesetContext } from "../../../utils/TilesetState/TilesetContext";
-import { useProjectContext } from "../../../utils/GlobalState/GlobalState";
+
 import ColorSelector from "./ColorSelector";
 import SaveTile from "./SaveTile";
 import { useState } from "react";
 const TilesetNav = () => {
-  const { state: projectState } = useProjectContext();
-  const { state, dispatch } = useTilesetContext();
   const [savingTile, setSavingTile] = useState(false);
+  const dispatch = useDispatch();
+  const projectState = useSelector((state: RootState) => state.global);
+  const state = useSelector((state: RootState) => state.tileset);
   return (
     <SideNav>
       <div className='nav-wrapper flex flex-col justify-center items-center text-white  m-2'>
@@ -23,13 +26,13 @@ const TilesetNav = () => {
             onChange={async (e) => {
               console.log(state);
               if (e.target.value !== "NONE") {
-                await dispatch({
-                  type: SET_SELECTED_TILESET,
-                  //find the tileset in the project state that matches the value of the select
-                  payload: projectState.tilesets.find(
-                    (tileset) => tileset.tag === e.target.value
-                  ),
-                });
+                await dispatch(
+                  setSelectedTileset(
+                    projectState.tilesets.find(
+                      (tileset) => tileset.tag === e.target.value
+                    ) || projectState.tilesets[0]
+                  )
+                );
               }
             }}
           >

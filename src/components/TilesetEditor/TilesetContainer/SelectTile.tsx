@@ -1,11 +1,11 @@
-import { useTilesetContext } from "../../../utils/TilesetState/TilesetContext";
-import { SET_SELECTED_TILE } from "../../../utils/TilesetState/actions";
-
+import { setSelectedTile } from "../../../utils/redux/reducers/TilesetReducers";
+import { RootState } from "../../../utils/redux/store";
+import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 
 const SelectTile = () => {
-  const { state, dispatch } = useTilesetContext();
-
+  const dispatch = useDispatch();
+  const state = useSelector((state: RootState) => state.tileset);
   const [periodString, setPeriodString] = useState("");
   const { selectedTileset, selectedTile } = state;
 
@@ -27,7 +27,7 @@ const SelectTile = () => {
   const handleSelectTile = async (e: React.MouseEvent<HTMLDivElement>) => {
     const tile = e.currentTarget.dataset.tile;
     if (tile) {
-      await dispatch({ type: SET_SELECTED_TILE, payload: parseInt(tile) });
+      await dispatch(setSelectedTile(parseInt(tile)));
     }
   };
 

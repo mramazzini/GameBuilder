@@ -3,15 +3,7 @@ import TilesetEditor from "../pages/TilesetEditor";
 import AppRunner from "../pages/AppRunner";
 import Home from "../pages/Home";
 import { ReactNode } from "react";
-const tabs = [
-  "Map Editor",
-  "Tileset Editor",
-  "Hitbox Editor",
-  "Sprite Editor",
-  "Animation Editor",
-  "Sound Editor",
-  "App Runner",
-];
+const tabs = ["Maps", "Tilesets", "Entities", "App Runner"];
 interface TabComponent {
   (): ReactNode;
 }
@@ -21,9 +13,9 @@ const TABLIST: { tab: string; id: number; element: TabComponent }[] = tabs.map(
       tab: tab,
       id: index,
       element:
-        tab === "Map Editor"
+        tab === "Maps"
           ? MapEditor
-          : tab === "Tileset Editor"
+          : tab === "Tilesets"
           ? TilesetEditor
           : tab === "App Runner"
           ? AppRunner

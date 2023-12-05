@@ -1,25 +1,20 @@
 import SelectTile from "./SelectTile";
 import TileEditor from "./TileEditor";
 import { useEffect } from "react";
-import { useTilesetContext } from "../../../utils/TilesetState/TilesetContext";
-import { useProjectContext } from "../../../utils/GlobalState/GlobalState";
-import TilesetContainerKeyListener from "./TileContainerKeyListener";
-import { SET_SELECTED_TILESET } from "../../../utils/TilesetState/actions";
-const TilesetContainer = () => {
-  const { state, dispatch } = useTilesetContext();
-  const { state: projectState, dispatch: projectDispatch } =
-    useProjectContext();
 
+import TilesetContainerKeyListener from "./TileContainerKeyListener";
+
+import { setSelectedTileset } from "../../../utils/redux/reducers/TilesetReducers";
+import { RootState } from "../../../utils/redux/store";
+import { useSelector, useDispatch } from "react-redux";
+const TilesetContainer = () => {
+  const dispatch = useDispatch();
+  const state = useSelector((state: RootState) => state.tileset);
+  const projectState = useSelector((state: RootState) => state.global);
   useEffect(() => {
     //add keyListener
     const keyListener = (e: KeyboardEvent) => {
-      TilesetContainerKeyListener(
-        e,
-        dispatch,
-        state,
-        projectState,
-        projectDispatch
-      );
+      TilesetContainerKeyListener(e, dispatch, state, projectState);
     };
     window.addEventListener("keydown", keyListener);
     return () => {
@@ -30,10 +25,7 @@ const TilesetContainer = () => {
   useEffect(() => {
     //set default tileset (second condition is there to rerender on escape)
     if (projectState.tilesets.length > 0 && state.selectedTile === -1) {
-      dispatch({
-        type: SET_SELECTED_TILESET,
-        payload: projectState.tilesets[0],
-      });
+      dispatch(setSelectedTileset(projectState.tilesets[0]));
     }
   }, [projectState.tilesets, state.selectedTile]);
 

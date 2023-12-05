@@ -1,26 +1,27 @@
-import { useTilesetContext } from "../../../../utils/TilesetState/TilesetContext";
-import { useProjectContext } from "../../../../utils/GlobalState/GlobalState";
 import { useState, useEffect } from "react";
 import { RGBA } from "../../../../utils/types";
 import { Sketch } from "@uiw/react-color";
-import { ADD_COLOR } from "../../../../utils/GlobalState/actions";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../../../utils/redux/store";
+import { addColor } from "../../../../utils/redux/reducers/GlobalReducers";
 const Colorwheel = () => {
+  const dispatch = useDispatch();
+  const state = useSelector((state: RootState) => state.tileset);
+  const projectState = useSelector((state: RootState) => state.global);
   const [selectedColor, setSelectedColor] = useState<RGBA>({
     r: 0,
     g: 0,
     b: 0,
     a: 0,
   });
-  const { state, dispatch } = useTilesetContext();
-  const { state: projectState, dispatch: projectDispatch } =
-    useProjectContext();
+
   useEffect(() => {
     //initialize selected color
     if (!projectState.colors[state.selectedColor]) return;
     setSelectedColor(projectState.colors[state.selectedColor]);
   }, []);
   const handleAddColor = () => {
-    projectDispatch({ type: ADD_COLOR, payload: selectedColor });
+    dispatch(addColor(selectedColor));
   };
 
   return (

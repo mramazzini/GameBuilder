@@ -8,10 +8,12 @@ import TilePreview from "./TilePreview";
 import ColliderInfo from "./ColliderInfo";
 import CreateMap from "./CreateMap";
 import DeleteMap from "./DeleteMap";
-import { useMapContext } from "../../../utils/MapState/MapContext";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../utils/redux/store";
+
 const MapNav = () => {
   const [savingMap, setSavingMap] = useState(false);
-  const { state } = useMapContext();
+  const state = useSelector((state: RootState) => state.map);
   return state && state.selectedMap && state.selectedTileset ? (
     <SideNav>
       <MapToggle />

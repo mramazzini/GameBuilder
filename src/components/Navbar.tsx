@@ -1,8 +1,10 @@
 import TABLIST from "../utils/TabList";
-import { TOGGLE_FILE_EXPLORER } from "../utils/GlobalState/actions";
-import { useProjectContext } from "../utils/GlobalState/GlobalState";
+import { useSelector, useDispatch } from "react-redux";
+import { toggleFileExplorer } from "../utils/redux/reducers/GlobalReducers";
+import { RootState } from "../utils/redux/store";
 const Navbar = (props: { setCurrentPage: Function; currentPage: string }) => {
-  const { state, dispatch } = useProjectContext();
+  const dispatch = useDispatch();
+  const state = useSelector((state: RootState) => state.global);
   const getButtonClasses = (option: string) => {
     return `btn btn-outline-light font-bold font-mono ml-1 text-md px-2 py-1  hover:bg-slate-400 rounded-md ${
       option === props.currentPage ? "text-black bg-slate-200" : "text-white"
@@ -26,7 +28,7 @@ const Navbar = (props: { setCurrentPage: Function; currentPage: string }) => {
       {/* hide the navbar button*/}
       <button
         className='btn btn-outline-light font-bold font-mono  text-white text-lg px-2 py-1 m-1 hover:bg-slate-400 rounded-md'
-        onClick={async () => await dispatch({ type: TOGGLE_FILE_EXPLORER })}
+        onClick={() => dispatch(toggleFileExplorer())}
       >
         {state.fileExplorerOpened ? "Hide" : "Show Explorer"}
       </button>

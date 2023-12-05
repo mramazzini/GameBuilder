@@ -1,18 +1,14 @@
 import { useState, useEffect } from "react";
-import { useProjectContext } from "../../utils/GlobalState/GlobalState";
-import { RUN_COMMAND } from "../../utils/GlobalState/actions";
+import { useDispatch } from "react-redux";
+import { runCommand } from "../../utils/redux/reducers/GlobalReducers";
 const CommandLine = () => {
   const [inputText, setInputText] = useState("");
-  const { state: projectState, dispatch: projectDispatch } =
-    useProjectContext();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const keyListener = (e: KeyboardEvent) => {
       if (e.key === "Enter") {
-        projectDispatch({
-          type: RUN_COMMAND,
-          payload: inputText,
-        });
+        dispatch(runCommand(inputText));
         setInputText("");
       }
     };

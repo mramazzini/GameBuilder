@@ -1,14 +1,13 @@
-import { useTilesetContext } from "../../../utils/TilesetState/TilesetContext";
-import { useProjectContext } from "../../../utils/GlobalState/GlobalState";
 import { useEffect, useRef, useState } from "react";
-import { SET_NEW_BASE_64_IMAGE } from "../../../utils/GlobalState/actions";
-import { SET_SELECTED_COLOR } from "../../../utils/TilesetState/actions";
-
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../../utils/redux/store";
+import { setNewBase64Image } from "../../../utils/redux/reducers/GlobalReducers";
+import { setSelectedColor } from "../../../utils/redux/reducers/TilesetReducers";
 import RenderPixel from "./RenderPixel";
 const TileEditor = ({ tileNum }: { tileNum: number }) => {
-  const { state, dispatch } = useTilesetContext();
-  const { state: projectState, dispatch: projectDispatch } =
-    useProjectContext();
+  const dispatch = useDispatch();
+  const state = useSelector((state: RootState) => state.tileset);
+  const projectState = useSelector((state: RootState) => state.global);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [zoom, setZoom] = useState(30);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -23,7 +22,7 @@ const TileEditor = ({ tileNum }: { tileNum: number }) => {
   }>({ dragging: false, mouseEvent: 0 });
 
   useEffect(() => {
-    dispatch({ type: SET_SELECTED_COLOR, payload: 0 });
+    dispatch(setSelectedColor(0));
   }, [tileNum]);
 
   useEffect(() => {
@@ -53,15 +52,13 @@ const TileEditor = ({ tileNum }: { tileNum: number }) => {
         ctx.putImageData(newImageData, 0, 0);
 
         // update pixel data in global state on unmount
-        projectDispatch({
-          type: SET_NEW_BASE_64_IMAGE,
-          payload: {
+        dispatch(
+          setNewBase64Image({
             tile: tileNum,
             image: newImageData,
-
             tileset: state.selectedTileset,
-          },
-        });
+          })
+        );
       }
     };
 

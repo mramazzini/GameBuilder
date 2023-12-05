@@ -1,7 +1,9 @@
-import { useMapContext } from "../../../utils/MapState/MapContext";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../../utils/redux/store";
+import { setColliderVision } from "../../../utils/redux/reducers/MapReducers";
 const ColliderInfo = () => {
-  const { state, dispatch } = useMapContext();
-
+  const state = useSelector((state: RootState) => state.map);
+  const dispatch = useDispatch();
   return (
     <div className='collider-info flex  flex-row justify-around items-center h-full w-60'>
       <div className='collider-info__item__title'>
@@ -12,11 +14,7 @@ const ColliderInfo = () => {
           type='checkbox'
           checked={state.colliderVision}
           onChange={async (e) => {
-            console.log(e.target.checked);
-            await dispatch({
-              type: "SET_COLLIDER_VISION",
-              payload: e.target.checked,
-            });
+            await dispatch(setColliderVision(e.target.checked));
           }}
         />
       </div>

@@ -1,12 +1,15 @@
 import RenderTile from "./RenderTile";
 
-import { useMapContext } from "../../../utils/MapState/MapContext";
+import { useSelector } from "react-redux";
 import { MapLayer as MapLayerType } from "../../../utils/types";
+import { RootState } from "../../../utils/redux/store";
 
 interface MapLayerProps {
   zoomLevel: number;
   position: { x: number; y: number };
-  setCurrentTileHover: React.Dispatch<React.SetStateAction<number[]>>;
+  setCurrentTileHover: React.Dispatch<
+    React.SetStateAction<{ x: number; y: number }>
+  >;
   layer: MapLayerType;
   fullView: boolean;
 }
@@ -18,7 +21,7 @@ const MapLayer = ({
   layer,
   fullView,
 }: MapLayerProps) => {
-  const { state } = useMapContext();
+  const state = useSelector((state: RootState) => state.map);
 
   return (
     <div
@@ -45,7 +48,9 @@ const MapLayer = ({
           return (
             <div
               key={`${rowIndex}-${colIndex}`}
-              onMouseEnter={() => setCurrentTileHover([rowIndex, colIndex])}
+              onMouseEnter={() =>
+                setCurrentTileHover({ x: colIndex, y: rowIndex })
+              }
             >
               <RenderTile
                 tile={col}

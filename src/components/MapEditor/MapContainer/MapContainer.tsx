@@ -1,20 +1,24 @@
-import { useMapContext } from "../../../utils/MapState/MapContext";
 import { useState, useEffect, useRef } from "react";
 import MapContainerMouseListener from "./MapContainerMouseListener";
-import { useProjectContext } from "../../../utils/GlobalState/GlobalState";
+import { RootState } from "../../../utils/redux/store";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  setSelectedMap,
+  setSelectedTileset,
+} from "../../../utils/redux/reducers/MapReducers";
 import MapContainerKeyListener from "./MapContainerKeyListener";
 import MapLayer from "./MapLayer";
-import {
-  SET_SELECTED_MAP,
-  SET_SELECTED_TILESET,
-} from "../../../utils/MapState/actions";
+
 let mouseListener: MapContainerMouseListener;
 const MapContainer = () => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const [currentTileHover, setCurrentTileHover] = useState<number[]>([8, 8]); // [x,y]
-  const { state, dispatch } = useMapContext();
-  const { state: projectState, dispatch: projectDispatch } =
-    useProjectContext();
+  const [currentTileHover, setCurrentTileHover] = useState<{
+    x: number;
+    y: number;
+  }>({ x: 8, y: 8 }); // [x,y]
+  const state = useSelector((state: RootState) => state.map);
+  const projectState = useSelector((state: RootState) => state.global);
+  const dispatch = useDispatch();
 
   const [zoomLevel, setZoomLevel] = useState<number>();
   const [position, setPosition] = useState<{ x: number; y: number }>();
@@ -22,8 +26,9 @@ const MapContainer = () => {
     dragging: boolean;
     mouseEvent: number;
   }>({ dragging: false, mouseEvent: 0 });
+
   const keydownListener = (e: KeyboardEvent) => {
-    MapContainerKeyListener(e, dispatch, state, projectDispatch);
+    MapContainerKeyListener(e, dispatch, state);
   };
   useEffect(() => {
     console.log("adding keydown listener");
@@ -33,7 +38,7 @@ const MapContainer = () => {
       document.removeEventListener("keydown", keydownListener);
       console.log("removed keydown listener");
     };
-  }, [state.selectedMap, state.selectedTileset, state.selectedLayer]);
+  }, [state.selectedMap?.tag, state.selectedTileset?.tag, state.selectedLayer]);
 
   useEffect(() => {
     if (mapContainerRef.current) {
@@ -51,12 +56,12 @@ const MapContainer = () => {
           (state.selectedMap.sizeY * state.selectedTileset.tileHeight) / 2,
       });
     }
-  }, [state.selectedMap, state.selectedTileset, state.selectedLayer]);
+  }, [state.selectedMap?.tag, state.selectedTileset?.tag, state.selectedLayer]);
 
   useEffect(() => {
     mouseListener = new MapContainerMouseListener(
       dispatch,
-      projectDispatch,
+
       setPosition,
       setIsDragging,
       setZoomLevel
@@ -67,16 +72,10 @@ const MapContainer = () => {
     //set default map and tileset
 
     if (projectState.maps.length > 0) {
-      dispatch({
-        type: SET_SELECTED_MAP,
-        payload: projectState.maps[0],
-      });
+      dispatch(setSelectedMap(projectState.maps[0]));
     }
     if (projectState.tilesets.length > 0) {
-      dispatch({
-        type: SET_SELECTED_TILESET,
-        payload: projectState.tilesets[0],
-      });
+      dispatch(setSelectedTileset(projectState.tilesets[0]));
     }
   }, [projectState.tilesets, projectState.maps]);
   return state.selectedTileset && state.selectedMap ? (

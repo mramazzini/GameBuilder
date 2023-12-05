@@ -3,12 +3,15 @@ import Logo from "../assets/Logo.png";
 import { useCallback } from "react";
 const ipcRenderer = window.ipcRenderer;
 
-import { SET_PROJECT_DIRECTORY, SET_ERROR } from "../utils/GlobalState/actions";
-
-import { useProjectContext } from "../utils/GlobalState/GlobalState";
-
+import { useSelector, useDispatch } from "react-redux";
+import {
+  setProjectDirectory,
+  setError,
+} from "../utils/redux/reducers/GlobalReducers";
+import { RootState } from "../utils/redux/store";
 const TitleBar = () => {
-  const { state, dispatch } = useProjectContext();
+  const state = useSelector((state: RootState) => state.global);
+  const dispatch = useDispatch();
 
   // Window Controls -----------------------------------------------------------
   const maximize = () => {
@@ -41,10 +44,8 @@ const TitleBar = () => {
 
   const runProjectGame = async () => {
     if (state.projectDirectory === "") {
-      await dispatch({
-        type: SET_ERROR,
-        payload: "Please create or load a project first",
-      });
+      await dispatch(setError("Please create or load a project first"));
+
       return;
     }
     ipcRenderer.send("initialize-engine", state.projectDirectory);

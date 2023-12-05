@@ -1,9 +1,10 @@
-import { useProjectContext } from "../utils/GlobalState/GlobalState";
-import { SET_ERROR } from "../utils/GlobalState/actions";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../utils/redux/store";
+import { setError } from "../utils/redux/reducers/GlobalReducers";
 
 const Error = () => {
-  const { state, dispatch } = useProjectContext();
-
+  const state = useSelector((state: RootState) => state.global);
+  const dispatch = useDispatch();
   return (
     state.error !== "" && (
       <div className='w-screen h-screen bg-black/50 absolute top-0 left-0 flex justify-center items-center'>
@@ -11,9 +12,7 @@ const Error = () => {
           <h1>{state.error}</h1>
           <button
             className='bg-black/70 text-white px-5 py-1 rounded-md hover:bg-black/80 '
-            onClick={async () =>
-              await dispatch({ type: SET_ERROR, payload: "" })
-            }
+            onClick={async () => await dispatch(setError(""))}
           >
             Ok
           </button>

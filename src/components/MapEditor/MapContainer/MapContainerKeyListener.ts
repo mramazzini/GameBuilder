@@ -1,77 +1,65 @@
 import {
-  TOGGLE_COLLIDER_VISION,
-  TOGGLE_ADDING_COLLIDER,
-  MOVE_TILE_COLUMN_LEFT,
-  MOVE_TILE_COLUMN_RIGHT,
-  MOVE_TILE_ROW_UP,
-  MOVE_TILE_ROW_DOWN,
-  SET_SELECTED_LAYER,
-  TAB_SELECTED_LAYER,
-} from "../../../utils/MapState/actions";
+  toggleColliderVision,
+  moveTileColumnLeft,
+  moveTileColumnRight,
+  moveTileRowUp,
+  moveTileRowDown,
+  setSelectedLayer,
+  tabSelectedLayer,
+} from "../../../utils/redux/reducers/MapReducers";
+
 import {
-  POP_FROM_MAP_HISTORY,
-  POP_FROM_MAP_UNDO_HISTORY,
-} from "../../../utils/GlobalState/actions";
+  popFromMapHistory,
+  popFromMapUndoHistory,
+} from "../../../utils/redux/reducers/GlobalReducers";
 
 import { MapState } from "../../../utils/types";
 
 const MapContainerKeyListener = async (
   e: KeyboardEvent,
   dispatch: any,
-  state: MapState,
-  projectDispatch: any
+  state: MapState
 ) => {
   if (e.key === "Shift") {
-    await dispatch({
-      type: TOGGLE_COLLIDER_VISION,
-      payload: !state.colliderVision,
-    });
+    await dispatch(toggleColliderVision());
     return;
   }
   if (e.key === "Tab") {
     e.preventDefault();
-    await dispatch({
-      type: TAB_SELECTED_LAYER,
-    });
+    await dispatch(tabSelectedLayer());
   }
   if (e.key === "z" && e.ctrlKey) {
-    await projectDispatch({
-      type: POP_FROM_MAP_HISTORY,
-      payload: { tag: state.selectedMap.tag, layer: state.selectedLayer },
-    });
+    await dispatch(
+      popFromMapHistory({
+        tag: state.selectedMap.tag,
+        layer: state.selectedLayer,
+      })
+    );
+
     return;
   }
   if (e.key === "y" && e.ctrlKey) {
-    await projectDispatch({
-      type: POP_FROM_MAP_UNDO_HISTORY,
-      payload: { tag: state.selectedMap.tag, layer: state.selectedLayer },
-    });
+    //FIX
+    // await dispatch(popFromMapUndoHistory(state.selectedMap.tag));
+
     return;
   }
 
   if (e.key === "w") {
-    await dispatch({
-      type: MOVE_TILE_ROW_UP,
-    });
+    await dispatch(moveTileRowUp());
+
     return;
   }
   if (e.key === "s") {
-    await dispatch({
-      type: MOVE_TILE_ROW_DOWN,
-    });
+    await dispatch(moveTileRowDown());
     return;
   }
   if (e.key === "a") {
-    console.log("a");
-    await dispatch({
-      type: MOVE_TILE_COLUMN_LEFT,
-    });
+    await dispatch(moveTileColumnLeft());
     return;
   }
   if (e.key === "d") {
-    await dispatch({
-      type: MOVE_TILE_COLUMN_RIGHT,
-    });
+    await dispatch(moveTileColumnRight());
     return;
   }
 };

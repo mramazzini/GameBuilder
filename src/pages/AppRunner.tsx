@@ -1,8 +1,9 @@
 import GameLog from "../components/AppRunner/GameLog";
-import { useProjectContext } from "../utils/GlobalState/GlobalState";
+import { useSelector } from "react-redux";
+import { RootState } from "../utils/redux/store";
 import Home from "./Home";
 const AppRunner = () => {
-  const { state } = useProjectContext();
+  const state = useSelector((state: RootState) => state.global);
   return state.projectDirectory ? (
     <div className='flex flex-col justify-start h-full'>
       <GameLog />

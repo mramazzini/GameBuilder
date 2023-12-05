@@ -1,10 +1,11 @@
-import { useTilesetContext } from "../../../utils/TilesetState/TilesetContext";
-import { useProjectContext } from "../../../utils/GlobalState/GlobalState";
 import { RGBA } from "../../../utils/types";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../../utils/redux/store";
+import { setSelectedColor } from "../../../utils/redux/reducers/TilesetReducers";
 const ColorSelector = () => {
-  const { state, dispatch } = useTilesetContext();
-  const { state: projectState, dispatch: projectDispatch } =
-    useProjectContext();
+  const dispatch = useDispatch();
+  const state = useSelector((state: RootState) => state.tileset);
+  const projectState = useSelector((state: RootState) => state.global);
   const equalColors = (color1: RGBA, color2: RGBA) => {
     if (!color1 || !color2) return false;
     return (
@@ -55,12 +56,7 @@ const ColorSelector = () => {
                         : "transparent"
                     }`,
                   }}
-                  onClick={async () =>
-                    await dispatch({
-                      type: "SET_SELECTED_COLOR",
-                      payload: index,
-                    })
-                  }
+                  onClick={async () => await dispatch(setSelectedColor(index))}
                 >
                   <div
                     className='selected-color-circle '

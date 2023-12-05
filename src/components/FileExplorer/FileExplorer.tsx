@@ -1,9 +1,9 @@
 // FileExplorer.tsx
 
 import React, { useState, useEffect } from "react";
-
+import { useSelector } from "react-redux";
 import RenderFolder from "./RenderFolder.js";
-import { useProjectContext } from "../../utils/GlobalState/GlobalState.js";
+import { RootState } from "../../utils/redux/store.js";
 const ipcRenderer = window.ipcRenderer;
 
 interface FileExplorerProps {
@@ -11,7 +11,7 @@ interface FileExplorerProps {
 }
 
 const FileExplorer: React.FC<FileExplorerProps> = ({ initialPath }) => {
-  const { state, dispatch } = useProjectContext();
+  const state = useSelector((state: RootState) => state.global);
   const [width, setWidth] = useState(400);
   const [isResizing, setResizing] = useState(false);
 

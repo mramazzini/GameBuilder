@@ -1,8 +1,9 @@
-import { Tileset, Map } from "../../../utils/types";
-import { useMapContext } from "../../../utils/MapState/MapContext";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../utils/redux/store";
 
 const MapInfo = () => {
-  const { state } = useMapContext();
+  const state = useSelector((state: RootState) => state.map);
+
   return (
     <div className='flex flex-col justify-between items-center h-full '>
       <div className='flex flex-col justify-center items-end'>

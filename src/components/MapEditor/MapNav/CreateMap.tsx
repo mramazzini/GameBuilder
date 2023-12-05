@@ -1,17 +1,19 @@
-import { useMapContext } from "../../../utils/MapState/MapContext";
-import { useProjectContext } from "../../../utils/GlobalState/GlobalState";
+import { useSelector, useDispatch } from "react-redux";
+
 import {
-  SET_SELECTED_LAYER,
-  SET_SELECTED_MAP,
-  SET_SELECTED_TILESET,
-} from "../../../utils/MapState/actions";
+  setSelectedLayer,
+  setSelectedMap,
+  setSelectedTileset,
+} from "../../../utils/redux/reducers/MapReducers";
+import { RootState } from "../../../utils/redux/store";
 
 import { useState, useEffect } from "react";
 const ipcRenderer = window.ipcRenderer;
 
 const CreateMap = () => {
-  const { dispatch } = useMapContext();
-  const { state: projectState } = useProjectContext();
+  const projectState = useSelector((state: RootState) => state.global);
+  const dispatch = useDispatch();
+
   const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState({ hasError: false, message: "" });
   const [loading, setLoading] = useState(false);
@@ -45,20 +47,15 @@ const CreateMap = () => {
 
   useEffect(() => {
     //if map created succesfully, set selected map and tileset to new map
-    dispatch({
-      type: SET_SELECTED_MAP,
-      payload: projectState.maps[projectState.maps.length - 1],
-    });
+
+    dispatch(setSelectedMap(projectState.maps[projectState.maps.length - 1]));
     const newTileset =
       projectState.tilesets.find(
         (tileset) =>
           tileset.tag ===
           projectState.maps[projectState.maps.length - 1]?.tileset
       ) || projectState.tilesets[0];
-    dispatch({
-      type: SET_SELECTED_TILESET,
-      payload: newTileset,
-    });
+    dispatch(setSelectedTileset(newTileset));
   }, [projectState.maps]);
 
   const validateInput = () => {
@@ -94,11 +91,7 @@ const CreateMap = () => {
       },
       projectDirectory: projectState.projectDirectory,
     });
-
-    dispatch({
-      type: SET_SELECTED_LAYER,
-      payload: -1,
-    });
+    dispatch(setSelectedLayer(-1));
   };
   return (
     <div>

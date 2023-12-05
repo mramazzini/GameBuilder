@@ -1,16 +1,14 @@
-import { useMapContext } from "../../../utils/MapState/MapContext";
-
-import { SET_SELECTED_LAYER } from "../../../utils/MapState/actions";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../../utils/redux/store";
+import { setSelectedLayer } from "../../../utils/redux/reducers/MapReducers";
 
 import { useState } from "react";
 const LayerSelector = () => {
-  const { state, dispatch } = useMapContext();
   const [hoveredLayer, setHoveredLayer] = useState<number>(-1);
+  const state = useSelector((state: RootState) => state.map);
+  const dispatch = useDispatch();
   const handleLayerChange = async (num: number) => {
-    await dispatch({
-      type: SET_SELECTED_LAYER,
-      payload: num,
-    });
+    await dispatch(setSelectedLayer(num));
   };
 
   return state.selectedMap && state.selectedTileset ? (

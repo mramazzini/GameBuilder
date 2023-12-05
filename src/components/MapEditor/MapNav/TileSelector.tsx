@@ -1,9 +1,10 @@
 import RenderNavTile from "./RenderNavTile";
-import { useMapContext } from "../../../utils/MapState/MapContext";
-import { SET_SELECTED_TILE } from "../../../utils/MapState/actions";
-
+import { setSelectedTile } from "../../../utils/redux/reducers/MapReducers";
+import { RootState } from "../../../utils/redux/store";
+import { useSelector, useDispatch } from "react-redux";
 const TileSelector = () => {
-  const { state, dispatch } = useMapContext();
+  const state = useSelector((state: RootState) => state.map);
+  const dispatch = useDispatch();
   const getArray = (length: number) => {
     console.log(length);
     return [...Array(length)];
@@ -32,9 +33,7 @@ const TileSelector = () => {
                   width: `${16}px`,
                   height: `${16}px`,
                 }}
-                onClick={async () =>
-                  await dispatch({ type: SET_SELECTED_TILE, payload: index })
-                }
+                onClick={async () => await dispatch(setSelectedTile(index))}
               >
                 {RenderNavTile(
                   {

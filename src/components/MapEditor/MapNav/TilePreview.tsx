@@ -1,7 +1,7 @@
-import { useMapContext } from "../../../utils/MapState/MapContext";
-
+import { useSelector } from "react-redux";
+import { RootState } from "../../../utils/redux/store";
 const TilePreview = () => {
-  const { state } = useMapContext();
+  const state = useSelector((state: RootState) => state.map);
   // Displays an image preview of the selected tile
 
   const scaleFactor = 128 / (state.selectedTileset?.tileWidth || 128);

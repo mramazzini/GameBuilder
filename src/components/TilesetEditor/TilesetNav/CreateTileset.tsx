@@ -1,12 +1,13 @@
-import { useTilesetContext } from "../../../utils/TilesetState/TilesetContext";
-import { useProjectContext } from "../../../utils/GlobalState/GlobalState";
 import { useEffect, useRef, useState } from "react";
-import { SET_SELECTED_TILESET } from "../../../utils/TilesetState/actions";
-import { CREATE_TILESET } from "../../../utils/GlobalState/actions";
+
+import { setSelectedTileset } from "../../../utils/redux/reducers/TilesetReducers";
+import { RootState } from "../../../utils/redux/store";
+import { useSelector, useDispatch } from "react-redux";
+import { createTileset } from "../../../utils/redux/reducers/GlobalReducers";
+
 const CreateTileset = () => {
-  const { state, dispatch } = useTilesetContext();
-  const { state: projectState, dispatch: projectDispatch } =
-    useProjectContext();
+  const dispatch = useDispatch();
+  const projectState = useSelector((state: RootState) => state.global);
 
   const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState({ hasError: false, message: "" });
@@ -45,18 +46,19 @@ const CreateTileset = () => {
       setError({ hasError: true, message: "Tileset already exists" });
       return;
     }
-    await projectDispatch({
-      type: CREATE_TILESET,
-      payload: {
+    await dispatch(
+      createTileset({
         tag: formdata.tag,
         tileSize: formdata.tileSize,
-      },
-    });
+      })
+    );
 
-    await dispatch({
-      type: SET_SELECTED_TILESET,
-      payload: projectState.tilesets[projectState.tilesets.length - 1],
-    });
+    await dispatch(
+      setSelectedTileset(
+        projectState.tilesets[projectState.tilesets.length - 1]
+      )
+    );
+
     setFormdata({
       tag: "",
       tileSize: 1,

@@ -1,34 +1,27 @@
-import { useTilesetContext } from "../../../utils/TilesetState/TilesetContext";
-import { useProjectContext } from "../../../utils/GlobalState/GlobalState";
 import { useState, useEffect } from "react";
-import { ADD_TILE_TO_TILESET } from "../../../utils/GlobalState/actions";
+
+import { addTileToTileset } from "../../../utils/redux/reducers/GlobalReducers";
 import {
-  SET_SELECTED_TILE,
-  SET_SELECTED_TILESET,
-} from "../../../utils/TilesetState/actions";
+  setSelectedTile,
+  setSelectedTileset,
+} from "../../../utils/redux/reducers/TilesetReducers";
+import { RootState } from "../../../utils/redux/store";
+import { useSelector, useDispatch } from "react-redux";
 
 const AddTile = () => {
-  const { state, dispatch } = useTilesetContext();
-  const { state: projectState, dispatch: projectDispatch } =
-    useProjectContext();
-
+  const dispatch = useDispatch();
+  const projectState = useSelector((state: RootState) => state.global);
+  const state = useSelector((state: RootState) => state.tileset);
   const handleAddTile = async () => {
-    await projectDispatch({
-      type: ADD_TILE_TO_TILESET,
-      payload: {
-        tileset: state.selectedTileset.tag,
-      },
-    });
-    await dispatch({
-      type: SET_SELECTED_TILESET,
-      payload: projectState.tilesets.find(
-        (tileset) => tileset.tag === state.selectedTileset.tag
-      ),
-    });
-    await dispatch({
-      type: SET_SELECTED_TILE,
-      payload: -1,
-    });
+    await dispatch(addTileToTileset(state.selectedTileset.tag));
+    await dispatch(
+      setSelectedTileset(
+        projectState.tilesets.find(
+          (tileset) => tileset.tag === state.selectedTileset.tag
+        ) || projectState.tilesets[0]
+      )
+    );
+    await dispatch(setSelectedTile(-1));
   };
 
   return (

@@ -1,9 +1,9 @@
-import { useProjectContext } from "../../utils/GlobalState/GlobalState";
 import React, { useEffect, useRef } from "react";
+import { RootState } from "../../utils/redux/store";
+import { useSelector, useDispatch } from "react-redux";
 import CommandLine from "./CommandLine";
 const GameLog = () => {
-  const { state, dispatch } = useProjectContext();
-
+  const state = useSelector((state: RootState) => state.global);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {

@@ -1,13 +1,13 @@
-import { useProjectContext } from "../../../utils/GlobalState/GlobalState";
-import { useTilesetContext } from "../../../utils/TilesetState/TilesetContext";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../utils/redux/store";
 const ipcRenderer = window.ipcRenderer;
 interface TileSaveProps {
   setSavingTile: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const SaveTile = ({ setSavingTile }: TileSaveProps) => {
-  const { state: projectState } = useProjectContext();
-  const { state } = useTilesetContext();
+  const state = useSelector((state: RootState) => state.tileset);
+  const projectState = useSelector((state: RootState) => state.global);
   const saveTile = () => {
     const payload = {
       projectDirectory: projectState.projectDirectory,

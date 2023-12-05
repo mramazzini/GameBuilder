@@ -1,14 +1,15 @@
-import { useProjectContext } from "../../../utils/GlobalState/GlobalState";
-import { useMapContext } from "../../../utils/MapState/MapContext";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../../utils/redux/store";
 import {
-  SET_SELECTED_LAYER,
-  SET_SELECTED_MAP,
-  SET_SELECTED_TILESET,
-} from "../../../utils/MapState/actions";
+  setSelectedLayer,
+  setSelectedMap,
+  setSelectedTileset,
+} from "../../../utils/redux/reducers/MapReducers";
 
 const MapToggle = () => {
-  const { state } = useProjectContext();
-  const { state: mapState, dispatch } = useMapContext();
+  const state = useSelector((state: RootState) => state.global);
+  const mapState = useSelector((state: RootState) => state.map);
+  const dispatch = useDispatch();
 
   return (
     <div className='tile-selector flex flex-row justify-between items-center p-2 overflow-hidden '>
@@ -23,10 +24,10 @@ const MapToggle = () => {
             const tileset = state.tilesets.find((tileset) => {
               return tileset.tag === e.target.value;
             });
-            await dispatch({
-              type: SET_SELECTED_TILESET,
-              payload: tileset ? tileset : mapState.selectedTileset,
-            });
+
+            await dispatch(
+              setSelectedTileset(tileset ? tileset : mapState.selectedTileset)
+            );
           }}
         >
           <option value='NONE'>none</option>
@@ -46,21 +47,14 @@ const MapToggle = () => {
           className='bg-black/50 truncate  w-24 text-white/75 border border-white/25 rounded-sm p-1'
           onChange={async (e) => {
             const map = state.maps.find((map) => map.tag === e.target.value);
-            await dispatch({
-              type: SET_SELECTED_MAP,
-              payload: map ? map : mapState.selectedMap,
-            });
+            await dispatch(setSelectedMap(map ? map : mapState.selectedMap));
             const tileset = state.tilesets.find(
               (tileset) => tileset.tag === map?.tileset
             );
-            await dispatch({
-              type: SET_SELECTED_TILESET,
-              payload: tileset ? tileset : mapState.selectedTileset,
-            });
-            await dispatch({
-              type: SET_SELECTED_LAYER,
-              payload: -1,
-            });
+            await dispatch(
+              setSelectedTileset(tileset ? tileset : mapState.selectedTileset)
+            );
+            await dispatch(setSelectedLayer(-1));
           }}
         >
           <option value='NONE'>none</option>
