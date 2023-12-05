@@ -284,62 +284,7 @@ export const GlobalSlice = createSlice({
         );
       });
     },
-    setNewBase64Image: (
-      state,
-      action: PayloadAction<{ tile: number; tileset: Tileset; image: any }>
-    ) => {
-      const tile = action.payload.tile;
-      const tileset = action.payload.tileset;
-      const imageDataToReplaceTile = action.payload.image;
 
-      //find tileset
-      const tilesetIndex = state.tilesets.findIndex(
-        (tilesetObject: Tileset) => tilesetObject.tag === tileset.tag
-      );
-
-      //update tileset base64 image data at tile with new image by
-      // drawing it to a canvas
-      const oldTilesetImage =
-        "data:image/png;base64," + state.tilesets[tilesetIndex].base64;
-
-      const image = new Image();
-      image.src = oldTilesetImage;
-      image.onload = () => {
-        const canvas = document.createElement("canvas");
-        canvas.width = tileset.tileWidth * tileset.columns;
-        canvas.height = tileset.tileHeight * tileset.rows;
-        const ctx = canvas.getContext("2d");
-        if (!ctx) {
-          return;
-        }
-        ctx.drawImage(image, 0, 0);
-
-        //get tile x and y based on tileset col and rows
-        const tileX = tile % tileset.columns;
-        const tileY = Math.floor(tile / tileset.columns);
-        //set image data
-        ctx.putImageData(
-          imageDataToReplaceTile,
-          tileX * tileset.tileWidth,
-          tileY * tileset.tileHeight
-        );
-        //update base64 image
-        const newBase64 = canvas.toDataURL("image/png").split(",")[1];
-
-        //update tileset
-        const newTileset = {
-          ...state.tilesets[tilesetIndex],
-          base64: newBase64,
-        };
-
-        //update tileset in state
-        const newTilesets = [...state.tilesets];
-        newTilesets[tilesetIndex] = newTileset;
-
-        state.tilesets = newTilesets;
-      };
-      return;
-    },
     addTileToTileset: (state, action: PayloadAction<string>) => {
       const tilesetTag = action.payload;
 
@@ -390,8 +335,27 @@ export const GlobalSlice = createSlice({
       };
       state.tilesets.push(newTileset);
     },
+    attachNewBase64ToTileset: (
+      state,
+      action: PayloadAction<{ tag: string; base64: string }>
+    ) => {
+      const tilesetTag = action.payload.tag;
+      const base64 = action.payload.base64;
+
+      const tilesetIndex = state.tilesets.findIndex(
+        (tilesetObject: Tileset) => tilesetObject.tag === tilesetTag
+      );
+      if (tilesetIndex === -1) {
+        return;
+      }
+      const newTileset = {
+        ...state.tilesets[tilesetIndex],
+        base64,
+      };
+
+      state.tilesets[tilesetIndex] = newTileset;
+    },
   },
-  extraReducers: (builder) => {},
 });
 export const {
   toggleFileExplorer,
@@ -409,7 +373,7 @@ export const {
   runCommand,
   addColor,
   removeColor,
-  setNewBase64Image,
+  attachNewBase64ToTileset,
   addTileToTileset,
   createTileset,
 } = GlobalSlice.actions;

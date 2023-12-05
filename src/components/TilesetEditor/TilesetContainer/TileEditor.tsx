@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { useAppDispatch } from "../../../utils/redux/store";
 import { RootState } from "../../../utils/redux/store";
-import { setNewBase64Image } from "../../../utils/redux/reducers/GlobalReducers";
+import { setNewBase64Image } from "../../../utils/redux/thunks/setNewBase64Image";
 import { setSelectedColor } from "../../../utils/redux/reducers/TilesetReducers";
 import RenderPixel from "./RenderPixel";
 const TileEditor = ({ tileNum }: { tileNum: number }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const state = useSelector((state: RootState) => state.tileset);
   const projectState = useSelector((state: RootState) => state.global);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
