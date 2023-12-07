@@ -15,11 +15,9 @@ const titleBarListener = (ipcMain: any) => {
         const enginePath = path.join(
           appPath,
           "..",
-          "..",
-          "Engine",
-          "GameC++",
+          "C-Game-engine",
           "build",
-          "main.exe"
+          "main"
         );
 
         const args = [projectDirectory];
